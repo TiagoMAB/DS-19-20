@@ -5,8 +5,7 @@ Distributed Systems 2019-2020, 2nd semester project
 
 ## Authors
 
-*(fill-in line below with group identifier e.g. A07 or T22; and then delete this line)*  
-**Group CXX**
+**Group A41**
 
 ### Code identification
 
@@ -16,13 +15,11 @@ This change is important for code dependency management, to make sure that your 
 
 ### Team members
 
-*(fill-in table below with team members; and then delete this line)*  
-
-| Number | Name              | User                             | Email                               |
-| -------|-------------------|----------------------------------| ------------------------------------|
-| 11111  | Alice Distributed | <https://github.com/AliceUser>   | <mailto:alice@tecnico.ulisboa.pt>   |
-| 22222  | Bob Systems       | <https://github.com/BobUser>     | <mailto:bob@tecnico.ulisboa.pt>     |
-| 33333  | Charlie Rules     | <https://github.com/CharlieUser> | <mailto:charlie@tecnico.ulisboa.pt> |
+| Number | Name                   | User                              | Email                               |
+| -------|------------------------|-----------------------------------| ------------------------------------|
+| 89549  | Tiago Barroso          | <https://github.com/TiagoMAB>     | <mailto:tiago.agostinho.barroso@tecnico.ulisboa.pt>   |
+| 89425  | Daniel Pereira         | <https://github.com/DanielPereira890>     | <mailto:daniel.r.pereira@tecnico.ulisboa.pt>     |
+| 89445  | Francisco Serralheiro  | <https://github.com/Serralheiro> | <mailto:francisco.serralheiro@tecnico.ulisboa.pt> |
 
 ### Task leaders
 
