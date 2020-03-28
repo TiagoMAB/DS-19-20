@@ -4,3 +4,159 @@
 syntax = "proto3";
 package pt.tecnico.sauron.silo.grpc;
 
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;            //TODO: check if needed
+
+
+//
+//Types
+//
+enum Type {
+    CAR = 0;
+    PERSON = 1;
+}
+
+message Observation {                           //TODO: check between nested type or normal
+
+    Type type = 1;
+    uint64 identifier = 2;
+    google.protobuf.Timestamp date = 3;
+
+}
+
+
+//
+//cam_join command request and response messages
+//
+message CamJoinRequest {
+
+    string name = 1;
+    double latitude = 2;                        //TODO: check between double or float
+    double longitude = 3;                       //TODO: check between double or float
+
+}
+
+message CamJoinResponse {
+
+}
+
+
+//
+//cam_info command request and response messages
+//
+message CamInfoRequest {
+
+    string name = 1;
+
+}
+
+message CamInfoResponse {
+
+    double latitude = 1;
+    double longitude = 2;
+
+}
+
+
+//
+//report command request and response messages
+//
+message ReportRequest {
+
+    string name = 1;
+    repeated Observation observations = 2;
+
+}
+
+message ReportResponse {
+
+}
+
+
+//
+//track command request and response messages
+//
+message TrackRequest {
+
+    Type type = 1;
+    uint64 identifier = 2;
+
+}
+
+message TrackResponse {
+
+    Observation observation = 1;
+
+}
+
+
+//
+//trackMatch command request and response messages
+//
+message TrackMatchRequest {
+
+    Type type = 1;
+    uint64 partialIdentifier = 2;
+
+}
+
+message TrackMatchResponse {
+
+    repeated Observation observations = 2;
+
+}
+
+
+//
+//trace command request and response messages
+//
+message TraceRequest {
+
+    Type type = 1;
+    uint64 identifier = 2;
+
+}
+
+message TraceResponse {
+
+    repeated Observation observations = 2;
+}
+
+
+//
+//ctrl_ping command request and response messages
+//
+message CtrlPingRequest {
+
+}
+
+message CtrlPingResponse {
+
+    string state = 1;
+
+}
+
+
+//
+//ctrl_clear command request and response messages
+//
+message CtrlClearRequest {
+
+}
+
+message CtrlClearResponse {
+                                                //TODO: check if returns string message or not
+}
+
+
+//
+//ctrl_init command request and response messages
+//
+message CtrlInitRequest {
+                                                //TODO: check parameters
+}
+
+message CtrlInitResponse {
+
+}
