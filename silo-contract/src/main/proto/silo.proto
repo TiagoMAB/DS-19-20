@@ -25,9 +25,8 @@ message Observation {                           //TODO: check between nested typ
 
 }
 
-
 //
-//cam_join command request and response messages
+//cam_join command request message
 //
 message CamJoinRequest {
 
@@ -37,13 +36,15 @@ message CamJoinRequest {
 
 }
 
+//
+//cam_join command response message
+//
 message CamJoinResponse {
 
 }
 
-
 //
-//cam_info command request and response messages
+//cam_info command request message
 //
 message CamInfoRequest {
 
@@ -51,6 +52,9 @@ message CamInfoRequest {
 
 }
 
+//
+//cam_info command response message
+//
 message CamInfoResponse {
 
     double latitude = 1;
@@ -58,9 +62,8 @@ message CamInfoResponse {
 
 }
 
-
 //
-//report command request and response messages
+//report command request message
 //
 message ReportRequest {
 
@@ -69,13 +72,15 @@ message ReportRequest {
 
 }
 
+//
+//report command response message
+//
 message ReportResponse {
 
 }
 
-
 //
-//track command request and response messages
+//track command request message
 //
 message TrackRequest {
 
@@ -84,15 +89,17 @@ message TrackRequest {
 
 }
 
+//
+//track command response message
+//
 message TrackResponse {
 
     Observation observation = 1;
 
 }
 
-
 //
-//trackMatch command request and response messages
+//trackMatch command request message
 //
 message TrackMatchRequest {
 
@@ -101,15 +108,17 @@ message TrackMatchRequest {
 
 }
 
+//
+//trackMatch command response message
+//
 message TrackMatchResponse {
 
     repeated Observation observations = 2;
 
 }
 
-
 //
-//trace command request and response messages
+//trace command request message
 //
 message TraceRequest {
 
@@ -118,45 +127,68 @@ message TraceRequest {
 
 }
 
+//
+//trace command response message
+//
 message TraceResponse {
 
     repeated Observation observations = 2;
 }
 
-
 //
-//ctrl_ping command request and response messages
+//ctrl_ping command request message
 //
 message CtrlPingRequest {
 
 }
 
+//
+//ctrl_ping command response message
+//
 message CtrlPingResponse {
 
     string state = 1;
 
 }
 
-
 //
-//ctrl_clear command request and response messages
+//ctrl_clear command request message
 //
 message CtrlClearRequest {
 
 }
 
+//
+//ctrl_clear command response message
+//
 message CtrlClearResponse {
                                                 //TODO: check if returns string message or not
 }
 
-
 //
-//ctrl_init command request and response messages
+//ctrl_init command request message
 //
 message CtrlInitRequest {
                                                 //TODO: check parameters
 }
 
+//
+//ctrl_init command response message
+//
 message CtrlInitResponse {
 
+}
+
+// service
+
+service silo {
+    rpc cam_join(CamJoinRequest) returns (CamJoinResponse);
+    rpc cam_info(CamInfoRequest) returns (CamInfoResponse);
+    rpc report(ReportRequest) returns (ReportResponse);
+    rpc track(TrackRequest) returns (TrackResponse);
+    rpc track_match(TrackMatchRequest) returns (TrackMatchResponse);
+    rpc trace(TraceRequest) returns (TraceResponse);
+    rpc ctrl_ping(CtrlPingRequest) returns (CtrlPingResponse);
+    rpc ctrl_clear(CtrlClearRequest) returns (CtrlClearResponse);
+    rpc ctrl_init(CtrlInitRequest) returns (CtrlInitResponse);
 }
