@@ -9,17 +9,17 @@ public class Object {
     private Type type;
     private String identifier;
 
-    public Object(Type t, String i) {
-        this.type = t;
-        this.identifier = i;
+    public Object(Type type, String identifier) {
+        this.type = type;
+        this.identifier = identifier;
     }
 
     public Type getType() {
         return this.type;
     }
 
-    public void setType(Type t) {
-        this.type = t;
+    public void setType(Type type) {
+        this.type = type;
     }
 
     public String getIdentifier() {

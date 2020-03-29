@@ -29,17 +29,20 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
     @Override
     public void track(TrackRequest request, StreamObserver<TrackResponse> responseObserver) {
-        super.track(request, responseObserver);
+        LOGGER.info("track()...");
+
     }
 
     @Override
     public void trackMatch(TrackMatchRequest request, StreamObserver<TrackMatchResponse> responseObserver) {
-        super.trackMatch(request, responseObserver);
+        LOGGER.info("trackMatch()...");
+
     }
 
     @Override
     public void trace(TraceRequest request, StreamObserver<TraceResponse> responseObserver) {
-        super.trace(request, responseObserver);
+        LOGGER.info("trace()...");
+
     }
 
     @Override
