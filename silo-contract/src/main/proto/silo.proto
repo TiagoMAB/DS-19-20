@@ -20,7 +20,7 @@ enum Type {
 message Observation {                           //TODO: check between nested type or normal
 
     Type type = 1;
-    uint64 identifier = 2;
+    string identifier = 2;
     google.protobuf.Timestamp date = 3;
 
 }
@@ -85,7 +85,7 @@ message ReportResponse {
 message TrackRequest {
 
     Type type = 1;
-    uint64 identifier = 2;
+    string identifier = 2;
 
 }
 
@@ -104,7 +104,7 @@ message TrackResponse {
 message TrackMatchRequest {
 
     Type type = 1;
-    uint64 partialIdentifier = 2;
+    string partialIdentifier = 2;
 
 }
 
@@ -123,7 +123,7 @@ message TrackMatchResponse {
 message TraceRequest {
 
     Type type = 1;
-    uint64 identifier = 2;
+    string identifier = 2;
 
 }
 
