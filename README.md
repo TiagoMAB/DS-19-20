@@ -23,8 +23,6 @@ This change is important for code dependency management, to make sure that your 
 
 ### Task leaders
 
-*(fill-in table below with with team members assigned as leader to each task set; and then delete this line)*  
-
 | Task set | To-Do                         | Leader              |
 | ---------|-------------------------------| --------------------|
 | core     | protocol buffers, silo-client | _(whole team)_      |
