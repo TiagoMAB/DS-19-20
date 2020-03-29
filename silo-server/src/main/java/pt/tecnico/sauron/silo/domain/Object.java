@@ -1,12 +1,9 @@
 package pt.tecnico.sauron.silo.domain;
 
 import pt.tecnico.sauron.silo.domain.exceptions.InvalidIdentifierException;
+import pt.tecnico.sauron.silo.grpc.Type;
 
 public class Object {
-
-    enum Type {
-        CAR, PERSON
-    }
 
     private Type type;
     private String identifier;
