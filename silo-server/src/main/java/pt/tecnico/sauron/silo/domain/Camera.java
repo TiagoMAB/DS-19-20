@@ -3,9 +3,9 @@ package pt.tecnico.sauron.silo.domain;
 public class Camera {
 
     private String name;
-    private float latitude, longitude;
+    private double latitude, longitude;
 
-    public Camera(String name, float latitude, float longitude) {
+    public Camera(String name, double latitude, double longitude) { //TODO double check if its a double
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -19,7 +19,7 @@ public class Camera {
         this.name = name;
     }
 
-    public float getLatitude() {
+    public double getLatitude() {
         return this.latitude;
     }
 
@@ -27,7 +27,7 @@ public class Camera {
         this.latitude = latitude;
     }
 
-    public float getLongitude() {
+    public double getLongitude() {
         return this.longitude;
     }
 

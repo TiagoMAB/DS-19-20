@@ -1,6 +1,7 @@
 package pt.tecnico.sauron.silo;
 
 import io.grpc.stub.StreamObserver;
+import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Silo;
 import pt.tecnico.sauron.silo.grpc.*;
 
@@ -17,15 +18,22 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
     private final Silo silo = new Silo();
 
     @Override
-    public void camInfo(CamInfoRequest request, StreamObserver<CamInfoResponse> responseObserver) {
-        super.camInfo(request, responseObserver);
+    public void camJoin(CamJoinRequest request, StreamObserver<CamJoinResponse> responseObserver) {
+        try{        
+            //check name
+            silo.registerCamera(request.getName(), request.getLatitude(), request.getLongitude());
+        }
+        catch (Exception e){
+            LOGGER.info(e.getMessage());
+            responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
+        }
     }
 
     @Override
-    public void camJoin(CamJoinRequest request, StreamObserver<CamJoinResponse> responseObserver) {
-        super.camJoin(request, responseObserver);
+    public void camInfo(CamInfoRequest request, StreamObserver<CamInfoResponse> responseObserver) {
+        super.camInfo(request, responseObserver);
     }
-
+    
     @Override
     public void report(ReportRequest request, StreamObserver<ReportResponse> responseObserver) {
         super.report(request, responseObserver);

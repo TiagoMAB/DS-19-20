@@ -10,7 +10,7 @@ public class Silo {
 
     private HashMap objects = new HashMap<String, Object>();
     private TreeSet observations = new TreeSet<Observation>();
-    private HashSet cameras = new HashSet<Camera>();
+    private HashMap cameras = new HashMap();
 
     public Silo() { }
 
@@ -30,4 +30,24 @@ public class Silo {
         throw new NoObservationFound(s);
     }
 
+    public void checkCameraName(String name) throws InvalidCameraName {
+        
+    }
+
+    public void registerCamera(String name, double latitude, double longitude) throws InvalidCameraName, DuplicateCameraName {
+        //TODO maybe check latitude and longitude?
+        if(!(name.length() >= 3 && name.length() <= 15)) {
+            throw new InvalidCameraName(name);
+        }
+        else{
+            if(cameras.containsKey(name)){
+                throw new DuplicateCameraName(name);
+            }
+            else {
+                Camera camera = new Camera(name, latitude, longitude);
+                cameras.put(name, camera);
+            }
+        }
+    }
+    
 }
