@@ -31,13 +31,10 @@ public class Object {
     }
 
     public void checkIdentifier(String identifier) throws InvalidIdentifierException {
-        if (identifier.isBlank()) {
-            throw new InvalidIdentifierException(identifier);
-        }
 
-        if (type == Type.CAR && identifier.length() == 6) {
-
+        if (type == Type.CAR && !identifier.isBlank() && identifier.length() == 6) {
             String[] patterns = {"^\\d{2}[A-Z]{2}\\d{2}", "^[A-Z]{2}\\d{4}", "^\\d{4}[A-Z]{2}", "^\\d{2}[A-Z]{4}", "^[A-Z]{4}\\d{2}", "^[A-Z]{2}\\d{2}[A-Z]{2}"};
+
             for (String pattern: patterns) {
                 if (identifier.matches(pattern)) {
                     this.identifier = identifier;
@@ -46,7 +43,7 @@ public class Object {
             }
         }
 
-        if (type == Type.PERSON) {
+        if (type == Type.PERSON && !identifier.isBlank()) {
             Long n;
 
             try {
@@ -66,5 +63,4 @@ public class Object {
 
         throw new InvalidIdentifierException(identifier);
     }
-
 }
