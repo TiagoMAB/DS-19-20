@@ -1,14 +1,16 @@
 package pt.tecnico.sauron.silo.domain;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
-public class Observation implements Comparable<Observation> {
+public class Observation {
 
     private Object object;
-    private Timestamp time;
+    private String identifier;
+    private LocalDateTime time;
 
-    public Observation(Object object, Timestamp time) {
+    public Observation(Object object, String identifier, LocalDateTime time) {
         this.object = object;
+        this.identifier = identifier;
         this.time = time;
     }
 
@@ -20,21 +22,19 @@ public class Observation implements Comparable<Observation> {
         this.object = object;
     }
 
-    public Timestamp getTime() {
+    public String getIdentifier() {
+        return this.identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public LocalDateTime getTime() {
         return this.time;
     }
 
-    public void setTime(Timestamp time) {
+    public void setTime(LocalDateTime time) {
         this.time = time;
-    }
-
-    @Override
-    public int compareTo(Observation o) {
-        if (this.getTime().before(o.getTime())) {
-            return -1;
-        }
-        else {
-            return 1;
-        }
     }
 }
