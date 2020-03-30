@@ -22,6 +22,9 @@ message Observation {                           //TODO: check between nested typ
     Type type = 1;
     string identifier = 2;
     google.protobuf.Timestamp date = 3;
+    string name = 4;
+    double latitude = 5;
+    double longitude = 6;
 
 }
 
