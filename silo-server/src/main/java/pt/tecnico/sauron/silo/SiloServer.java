@@ -6,6 +6,8 @@ import pt.tecnico.sauron.silo.grpc.*;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import static io.grpc.Status.INVALID_ARGUMENT;
@@ -32,7 +34,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
     }
 
     @Override
-    public void track(TrackRequest request, StreamObserver<TrackResponse> responseObserver) {
+    public void track(TrackRequest request, StreamObserver<TrackResponse> responseObserver) {               //TODO: Validation/Verification of arguments
         LOGGER.info("track()...");
 
         Type t = request.getType();
@@ -49,6 +51,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
             responseObserver.onNext(TrackResponse.newBuilder().setObservation(obs).build());
             responseObserver.onCompleted();
+            LOGGER.info("Sent Observation(type: " + t + " | identifier: " + i + "ts: " + date.toString());
         }
         catch (Exception e) {
             LOGGER.info(e.getMessage());
@@ -64,9 +67,36 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
     }
 
     @Override
-    public void trace(TraceRequest request, StreamObserver<TraceResponse> responseObserver) {
+    public void trace(TraceRequest request, StreamObserver<TraceResponse> responseObserver) {               //TODO: Validation/Verification of arguments
         LOGGER.info("trace()...");
 
+        Type t = request.getType();
+        String i = request.getIdentifier();
+
+        LOGGER.info("Received type: " + t + " | identifier: " + i);
+
+        List<pt.tecnico.sauron.silo.domain.Observation> observations = new ArrayList<pt.tecnico.sauron.silo.domain.Observation>();
+        try {
+            observations = silo.trace(t, i);
+        }
+        catch (Exception e) {
+            LOGGER.info(e.getMessage());
+            responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
+        }
+
+        TraceResponse.Builder response = TraceResponse.newBuilder();
+
+        for (pt.tecnico.sauron.silo.domain.Observation o: observations) {
+            Timestamp date = o.getTime();
+            Long milliseconds = date.getTime();
+            com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(milliseconds/1000).build();
+
+            Observation obs = Observation.newBuilder().setType(t).setIdentifier(i).setDate(ts).build();
+            response.addObservations(obs);
+        }
+
+        responseObserver.onNext(response.build());
+        responseObserver.onCompleted();
     }
 
     @Override
