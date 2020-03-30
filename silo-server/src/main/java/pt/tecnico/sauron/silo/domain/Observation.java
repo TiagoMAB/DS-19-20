@@ -6,10 +6,12 @@ public class Observation implements Comparable<Observation> {
 
     private Object object;
     private Timestamp time;
+    private Camera camera;
 
-    public Observation(Object object, Timestamp time) {
+    public Observation(Object object, Timestamp time, Camera camera) {
         this.object = object;
         this.time = time;
+        this.camera = camera;
     }
 
     public Object getObject() {
@@ -27,6 +29,10 @@ public class Observation implements Comparable<Observation> {
     public void setTime(Timestamp time) {
         this.time = time;
     }
+
+    public Camera getCamera() { return this.camera; }
+
+    public void setCamera(Camera camera) { this.camera = camera; }
 
     @Override
     public int compareTo(Observation o) {
