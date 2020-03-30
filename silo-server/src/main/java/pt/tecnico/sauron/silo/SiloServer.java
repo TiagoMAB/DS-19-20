@@ -4,7 +4,11 @@ import io.grpc.stub.StreamObserver;
 import pt.tecnico.sauron.silo.domain.Silo;
 import pt.tecnico.sauron.silo.grpc.*;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.logging.Logger;
+
+import static io.grpc.Status.INVALID_ARGUMENT;
 
 public class SiloServer extends SiloGrpc.SiloImplBase {
 
@@ -30,6 +34,26 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
     @Override
     public void track(TrackRequest request, StreamObserver<TrackResponse> responseObserver) {
         LOGGER.info("track()...");
+
+        Type t = request.getType();
+        String i = request.getIdentifier();
+
+        LOGGER.info("Received type: " + t + " | identifier: " + i);
+
+        try {
+            Timestamp date = silo.track(t, i);
+            Long milliseconds = date.getTime();
+            com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(milliseconds/1000).build();
+
+            Observation obs = Observation.newBuilder().setType(t).setIdentifier(i).setDate(ts).build();
+
+            responseObserver.onNext(TrackResponse.newBuilder().setObservation(obs).build());
+            responseObserver.onCompleted();
+        }
+        catch (Exception e) {
+            LOGGER.info(e.getMessage());
+            responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
+        }
 
     }
 
