@@ -3,11 +3,12 @@ package pt.tecnico.sauron.silo.domain;
 public class Camera {
 
     private String name;
-    private Place place;
+    private float latitude, longitude;
 
-    public Camera(String name, Place place) {
+    public Camera(String name, float latitude, float longitude) {
         this.name = name;
-        this.place = place;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public String getName() {
@@ -18,11 +19,19 @@ public class Camera {
         this.name = name;
     }
 
-    public Place getPlace() {
-        return this.place;
+    public float getLatitude() {
+        return this.latitude;
     }
 
-    public void setPlace(Place place) {
-        this.place = place;
+    public void setLatitude(float latitude) {
+        this.latitude = latitude;
+    }
+
+    public float getLongitude() {
+        return this.longitude;
+    }
+
+    public void setLongitude(float longitude) {
+        this.longitude = longitude;
     }
 }
