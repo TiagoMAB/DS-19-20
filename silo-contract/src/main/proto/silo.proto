@@ -179,9 +179,10 @@ message CtrlInitResponse {
 
 }
 
-// service
-
-service silo {
+//
+// Silo service
+//
+service Silo {
     rpc cam_join(CamJoinRequest) returns (CamJoinResponse);
     rpc cam_info(CamInfoRequest) returns (CamInfoResponse);
     rpc report(ReportRequest) returns (ReportResponse);

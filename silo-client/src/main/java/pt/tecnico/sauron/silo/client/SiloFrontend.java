@@ -7,12 +7,12 @@ import pt.tecnico.sauron.silo.grpc.*;
 public class SiloFrontend implements AutoCloseable {
 
     private final ManagedChannel channel;
-    private final siloGrpc.siloBlockingStub stub;
+    private final SiloGrpc.SiloBlockingStub stub;
 
     public SiloFrontend(String host, int port) {
 
         this.channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
-        this.stub = siloGrpc.newBlockingStub(channel);
+        this.stub = SiloGrpc.newBlockingStub(channel);
 
     }
 
