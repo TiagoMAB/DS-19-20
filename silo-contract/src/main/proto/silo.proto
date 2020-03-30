@@ -132,7 +132,7 @@ message TraceRequest {
 //
 message TraceResponse {
 
-    repeated Observation observations = 2;
+    repeated Observation observations = 1;
 }
 
 //
