@@ -1,38 +1,45 @@
 package pt.tecnico.sauron.silo.domain;
 
-import pt.tecnico.sauron.silo.domain.exceptions.InvalidIdentifierException;
-import pt.tecnico.sauron.silo.grpc.Type;
+import pt.tecnico.sauron.silo.domain.exceptions.*;
 
 public class Object {
+
+    enum Type {
+        car, person
+    }
 
     private Type type;
     private String identifier;
 
-    public Object(Type type, String identifier) {
-        this.type = type;
-        this.identifier = identifier;
+    public Object(int type, String identifier) throws InvalidIdentifierException, InvalidObjectTypeException {
+        setType(type);
+        setIdentifier(identifier);
     }
 
     public Type getType() {
         return this.type;
     }
 
-    public void setType(Type type) {
-        this.type = type;
-    }
-
     public String getIdentifier() {
         return this.identifier;
     }
 
-    public void setIdentifier(String identifier) throws InvalidIdentifierException {
-        checkIdentifier(identifier);
-        this.identifier = identifier;
+    public void setType(int type) throws InvalidObjectTypeException {
+
+        if (type == 0) {
+            this.type = Type.car;
+        }
+        else if (type == 1) {
+            this.type = Type.person;
+        }
+        else {
+            throw new InvalidObjectTypeException();
+        }
     }
 
-    public void checkIdentifier(String identifier) throws InvalidIdentifierException {
+    public void setIdentifier(String identifier) throws InvalidIdentifierException {
 
-        if (type == Type.CAR && !identifier.isBlank() && identifier.length() == 6) {
+        if (type == Type.car && !identifier.isBlank() && identifier.length() == 6) {
             String[] patterns = {"^\\d{2}[A-Z]{2}\\d{2}", "^[A-Z]{2}\\d{4}", "^\\d{4}[A-Z]{2}", "^\\d{2}[A-Z]{4}", "^[A-Z]{4}\\d{2}", "^[A-Z]{2}\\d{2}[A-Z]{2}"};
 
             for (String pattern: patterns) {
@@ -43,7 +50,7 @@ public class Object {
             }
         }
 
-        if (type == Type.PERSON && !identifier.isBlank()) {
+        if (type == Type.person && !identifier.isBlank()) {
             Long n;
 
             try {
@@ -62,5 +69,6 @@ public class Object {
         }
 
         throw new InvalidIdentifierException(identifier);
+
     }
 }
