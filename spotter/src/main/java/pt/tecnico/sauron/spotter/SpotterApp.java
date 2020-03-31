@@ -107,4 +107,8 @@ public class SpotterApp {
 			System.out.println(t + "," + o.getIdentifier() + "," + o.getDate() + "," + o.getName() + "," + o.getLatitude() + "," + o.getLongitude());
 		}
 	}
+
+	private static void checkObservation(Observation observation) {
+
+	}
 }
