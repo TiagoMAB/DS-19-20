@@ -15,6 +15,13 @@ public class Silo {
 
     public Silo() {}
 
+    public void report(List<Observation> ol) {
+        Iterator it = ol.iterator();
+        while (it.hasNext()) {
+            observations.add((Observation) it.next());
+        }
+    }
+
     public Timestamp track(Type t, String s) throws NoObservationFound {
 
         Iterator it = observations.descendingIterator();
