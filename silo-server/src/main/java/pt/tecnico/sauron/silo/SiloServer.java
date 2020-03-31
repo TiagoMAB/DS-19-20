@@ -1,8 +1,6 @@
 package pt.tecnico.sauron.silo;
 
 import io.grpc.stub.StreamObserver;
-import pt.tecnico.sauron.silo.domain.Camera;
-import pt.tecnico.sauron.silo.domain.Object;
 import pt.tecnico.sauron.silo.domain.Silo;
 import pt.tecnico.sauron.silo.grpc.*;
 
@@ -30,7 +28,6 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
         super.camJoin(request, responseObserver);
     }
 
-    @Override
     public void report(ReportRequest request, StreamObserver<ReportResponse> responseObserver) { //TODO: Validation/Verification of arguments
         LOGGER.info("report()...");
 
@@ -78,7 +75,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
         LOGGER.info("Received type: " + t + " | identifier: " + i);
 
         try {
-            Timestamp date = silo.track(t, i);
+            Timestamp date = silo.track(t.getNumber(), i);
             Long milliseconds = date.getTime();
             com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(milliseconds/1000).build();
 
@@ -99,6 +96,34 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
     public void trackMatch(TrackMatchRequest request, StreamObserver<TrackMatchResponse> responseObserver) {
         LOGGER.info("trackMatch()...");
 
+
+        Type t = request.getType();
+        String i = request.getPartialIdentifier();
+
+        LOGGER.info("Received type: " + t + " | identifier: " + i);
+
+        List<pt.tecnico.sauron.silo.domain.Observation> observations = new ArrayList<>();
+        try {
+            observations = silo.trackMatch(t.getNumber(), i);
+        }
+        catch (Exception e) {
+            //LOGGER.info(e.getMessage());
+            //responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
+        }
+
+        TrackMatchResponse.Builder response = TrackMatchResponse.newBuilder();
+        LOGGER.info("Response built ");
+        for (pt.tecnico.sauron.silo.domain.Observation o: observations) {
+            Timestamp date = o.getTime();
+            Long milliseconds = date.getTime();
+            com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(milliseconds/1000).build();
+
+            Observation obs = Observation.newBuilder().setType(t).setIdentifier(o.getObject().getIdentifier()).setDate(ts).build();
+            response.addObservations(obs);
+        }
+
+        responseObserver.onNext(response.build());
+        responseObserver.onCompleted();
     }
 
     @Override
@@ -112,7 +137,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
         List<pt.tecnico.sauron.silo.domain.Observation> observations = new ArrayList<pt.tecnico.sauron.silo.domain.Observation>();
         try {
-            observations = silo.trace(t, i);
+            observations = silo.trace(t.getNumber(), i);
         }
         catch (Exception e) {
             LOGGER.info(e.getMessage());
