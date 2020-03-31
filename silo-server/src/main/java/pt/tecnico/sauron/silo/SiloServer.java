@@ -28,9 +28,41 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
         super.camJoin(request, responseObserver);
     }
 
-    @Override
-    public void report(ReportRequest request, StreamObserver<ReportResponse> responseObserver) {
-        super.report(request, responseObserver);
+    public void report(ReportRequest request, StreamObserver<ReportResponse> responseObserver) { //TODO: Validation/Verification of arguments
+        LOGGER.info("report()...");
+
+        //TODO: check the use of n, if camera already exists IMPORTANT
+        String n = request.getName();
+        List<Observation> ol = request.getObservationsList();
+
+        List<pt.tecnico.sauron.silo.domain.Observation> observationsList = new ArrayList<pt.tecnico.sauron.silo.domain.Observation>();
+
+        LOGGER.info("Received name: " + n);
+
+        for (int i = 0; i < ol.size(); i++) {
+            Observation o = ol.get(i);
+            LOGGER.info("Received Observation " + i + " Object type: " + o.getType() + " Object identifier: " + o.getIdentifier() + " Time: " + o.getDate() +
+                    " Camera name: " + o.getName() + " Camera latitude: " + o.getLatitude() + " Camera longitude: " + o.getLongitude());
+
+            Object obj = new Object(o.getType(), o.getIdentifier());
+            Timestamp time = new Timestamp(System.currentTimeMillis());   // TODO: check if time calculation is correct
+            Camera camera = new Camera(o.getName(), o.getLatitude(), o.getLongitude());
+
+            pt.tecnico.sauron.silo.domain.Observation observation = new pt.tecnico.sauron.silo.domain.Observation(obj, time, camera);
+            observationsList.add(observation);
+        }
+
+        try {
+            silo.report(observationsList);
+
+            responseObserver.onNext(ReportResponse.newBuilder().build());
+            responseObserver.onCompleted();
+            LOGGER.info("Sent response");
+        }
+        catch (Exception e) {
+            LOGGER.info(e.getMessage());
+            responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
+        }
     }
 
     @Override
