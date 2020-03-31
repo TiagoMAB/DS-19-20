@@ -12,8 +12,15 @@ public class Silo {
 
     public Silo() { }
 
-    public Observation track(int t, String i) throws NoObservationFound, InvalidObjectTypeException {
+    public void report(List<Observation> ol) {
+        Iterator it = ol.iterator();
+        while (it.hasNext()) {
+            observations.add((Observation) it.next());
+        }
+    }
 
+    public Observation track(int t, String i) throws NoObservationFound, InvalidObjectTypeException {
+      
         //validation of type to avoid unnecessary searches through data                                                     TODO:maybe do the same for identifier
         if (!checkType(t)) {
             throw new InvalidObjectTypeException();
