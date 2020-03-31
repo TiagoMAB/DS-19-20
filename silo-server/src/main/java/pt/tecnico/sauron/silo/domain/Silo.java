@@ -121,7 +121,6 @@ public class Silo {
             }
             else if (s.charAt(i) >= 'A' && s.charAt(i) <= 'Z' || s.charAt(i) >= '0' && s.charAt(i) <= '9' ) {
                 pattern = pattern + s.charAt(i);
-                anyCount++;
             }
             else {
                 throw new InvalidPartialIdentifierException();
