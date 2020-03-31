@@ -5,7 +5,7 @@ public class Camera {
     private String name;
     private double latitude, longitude;
 
-    public Camera(String name, double latitude, double longitude) { //TODO double check if its a double
+    public Camera(String name, double latitude, double longitude) {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;

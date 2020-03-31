@@ -42,7 +42,8 @@ public class Silo {
         }
         else{
             if(cameras.containsKey(name)){
-                throw new DuplicateCameraName(name);
+//                System.out.printf("Catched!\n");
+                throw new DuplicateCameraName("Repeated name " + '"' + name +'"' );
             }
             else {
                 Camera camera = new Camera(name, latitude, longitude);
