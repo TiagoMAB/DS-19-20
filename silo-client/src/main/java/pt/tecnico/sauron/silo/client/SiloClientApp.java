@@ -2,10 +2,7 @@ package pt.tecnico.sauron.silo.client;
 
 
 import io.grpc.StatusRuntimeException;
-import pt.tecnico.sauron.silo.grpc.Observation;
-import pt.tecnico.sauron.silo.grpc.TraceRequest;
-import pt.tecnico.sauron.silo.grpc.TraceResponse;
-import pt.tecnico.sauron.silo.grpc.Type;
+import pt.tecnico.sauron.silo.grpc.*;
 
 import java.util.List;
 import java.util.Scanner;
@@ -14,6 +11,7 @@ public class SiloClientApp {
 	private static final String EXIT_CMD = "exit";
 	private static final String TRACE_CMD = "trace";
 	private static final String TRACK_CMD = "track";
+	private static final String NEW_CAM_CMD = "cam_join";
 
 
 	public static void main(String[] args) {
@@ -24,7 +22,6 @@ public class SiloClientApp {
 		for (int i = 0; i < args.length; i++) {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
 		}
-
 
 		// check arguments
 		if (args.length < 2) {
@@ -58,9 +55,32 @@ public class SiloClientApp {
 						continue;
 					}
 
+					if (NEW_CAM_CMD.equals(line)) {
+						System.out.print("> Set the camera name (`stop` to cancel command)\n> ");
+							String cam_name = scanner.nextLine();
+							if (cam_name.equals("stop"))
+								break;
+							
+							System.out.print("> Set the latitude (`stop` to cancel command)\n> ");
+							String latitude = scanner.nextLine();
+							if (latitude.equals("stop"))
+								break;
 
+							System.out.print("> Set the longitude (`stop` to cancel command)\n> ");
+							String longitude = scanner.nextLine();
 
-				} catch (StatusRuntimeException e) {
+							if (longitude.equals("stop"))
+								break;
+
+						CamJoinResponse getResponse = frontend.camJoin(CamJoinRequest.newBuilder().
+														setName(cam_name).
+														setLatitude(Double.parseDouble(latitude)).
+														setLongitude(Double.parseDouble(longitude)).build());
+
+						
+					}
+						
+					} catch (StatusRuntimeException e) {
 					System.out.println(e.getStatus().getDescription());
 				}
 			}
