@@ -1,6 +1,8 @@
 package pt.tecnico.sauron.silo;
 
 import io.grpc.stub.StreamObserver;
+import pt.tecnico.sauron.silo.domain.Camera;
+import pt.tecnico.sauron.silo.domain.Object;
 import pt.tecnico.sauron.silo.domain.Silo;
 import pt.tecnico.sauron.silo.grpc.*;
 
@@ -44,12 +46,18 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
             LOGGER.info("Received Observation " + i + " Object type: " + o.getType() + " Object identifier: " + o.getIdentifier() + " Time: " + o.getDate() +
                     " Camera name: " + o.getName() + " Camera latitude: " + o.getLatitude() + " Camera longitude: " + o.getLongitude());
 
-            Object obj = new Object(o.getType(), o.getIdentifier());
-            Timestamp time = new Timestamp(System.currentTimeMillis());   // TODO: check if time calculation is correct
-            Camera camera = new Camera(o.getName(), o.getLatitude(), o.getLongitude());
+            try {
+                Object obj = new Object(o.getType().ordinal(), o.getIdentifier());
+                Timestamp time = new Timestamp(System.currentTimeMillis());   // TODO: check if time calculation is correct
+                Camera camera = new Camera(o.getName(), o.getLatitude(), o.getLongitude());
 
-            pt.tecnico.sauron.silo.domain.Observation observation = new pt.tecnico.sauron.silo.domain.Observation(obj, time, camera);
-            observationsList.add(observation);
+                pt.tecnico.sauron.silo.domain.Observation observation = new pt.tecnico.sauron.silo.domain.Observation(obj, time, camera);
+                observationsList.add(observation);
+            }
+            catch (Exception e) {
+                LOGGER.info(e.getMessage());
+                responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
+            }
         }
 
         try {
@@ -74,7 +82,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
         LOGGER.info("Received type: " + t + " | identifier: " + i);
 
-        try {
+        try {/*
             Timestamp date = silo.track(t.getNumber(), i);
             Long milliseconds = date.getTime();
             com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(milliseconds/1000).build();
@@ -83,7 +91,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
             responseObserver.onNext(TrackResponse.newBuilder().setObservation(obs).build());
             responseObserver.onCompleted();
-            LOGGER.info("Sent Observation(type: " + t + " | identifier: " + i + "ts: " + date.toString());
+            LOGGER.info("Sent Observation(type: " + t + " | identifier: " + i + "ts: " + date.toString());*/
         }
         catch (Exception e) {
             LOGGER.info(e.getMessage());
