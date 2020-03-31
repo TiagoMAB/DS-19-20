@@ -2,10 +2,7 @@ package pt.tecnico.sauron.silo.client;
 
 
 import io.grpc.StatusRuntimeException;
-import pt.tecnico.sauron.silo.grpc.Observation;
-import pt.tecnico.sauron.silo.grpc.TraceRequest;
-import pt.tecnico.sauron.silo.grpc.TraceResponse;
-import pt.tecnico.sauron.silo.grpc.Type;
+import pt.tecnico.sauron.silo.grpc.*;
 
 import java.util.List;
 import java.util.Scanner;
@@ -14,6 +11,7 @@ public class SiloClientApp {
 	private static final String EXIT_CMD = "exit";
 	private static final String TRACE_CMD = "trace";
 	private static final String TRACK_CMD = "track";
+	private static final String TRACKMATCH_CMD = "trackMatch";
 
 
 	public static void main(String[] args) {
@@ -46,7 +44,6 @@ public class SiloClientApp {
 					if (EXIT_CMD.equals(line))
 						break;
 
-					// get name
 					if (TRACE_CMD.equals(line)) {
 						TraceResponse getResponse = frontend.trace(TraceRequest.newBuilder().setType(Type.CAR).setIdentifier("AABB22").build());
 						List<Observation> obs = getResponse.getObservationsList();
@@ -58,7 +55,17 @@ public class SiloClientApp {
 						continue;
 					}
 
+					if (TRACKMATCH_CMD.equals(line)) {
+						TrackMatchResponse getResponse = frontend.trackMatch(TrackMatchRequest.newBuilder().setType(Type.CAR).setPartialIdentifier("*22").build());
+						List<Observation> obs = getResponse.getObservationsList();
 
+						System.out.println("ah");
+						for (Observation o: obs) {
+							System.out.println("Type: " + o.getType() + " | Identifier: " + o.getIdentifier() + " | Ts: " + o.getDate().toString());
+						}
+
+						continue;
+					}
 
 				} catch (StatusRuntimeException e) {
 					System.out.println(e.getStatus().getDescription());
