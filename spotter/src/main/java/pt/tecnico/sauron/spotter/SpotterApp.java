@@ -48,8 +48,8 @@ public class SpotterApp {
 					// spot
 					if (tokens.length == 3 && SPOT_CMD.equals(tokens[0])) {
 						Type type;
-						if (tokens[1].matches("car")) type = Type.CAR;
-						else if (tokens[1].matches("person")) type = Type.PERSON;
+						if (tokens[1].equals("car")) type = Type.CAR;
+						else if (tokens[1].equals("person")) type = Type.PERSON;
 						else {
 							System.out.println("Invalid type, must be either \"car\" or \"person\"");
 							continue;
@@ -76,8 +76,8 @@ public class SpotterApp {
 					// trail
 					if (tokens.length == 3 && TRAIL_CMD.equals(tokens[0])) {
 						Type type;
-						if (tokens[1].matches("car")) type = Type.CAR;
-						else if (tokens[1].matches("person")) type = Type.PERSON;
+						if (tokens[1].equals("car")) type = Type.CAR;
+						else if (tokens[1].equals("person")) type = Type.PERSON;
 						else {
 							System.out.println("Invalid type, must be either \"car\" or \"person\"");
 							continue;
@@ -110,5 +110,9 @@ public class SpotterApp {
 
 	private static void checkObservation(Observation observation) {
 
+	}
+
+	private static boolean checkType(Observation observation, Type t) {
+		return observation.getType() == t;
 	}
 }
