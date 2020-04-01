@@ -19,7 +19,6 @@ public class SpotterApp {
 		// TODO: use patterns for identifier checks
 		// String[] patterns = {"^\\d{2}[A-Z]{2}\\d{2}", "^[A-Z]{2}\\d{4}", "^\\d{4}[A-Z]{2}", "^\\d{2}[A-Z]{4}", "^[A-Z]{4}\\d{2}", "^[A-Z]{2}\\d{2}[A-Z]{2}"};
 
-		// receive and print arguments
 		System.out.printf("Received %d arguments%n", args.length);
 		for (int i = 0; i < args.length; i++) {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
@@ -49,9 +48,12 @@ public class SpotterApp {
 					// spot
 					if (tokens.length == 3 && SPOT_CMD.equals(tokens[0])) {
 						Type type;
-						if (tokens[1].matches("car")) type = Type.CAR;
-						else if (tokens[1].matches("person")) type = Type.PERSON;
-						else continue;	// TODO: change continue to printing an error
+						if (tokens[1].equals("car")) type = Type.CAR;
+						else if (tokens[1].equals("person")) type = Type.PERSON;
+						else {
+							System.out.println("Invalid type, must be either \"car\" or \"person\"");
+							continue;
+						}
 
 						// TODO: add error checking for identifier token with patterns
 						if (tokens[2].contains("*")) {
@@ -73,11 +75,13 @@ public class SpotterApp {
 
 					// trail
 					if (tokens.length == 3 && TRAIL_CMD.equals(tokens[0])) {
-						// TODO: repeated code, abstract
 						Type type;
-						if (tokens[1].matches("car")) type = Type.CAR;
-						else if (tokens[1].matches("person")) type = Type.PERSON;
-						else continue;	// TODO: change continue to printing an error
+						if (tokens[1].equals("car")) type = Type.CAR;
+						else if (tokens[1].equals("person")) type = Type.PERSON;
+						else {
+							System.out.println("Invalid type, must be either \"car\" or \"person\"");
+							continue;
+						}
 
 						// TODO: error check response type, all fields of response
 						TraceResponse getResponse = frontend.trace(TraceRequest.newBuilder().setType(type).setIdentifier(tokens[2]).build());
@@ -95,13 +99,20 @@ public class SpotterApp {
 		}
 	}
 
-	private static void printObservationsList(List<Observation> observationsList2) {
-		List<Observation> observationsList = observationsList2;
+	private static void printObservationsList(List<Observation> observationsList) {
 		for (int i = 0; i < observationsList.size(); i++) { // TODO: assumes list is ordered, error check order
 			Observation o = observationsList.get(i);
 			String t = o.getType() == Type.CAR ? "car" : "person";
 
 			System.out.println(t + "," + o.getIdentifier() + "," + o.getDate() + "," + o.getName() + "," + o.getLatitude() + "," + o.getLongitude());
 		}
+	}
+
+	private static void checkObservation(Observation observation) {
+
+	}
+
+	private static boolean checkType(Observation observation, Type t) {
+		return observation.getType() == t;
 	}
 }
