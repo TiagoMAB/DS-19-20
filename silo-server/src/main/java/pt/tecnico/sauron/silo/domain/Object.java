@@ -4,7 +4,7 @@ import pt.tecnico.sauron.silo.domain.exceptions.*;
 
 public class Object {
 
-    enum Type {
+    public enum Type {
         car, person
     }
 
@@ -24,17 +24,15 @@ public class Object {
         return this.identifier;
     }
 
-    public void setType(int type) throws InvalidObjectTypeException {
+    public void setType(int t) throws InvalidObjectTypeException {
 
-        if (type == 0) {
-            this.type = Type.car;
+        for (Type type: Type.values()) {
+            if (type.ordinal() == t) {
+                this.type = type;
+            }
         }
-        else if (type == 1) {
-            this.type = Type.person;
-        }
-        else {
-            throw new InvalidObjectTypeException();
-        }
+
+        throw new InvalidObjectTypeException();
     }
 
     public void setIdentifier(String identifier) throws InvalidIdentifierException {
@@ -70,5 +68,14 @@ public class Object {
 
         throw new InvalidIdentifierException(identifier);
 
+    }
+
+    public static Type findType(int t) throws InvalidObjectTypeException {
+        for (Type type: Type.values()) {
+            if (type.ordinal() == t) {
+                return type;
+            }
+        }
+        throw new InvalidObjectTypeException();
     }
 }
