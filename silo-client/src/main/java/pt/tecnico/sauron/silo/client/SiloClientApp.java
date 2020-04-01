@@ -12,7 +12,7 @@ public class SiloClientApp {
 	private static final String TRACE_CMD = "trace";
 	private static final String TRACK_CMD = "track";
 	private static final String NEW_CAM_CMD = "cam_join";
-
+	private static final String TRACKMATCH_CMD = "trackMatch";
 
 	public static void main(String[] args) {
 		System.out.println(SiloClientApp.class.getSimpleName());
@@ -43,7 +43,6 @@ public class SiloClientApp {
 					if (EXIT_CMD.equals(line))
 						break;
 
-					// get name
 					if (TRACE_CMD.equals(line)) {
 						TraceResponse getResponse = frontend.trace(TraceRequest.newBuilder().setType(Type.CAR).setIdentifier("AABB22").build());
 						List<Observation> obs = getResponse.getObservationsList();
@@ -80,7 +79,19 @@ public class SiloClientApp {
 						
 					}
 						
-					} catch (StatusRuntimeException e) {
+					if (TRACKMATCH_CMD.equals(line)) {
+						TrackMatchResponse getResponse = frontend.trackMatch(TrackMatchRequest.newBuilder().setType(Type.CAR).setPartialIdentifier("*22").build());
+						List<Observation> obs = getResponse.getObservationsList();
+
+						System.out.println("ah");
+						for (Observation o: obs) {
+							System.out.println("Type: " + o.getType() + " | Identifier: " + o.getIdentifier() + " | Ts: " + o.getDate().toString());
+						}
+
+						continue;
+					}
+
+				} catch (StatusRuntimeException e) {
 					System.out.println(e.getStatus().getDescription());
 				}
 			}
