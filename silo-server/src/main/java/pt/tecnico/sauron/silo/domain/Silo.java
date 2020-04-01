@@ -8,7 +8,7 @@ public class Silo {
 
     private HashMap<String, Object> objects = new HashMap<String, Object>();
     private TreeSet<Observation> observations = new TreeSet<Observation>();
-    private HashSet<Camera> cameras = new HashSet<Camera>();
+    private HashMap<String, Camera> cameras = new HashMap<String, Camera>();
 
     public Silo() { }
 
@@ -41,6 +41,23 @@ public class Silo {
         throw new NoObservationFound(i);
     }
 
+    public void registerCamera(String name, double latitude, double longitude) throws InvalidCameraName, DuplicateCameraName {
+        //TODO maybe check latitude and longitude?
+        if(!(name.length() >= 3 && name.length() <= 15)) {
+            throw new InvalidCameraName(name);
+        }
+        else{
+            if(cameras.containsKey(name)){
+//                System.out.printf("Catched!\n");
+                throw new DuplicateCameraName("Repeated name " + '"' + name +'"' );
+            }
+            else {
+                Camera camera = new Camera(name, latitude, longitude);
+                cameras.put(name, camera);
+            }
+        }
+    }
+    
     public List<Observation> trackMatch(int t, String s) throws NoObservationFound, InvalidObjectTypeException, InvalidPartialIdentifierException {
 
         List<Observation> list = new ArrayList<>();
