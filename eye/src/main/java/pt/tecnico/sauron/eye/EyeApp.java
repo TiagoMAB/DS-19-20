@@ -45,8 +45,6 @@ public class EyeApp {
 			}
 			while (true) {
 				try {
-					System.out.println("'help' for a list of all commands");
-					
 					String line = scanner.nextLine();
 					
 					// exit
