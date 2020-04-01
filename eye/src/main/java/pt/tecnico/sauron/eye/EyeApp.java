@@ -33,7 +33,6 @@ public class EyeApp {
 		final double longitude = Double.parseDouble(args[4]);
 		
 		try (SiloFrontend frontend = new SiloFrontend(host, port); Scanner scanner = new Scanner(System.in)) {
-			//check camera_name
 			try {
 				CamJoinResponse getResponse = frontend.camJoin(CamJoinRequest.newBuilder().
 					setName(camName).
@@ -46,15 +45,15 @@ public class EyeApp {
 			}
 			while (true) {
 				try {
+					System.out.println("'help' for a list of all commands");
+					
 					String line = scanner.nextLine();
-
+					
 					// exit
-					if (EXIT_CMD.equals(line)){
+					if (EXIT_CMD.equals(line))
 						return;
-						
-					}
+					
 
-					// get name
 				} catch (StatusRuntimeException e) {
 					System.out.println(e.getStatus().getDescription());
 				}
