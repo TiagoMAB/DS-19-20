@@ -30,7 +30,8 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
         super.camJoin(request, responseObserver);
     }
 
-    public void report(ReportRequest request, StreamObserver<ReportResponse> responseObserver) { //TODO: Validation/Verification of arguments
+    @Override
+    public void report(ReportRequest request, StreamObserver<ReportResponse> responseObserver) {
         LOGGER.info("report()...");
 
         //TODO: check the use of n, if camera already exists IMPORTANT
@@ -41,12 +42,12 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
         LOGGER.info("Received name: " + n);
 
-        for (int i = 0; i < ol.size(); i++) {
-            Observation o = ol.get(i);
-            LOGGER.info("Received Observation " + i + " Object type: " + o.getType() + " Object identifier: " + o.getIdentifier() + " Time: " + o.getDate() +
-                    " Camera name: " + o.getName() + " Camera latitude: " + o.getLatitude() + " Camera longitude: " + o.getLongitude());
+        try {
+            for (int i = 0; i < ol.size(); i++) {
+                Observation o = ol.get(i);
+                LOGGER.info("Received Observation " + i + " Object type: " + o.getType() + " Object identifier: " + o.getIdentifier() + " Time: " + o.getDate() +
+                        " Camera name: " + o.getName() + " Camera latitude: " + o.getLatitude() + " Camera longitude: " + o.getLongitude());
 
-            try {
                 Object obj = new Object(o.getType().ordinal(), o.getIdentifier());
                 Timestamp time = new Timestamp(System.currentTimeMillis());   // TODO: check if time calculation is correct
                 Camera camera = new Camera(o.getName(), o.getLatitude(), o.getLongitude());
@@ -54,13 +55,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
                 pt.tecnico.sauron.silo.domain.Observation observation = new pt.tecnico.sauron.silo.domain.Observation(obj, time, camera);
                 observationsList.add(observation);
             }
-            catch (Exception e) {
-                LOGGER.info(e.getMessage());
-                responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
-            }
-        }
 
-        try {
             silo.report(observationsList);
 
             responseObserver.onNext(ReportResponse.newBuilder().build());
