@@ -19,7 +19,7 @@ public class Camera {
 
     public void setName(String name) throws InvalidCameraNameException {
 
-        if (name.matches("[A-Za-z0-9]+")) {
+        if (name.length() >= 3 && name.length() <= 15 && name.matches("[A-Za-z0-9]+")) {
             this.name = name;
         }
         else {
