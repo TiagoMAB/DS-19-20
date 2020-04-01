@@ -95,15 +95,27 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
         LOGGER.info("Received type: " + t + " | identifier: " + i);
 
-        try {/*
-            Timestamp date = silo.track(t.getNumber(), i);
-            Long milliseconds = date.getTime();
+        try {
+            //Calls track and gets the observation asked (if one was found)
+            pt.tecnico.sauron.silo.domain.Observation o = silo.track(Object.findType(t.getNumber()), i);
+
+            //Gets camera information from observation
+            String name = o.getCamera().getName();
+            double latitude = o.getCamera().getLatitude();
+            double longitude = o.getCamera().getLongitude();
+
+            //Converts java.sql.timestamp to protobuf.timestamp
+            Timestamp timestamp = o.getTimestamp();
+            Long milliseconds = timestamp.getTime();
             com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(milliseconds/1000).build();
-            Observation obs = Observation.newBuilder().setType(t).setIdentifier(i).setDate(ts).build();
+
+            //Converts internal representation of observation to a data transfer object
+            Observation obs = Observation.newBuilder().setType(t).setIdentifier(i).setDate(ts).setName(name).setLatitude(latitude).setLongitude(longitude).build();
+
+            //Signals that the response was built successfully
             responseObserver.onNext(TrackResponse.newBuilder().setObservation(obs).build());
             responseObserver.onCompleted();
-            LOGGER.info("Sent Observation(type: " + t + " | identifier: " + i + "ts: " + date.toString());
-       */
+            LOGGER.info("Sent Observation(type: " + t + " | identifier: " + i + "ts: " + timestamp.toString());
         }
         catch (Exception e) {
             LOGGER.info(e.getMessage());
@@ -116,38 +128,51 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
     public void trackMatch(TrackMatchRequest request, StreamObserver<TrackMatchResponse> responseObserver) {
         LOGGER.info("trackMatch()...");
 
-
         Type t = request.getType();
         String i = request.getPartialIdentifier();
 
         LOGGER.info("Received type: " + t + " | identifier: " + i);
 
         List<pt.tecnico.sauron.silo.domain.Observation> observations = new ArrayList<>();
+        TrackMatchResponse.Builder response = TrackMatchResponse.newBuilder();
+
         try {
-            observations = silo.trackMatch(t.getNumber(), i);
+            //Calls trackMatch and gets the list of observations asked (if one was found)
+            observations = silo.trackMatch(Object.findType(t.getNumber()), i);
+
+            for (pt.tecnico.sauron.silo.domain.Observation o: observations) {
+
+                //Gets camera information from observation
+                String name = o.getCamera().getName();
+                double latitude = o.getCamera().getLatitude();
+                double longitude = o.getCamera().getLongitude();
+
+                //Converts java.sql.timestamp to protobuf.timestamp
+                Timestamp timestamp = o.getTimestamp();
+                Long milliseconds = timestamp.getTime();
+                com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(milliseconds/1000).build();
+
+                //Converts internal representation of observation to a data transfer object
+                Observation obs = Observation.newBuilder().setType(t).setIdentifier(i).setDate(ts).setName(name).setLatitude(latitude).setLongitude(longitude).build();
+
+                //Adds observation (dto) to list of observations to be sent
+                response.addObservations(obs);
+                LOGGER.info("Sent Observation(type: " + t + " | identifier: " + i + "ts: " + timestamp.toString());
+
+            }
         }
         catch (Exception e) {
-            //LOGGER.info(e.getMessage());
-            //responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
+            LOGGER.info(e.getMessage());
+            responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
         }
 
-        TrackMatchResponse.Builder response = TrackMatchResponse.newBuilder();
-        LOGGER.info("Response built ");
-        for (pt.tecnico.sauron.silo.domain.Observation o: observations) {
-            Timestamp date = o.getTime();
-            Long milliseconds = date.getTime();
-            com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(milliseconds/1000).build();
-
-            Observation obs = Observation.newBuilder().setType(t).setIdentifier(o.getObject().getIdentifier()).setDate(ts).build();
-            response.addObservations(obs);
-        }
-
+        //Signals that the response was built successfully
         responseObserver.onNext(response.build());
         responseObserver.onCompleted();
     }
 
     @Override
-    public void trace(TraceRequest request, StreamObserver<TraceResponse> responseObserver) {               //TODO: Validation/Verification of arguments
+    public void trace(TraceRequest request, StreamObserver<TraceResponse> responseObserver) {
         LOGGER.info("trace()...");
 
         Type t = request.getType();
@@ -156,23 +181,35 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
         LOGGER.info("Received type: " + t + " | identifier: " + i);
 
         List<pt.tecnico.sauron.silo.domain.Observation> observations = new ArrayList<pt.tecnico.sauron.silo.domain.Observation>();
+        TraceResponse.Builder response = TraceResponse.newBuilder();
+
         try {
-            observations = silo.trace(t.getNumber(), i);
+            //Calls trace and gets the list of observations asked (if one was found)
+            observations = silo.trace(Object.findType(t.getNumber()), i);
+
+            for (pt.tecnico.sauron.silo.domain.Observation o: observations) {
+
+                //Gets camera information from observation
+                String name = o.getCamera().getName();
+                double latitude = o.getCamera().getLatitude();
+                double longitude = o.getCamera().getLongitude();
+
+                //Converts java.sql.timestamp to protobuf.timestamp
+                Timestamp timestamp = o.getTimestamp();
+                Long milliseconds = timestamp.getTime();
+                com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(milliseconds/1000).build();
+
+                //Converts internal representation of observation to a data transfer object
+                Observation obs = Observation.newBuilder().setType(t).setIdentifier(i).setDate(ts).setName(name).setLatitude(latitude).setLongitude(longitude).build();
+
+                //Adds observation (dto) to list of observations to be sent
+                response.addObservations(obs);
+                LOGGER.info("Sent Observation(type: " + t + " | identifier: " + i + "ts: " + timestamp.toString());
+            }
         }
         catch (Exception e) {
             LOGGER.info(e.getMessage());
             responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
-        }
-
-        TraceResponse.Builder response = TraceResponse.newBuilder();
-
-        for (pt.tecnico.sauron.silo.domain.Observation o: observations) {
-            Timestamp date = o.getTime();
-            Long milliseconds = date.getTime();
-            com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(milliseconds/1000).build();
-
-            Observation obs = Observation.newBuilder().setType(t).setIdentifier(i).setDate(ts).build();
-            response.addObservations(obs);
         }
 
         responseObserver.onNext(response.build());

@@ -19,12 +19,7 @@ public class Silo {
         }
     }
 
-    public Observation track(int t, String i) throws NoObservationFound, InvalidObjectTypeException {
-      
-        //validation of type to avoid unnecessary searches through data                                                     TODO:maybe do the same for identifier
-        if (!checkType(t)) {
-            throw new InvalidObjectTypeException();
-        }
+    public Observation track(Object.Type t, String i) throws NoObservationFoundException {                                  //TODO: validation of identifier?
 
         //searches list of observations from the most recent to the oldest for a match in both type and identifier
         Iterator it = observations.descendingIterator();
@@ -33,12 +28,12 @@ public class Silo {
 
             Object o = observation.getObject();
 
-            if (o.getIdentifier().equals(i) && o.getType().ordinal() == t) {
+            if (o.getIdentifier().equals(i) && o.getType() == t) {
                 return observation;
             }
         }
 
-        throw new NoObservationFound(i);
+        throw new NoObservationFoundException(i);
     }
     
     public double getCameraLatitude(String name) throws CameraNameNotFoundException {
@@ -69,32 +64,29 @@ public class Silo {
         }
     }
     
-    public List<Observation> trackMatch(int t, String s) throws NoObservationFound, InvalidObjectTypeException, InvalidPartialIdentifierException {
+    public List<Observation> trackMatch(Object.Type t, String s) throws NoObservationFoundException, InvalidPartialIdentifierException {
 
         List<Observation> list = new ArrayList<>();
         HashSet<Object> objects = new HashSet<>();
 
-        //validation of type to avoid unnecessary searches through data                                                     TODO:maybe do the same for identifier
-        if (!checkType(t)) {
-            throw new InvalidObjectTypeException();
-        }
-
+        //evaluates identifier provided and returns a valid pattern for search in data
         String pattern = getPattern(s);
 
+        //searches list of observations from the most recent to the oldest for a match in both type and identifier
         Iterator it = observations.descendingIterator();
         while (it.hasNext()) {
             Observation observation = (Observation) it.next();
 
             Object o = observation.getObject();
 
-            if (o.getType().ordinal() == t && o.getIdentifier().matches(pattern) && !objects.contains(o)) {
+            if (o.getType() == t && o.getIdentifier().matches(pattern) && !objects.contains(o)) {
                 list.add(observation);
                 objects.add(o);
             }
         }
 
         if (list.isEmpty()) {
-            throw new NoObservationFound(s);
+            throw new NoObservationFoundException(s);
         }
         else {
             return list;
@@ -102,42 +94,28 @@ public class Silo {
 
     }
 
-    public List<Observation> trace(int t, String s) throws NoObservationFound, InvalidObjectTypeException {
+    public List<Observation> trace(Object.Type t, String s) throws NoObservationFoundException {                            //TODO: validation of identifier?
 
         List<Observation> list = new ArrayList<>();
 
-        //validation of type to avoid unnecessary searches through data                                                     TODO:maybe do the same for identifier
-        if (!checkType(t)) {
-            throw new InvalidObjectTypeException();
-        }
-
+        //searches list of observations from the most recent to the oldest for all matches in both type and identifiers
         Iterator it = observations.descendingIterator();
-
         while (it.hasNext()) {
             Observation observation = (Observation) it.next();
 
             Object o = observation.getObject();
 
-            if (o.getIdentifier().equals(s) && o.getType().ordinal() == t) {
+            if (o.getIdentifier().equals(s) && o.getType() == t) {
                 list.add(observation);
             }
         }
+
         if (list.isEmpty()) {
-            throw new NoObservationFound(s);
+            throw new NoObservationFoundException(s);
         }
         else {
             return list;
         }
-    }
-
-    public boolean checkType(int t) {                                                           //TODO: Maybe create package util with these functions/methods
-
-        for (Object.Type type: Object.Type.values()) {
-            if (type.ordinal() == t) {
-                return true;
-            }
-        }
-        return false;
     }
 
     public String getPattern(String s) throws InvalidPartialIdentifierException {
