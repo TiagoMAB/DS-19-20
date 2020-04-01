@@ -42,11 +42,11 @@ public class SpotterApp {
 					String[] tokens = line.split(" ");
 
 					// exit
-					if (tokens.length >= 1 && EXIT_CMD.equals(tokens[0])) // TODO: maybe change to length == 1
+					if (tokens.length == 1 && EXIT_CMD.equals(tokens[0]))
 						break;
 
 					// spot
-					if (tokens.length == 3 && SPOT_CMD.equals(tokens[0])) {
+					else if (tokens.length == 3 && SPOT_CMD.equals(tokens[0])) {
 						Type type;
 						if (tokens[1].equals("car")) type = Type.CAR;
 						else if (tokens[1].equals("person")) type = Type.PERSON;
@@ -74,7 +74,7 @@ public class SpotterApp {
 					}
 
 					// trail
-					if (tokens.length == 3 && TRAIL_CMD.equals(tokens[0])) {
+					else if (tokens.length == 3 && TRAIL_CMD.equals(tokens[0])) {
 						Type type;
 						if (tokens[1].equals("car")) type = Type.CAR;
 						else if (tokens[1].equals("person")) type = Type.PERSON;
@@ -87,7 +87,10 @@ public class SpotterApp {
 						TraceResponse getResponse = frontend.trace(TraceRequest.newBuilder().setType(type).setIdentifier(tokens[2]).build());
 						printObservationsList(getResponse.getObservationsList());
 					}
-					// TODO: add print for unrecognized commands
+
+					else {
+						System.out.println("Unrecognized command");
+					}
 
 				} catch (StatusRuntimeException e) {
 					System.out.println(e.getStatus().getDescription());
@@ -106,13 +109,5 @@ public class SpotterApp {
 
 			System.out.println(t + "," + o.getIdentifier() + "," + o.getDate() + "," + o.getName() + "," + o.getLatitude() + "," + o.getLongitude());
 		}
-	}
-
-	private static void checkObservation(Observation observation) {
-
-	}
-
-	private static boolean checkType(Observation observation, Type t) {
-		return observation.getType() == t;
 	}
 }
