@@ -86,9 +86,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
             Timestamp date = silo.track(t.getNumber(), i);
             Long milliseconds = date.getTime();
             com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(milliseconds/1000).build();
-
             Observation obs = Observation.newBuilder().setType(t).setIdentifier(i).setDate(ts).build();
-
             responseObserver.onNext(TrackResponse.newBuilder().setObservation(obs).build());
             responseObserver.onCompleted();
             LOGGER.info("Sent Observation(type: " + t + " | identifier: " + i + "ts: " + date.toString());*/
