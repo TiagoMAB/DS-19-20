@@ -36,7 +36,19 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
     @Override
     public void camInfo(CamInfoRequest request, StreamObserver<CamInfoResponse> responseObserver) {
-        super.camInfo(request, responseObserver);
+        try {
+            //get camera Info
+            double latitude = silo.getCameraLatitude(request.getName());
+            double longitude = silo.getCameraLongitude(request.getName());
+            
+            responseObserver.onNext(CamInfoResponse.newBuilder().setLatitude(latitude).build());
+            responseObserver.onNext(CamInfoResponse.newBuilder().setLongitude(longitude).build());
+            responseObserver.onCompleted();
+        }
+        catch (Exception e){
+            LOGGER.info(e.getMessage());
+            responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
+        }
     }
 
     public void report(ReportRequest request, StreamObserver<ReportResponse> responseObserver) { //TODO: Validation/Verification of arguments

@@ -40,16 +40,34 @@ public class Silo {
 
         throw new NoObservationFound(i);
     }
+    
+    public double getCameraLatitude(String name) throws CameraNameNotFoundException {
+        if(cameras.containsKey(name)){
+            return cameras.get(name).getLatitude();
+        }
+        else{
+            throw new CameraNameNotFoundException("Camera name not found: " + name);
+        }
+    }
 
-    public void registerCamera(String name, double latitude, double longitude) throws InvalidCameraName, DuplicateCameraName {
+    public double getCameraLongitude(String name) throws CameraNameNotFoundException {
+        if(cameras.containsKey(name)){
+            return cameras.get(name).getLongitude();
+        }
+        else{
+            throw new CameraNameNotFoundException("Camera name not found: " + name);
+        }
+    }
+
+    public void registerCamera(String name, double latitude, double longitude) throws InvalidCameraNameException, DuplicateCameraNameExeption {
         //TODO maybe check latitude and longitude?
         if(!(name.length() >= 3 && name.length() <= 15)) {
-            throw new InvalidCameraName(name);
+            throw new InvalidCameraNameException(name);
         }
         else{
             if(cameras.containsKey(name)){
 //                System.out.printf("Catched!\n");
-                throw new DuplicateCameraName("Repeated name " + '"' + name +'"' );
+                throw new DuplicateCameraNameExeption("Repeated name " + '"' + name +'"' );
             }
             else {
                 Camera camera = new Camera(name, latitude, longitude);
