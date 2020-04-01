@@ -24,6 +24,8 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
         try{        
             //check name
             silo.registerCamera(request.getName(), request.getLatitude(), request.getLongitude());
+            responseObserver.onNext(CamJoinResponse.newBuilder().build());
+            responseObserver.onCompleted();
         }
         catch (Exception e){
             LOGGER.info(e.getMessage());
