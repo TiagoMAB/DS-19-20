@@ -1,37 +1,57 @@
 package pt.tecnico.sauron.silo.domain;
 
+import pt.tecnico.sauron.silo.domain.exceptions.InvalidCameraNameException;
+import pt.tecnico.sauron.silo.domain.exceptions.InvalidCoordinateException;
+
 public class Camera {
 
     private String name;
     private double latitude, longitude;
 
-    public Camera(String name, double latitude, double longitude) {
-        this.name = name;
-        this.latitude = latitude;
-        this.longitude = longitude;
+    public Camera(String name, double latitude, double longitude) throws InvalidCameraNameException, InvalidCoordinateException {
+        setName(name);
+        setLatitude(latitude);
+        setLongitude(longitude);
     }
 
     public String getName() {
         return this.name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String name) throws InvalidCameraNameException {
+
+        if (!name.isBlank() && name.length() >= 3 && name.length() <= 15 && name.matches("[A-Za-z0-9]+")) {
+            this.name = name;
+        }
+        else {
+            throw new InvalidCameraNameException("Repeated name " + '"' + name +'"' );
+        }
+
     }
 
     public double getLatitude() {
         return this.latitude;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+    public void setLatitude(double latitude) throws InvalidCoordinateException {
+        if (latitude >= -90 && latitude <= 90) {
+            this.latitude = latitude;
+        }
+        else {
+            throw new InvalidCoordinateException(latitude);
+        }
     }
 
     public double getLongitude() {
         return this.longitude;
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public void setLongitude(double longitude) throws InvalidCoordinateException {
+        if (longitude >= -90 && longitude <= 90) {
+            this.longitude = longitude;
+        }
+        else {
+            throw new InvalidCoordinateException(longitude);
+        }
     }
 }

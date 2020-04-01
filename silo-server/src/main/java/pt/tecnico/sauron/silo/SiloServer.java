@@ -2,12 +2,11 @@ package pt.tecnico.sauron.silo;
 
 import io.grpc.stub.StreamObserver;
 import pt.tecnico.sauron.silo.domain.Camera;
+import pt.tecnico.sauron.silo.domain.Object;
 import pt.tecnico.sauron.silo.domain.Silo;
 import pt.tecnico.sauron.silo.grpc.*;
-import pt.tecnico.sauron.silo.domain.Object;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -51,7 +50,8 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
         }
     }
 
-    public void report(ReportRequest request, StreamObserver<ReportResponse> responseObserver) { //TODO: Validation/Verification of arguments
+    @Override
+    public void report(ReportRequest request, StreamObserver<ReportResponse> responseObserver) {
         LOGGER.info("report()...");
 
         //TODO: check the use of n, if camera already exists IMPORTANT
@@ -74,7 +74,6 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
                 pt.tecnico.sauron.silo.domain.Observation observation = new pt.tecnico.sauron.silo.domain.Observation(obj, time, camera);
                 observationsList.add(observation);
             }
-    
             silo.report(observationsList);
 
             responseObserver.onNext(ReportResponse.newBuilder().build());
@@ -100,9 +99,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
             Timestamp date = silo.track(t.getNumber(), i);
             Long milliseconds = date.getTime();
             com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(milliseconds/1000).build();
-
             Observation obs = Observation.newBuilder().setType(t).setIdentifier(i).setDate(ts).build();
-
             responseObserver.onNext(TrackResponse.newBuilder().setObservation(obs).build());
             responseObserver.onCompleted();
             LOGGER.info("Sent Observation(type: " + t + " | identifier: " + i + "ts: " + date.toString());

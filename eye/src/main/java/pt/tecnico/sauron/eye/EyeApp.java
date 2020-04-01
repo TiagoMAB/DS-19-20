@@ -1,13 +1,10 @@
 package pt.tecnico.sauron.eye;
 
 import io.grpc.StatusRuntimeException;
-import pt.tecnico.sauron.silo.client.SiloClientApp;
 import pt.tecnico.sauron.silo.client.SiloFrontend;
 import pt.tecnico.sauron.silo.grpc.*;
 
-import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 public class EyeApp {
 	private static final String EXIT_CMD = "exit";
