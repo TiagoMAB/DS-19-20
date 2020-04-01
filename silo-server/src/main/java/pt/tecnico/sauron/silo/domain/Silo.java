@@ -41,7 +41,7 @@ public class Silo {
         throw new NoObservationFound(i);
     }
 
-    public void registerCamera(String name, double latitude, double longitude) throws InvalidCameraName, DuplicateCameraName {
+    public void registerCamera(String name, double latitude, double longitude) throws InvalidCameraNameException, InvalidCameraName, DuplicateCameraName {
         //TODO maybe check latitude and longitude?
         if(!(name.length() >= 3 && name.length() <= 15)) {
             throw new InvalidCameraName(name);
@@ -52,7 +52,7 @@ public class Silo {
                 throw new DuplicateCameraName("Repeated name " + '"' + name +'"' );
             }
             else {
-                Camera camera = new Camera(name, latitude, longitude);
+                Camera camera = new Camera(name, latitude, longitude);      //TODO: Remove duplicate exception for camera name IMPORTANT
                 cameras.put(name, camera);
             }
         }
