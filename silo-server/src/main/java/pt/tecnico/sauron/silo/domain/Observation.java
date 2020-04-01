@@ -5,12 +5,12 @@ import java.sql.Timestamp;
 public class Observation implements Comparable<Observation> {
 
     private Object object;
-    private Timestamp time;
+    private Timestamp timestamp;
     private Camera camera;
 
-    public Observation(Object object, Timestamp time, Camera camera) {
+    public Observation(Object object, Timestamp timestamp, Camera camera) {
         this.object = object;
-        this.time = time;
+        this.timestamp = timestamp;
         this.camera = camera;
     }
 
@@ -22,12 +22,12 @@ public class Observation implements Comparable<Observation> {
         this.object = object;
     }
 
-    public Timestamp getTime() {
-        return this.time;
+    public Timestamp getTimestamp() {
+        return this.timestamp;
     }
 
-    public void setTime(Timestamp time) {
-        this.time = time;
+    public void setTime(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 
     public Camera getCamera() { return this.camera; }
@@ -36,7 +36,7 @@ public class Observation implements Comparable<Observation> {
 
     @Override
     public int compareTo(Observation o) {
-        if (this.getTime().before(o.getTime())) {
+        if (this.getTimestamp().before(o.getTimestamp())) {
             return -1;
         }
         else {
