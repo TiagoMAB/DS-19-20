@@ -7,9 +7,15 @@ import pt.tecnico.sauron.silo.grpc.*;
 
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class EyeApp {
 	private static final String EXIT_CMD = "exit";
+	private static final String COMMENT_LINE = "#";
+	private static final String SLEEP_LINE = "zzz";
+	private static final String CAR_LINE = "car";
+	private static final String PERSON_LINE = "person";
+	private static final String SEND_LINE = "\n";
 
 	public static void main(String[] args) {
 		System.out.println(EyeApp.class.getSimpleName());
@@ -51,9 +57,40 @@ public class EyeApp {
 					if (EXIT_CMD.equals(line))
 						return;
 					
+					// comment
+					if(COMMENT_LINE.equals(line.charAt(0)))
+						continue;
+					
+					// line processing
+					String tokens[] = line.split(",");
+					// sleep line
+					if(tokens[0].equals(SLEEP_LINE)){
+						Thread.sleep(Long.parseLong(tokens[1]));
+						System.out.println("SLEEP");
+						continue;
+					}
+					
+					if(tokens[0].equals(CAR_LINE)){
+						//process car observation
+						System.out.println("CAR LINE");
+						continue;
+					}
 
+					if(tokens[0].equals(PERSON_LINE)){
+						//process person observation
+						System.out.println("PERSON LINE");
+						continue;
+					}
+
+					if(tokens[0].equals(SEND_LINE)){
+						//process car observation
+						System.out.println("SEND LINE");
+						continue;
+					}
 				} catch (StatusRuntimeException e) {
 					System.out.println(e.getStatus().getDescription());
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 			}
 		}

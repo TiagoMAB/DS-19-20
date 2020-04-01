@@ -66,20 +66,20 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
                 Observation o = ol.get(i);
                 LOGGER.info("Received Observation " + i + " Object type: " + o.getType() + " Object identifier: " + o.getIdentifier() + " Time: " + o.getDate() +
                         " Camera name: " + o.getName() + " Camera latitude: " + o.getLatitude() + " Camera longitude: " + o.getLongitude());
-    
+
                 Object obj = new Object(o.getType().ordinal(), o.getIdentifier());
                 Timestamp time = new Timestamp(System.currentTimeMillis());   // TODO: check if time calculation is correct
                 Camera camera = new Camera(o.getName(), o.getLatitude(), o.getLongitude());
-    
+
                 pt.tecnico.sauron.silo.domain.Observation observation = new pt.tecnico.sauron.silo.domain.Observation(obj, time, camera);
                 observationsList.add(observation);
             }
     
-                silo.report(observationsList);
-    
-                responseObserver.onNext(ReportResponse.newBuilder().build());
-                responseObserver.onCompleted();
-                LOGGER.info("Sent response");
+            silo.report(observationsList);
+
+            responseObserver.onNext(ReportResponse.newBuilder().build());
+            responseObserver.onCompleted();
+            LOGGER.info("Sent response");
         }
         catch (Exception e) {
             LOGGER.info(e.getMessage());

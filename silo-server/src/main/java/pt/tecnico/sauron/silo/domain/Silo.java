@@ -59,15 +59,15 @@ public class Silo {
         }
     }
 
-    public void registerCamera(String name, double latitude, double longitude) throws InvalidCameraNameException, DuplicateCameraNameExeption {
+    public void registerCamera(String name, double latitude, double longitude) throws InvalidCameraNameException {
         //TODO maybe check latitude and longitude?
         if(!(name.length() >= 3 && name.length() <= 15)) {
-            throw new InvalidCameraNameException(name);
+            throw new InvalidCameraNameException("Invalid Length " + '"' + name + '"');
         }
         else{
             if(cameras.containsKey(name)){
 //                System.out.printf("Catched!\n");
-                throw new DuplicateCameraNameExeption("Repeated name " + '"' + name +'"' );
+                throw new InvalidCameraNameException("Invalid Name - Duplicate " + '"' + name +'"' );
             }
             else {
                 Camera camera = new Camera(name, latitude, longitude);
