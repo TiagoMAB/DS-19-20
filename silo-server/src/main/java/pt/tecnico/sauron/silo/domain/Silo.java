@@ -19,7 +19,7 @@ public class Silo {
         }
     }
 
-    public Observation track(int t, String i) throws NoObservationFound, InvalidObjectTypeException {
+    public Observation track(int t, String i) throws NoObservationFoundException, InvalidObjectTypeException {
       
         //validation of type to avoid unnecessary searches through data                                                     TODO:maybe do the same for identifier
         if (!checkType(t)) {
@@ -38,27 +38,27 @@ public class Silo {
             }
         }
 
-        throw new NoObservationFound(i);
+        throw new NoObservationFoundException(i);
     }
 
-    public void registerCamera(String name, double latitude, double longitude) throws InvalidCameraNameException, InvalidCameraName, DuplicateCameraName {
+    public void registerCamera(String name, double latitude, double longitude) throws InvalidCameraNameException {
         //TODO maybe check latitude and longitude?
         if(!(name.length() >= 3 && name.length() <= 15)) {
-            throw new InvalidCameraName(name);
+            throw new InvalidCameraNameException(name);
         }
         else{
             if(cameras.containsKey(name)){
 //                System.out.printf("Catched!\n");
-                throw new DuplicateCameraName("Repeated name " + '"' + name +'"' );
+                throw new InvalidCameraNameException(name + "(duplicate");
             }
             else {
-                Camera camera = new Camera(name, latitude, longitude);      //TODO: Remove duplicate exception for camera name IMPORTANT
+                Camera camera = new Camera(name, latitude, longitude);
                 cameras.put(name, camera);
             }
         }
     }
     
-    public List<Observation> trackMatch(int t, String s) throws NoObservationFound, InvalidObjectTypeException, InvalidPartialIdentifierException {
+    public List<Observation> trackMatch(int t, String s) throws NoObservationFoundException, InvalidObjectTypeException, InvalidPartialIdentifierException {
 
         List<Observation> list = new ArrayList<>();
         HashSet<Object> objects = new HashSet<>();
@@ -83,7 +83,7 @@ public class Silo {
         }
 
         if (list.isEmpty()) {
-            throw new NoObservationFound(s);
+            throw new NoObservationFoundException(s);
         }
         else {
             return list;
@@ -91,7 +91,7 @@ public class Silo {
 
     }
 
-    public List<Observation> trace(int t, String s) throws NoObservationFound, InvalidObjectTypeException {
+    public List<Observation> trace(int t, String s) throws NoObservationFoundException, InvalidObjectTypeException {
 
         List<Observation> list = new ArrayList<>();
 
@@ -112,7 +112,7 @@ public class Silo {
             }
         }
         if (list.isEmpty()) {
-            throw new NoObservationFound(s);
+            throw new NoObservationFoundException(s);
         }
         else {
             return list;
