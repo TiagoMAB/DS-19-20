@@ -1,8 +1,10 @@
 package pt.tecnico.sauron.silo;
 
 import io.grpc.stub.StreamObserver;
+import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Silo;
 import pt.tecnico.sauron.silo.grpc.*;
+import pt.tecnico.sauron.silo.domain.Object;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -19,13 +21,22 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
     private final Silo silo = new Silo();
 
     @Override
-    public void camInfo(CamInfoRequest request, StreamObserver<CamInfoResponse> responseObserver) {
-        super.camInfo(request, responseObserver);
+    public void camJoin(CamJoinRequest request, StreamObserver<CamJoinResponse> responseObserver) {
+        try{        
+            //check name
+            silo.registerCamera(request.getName(), request.getLatitude(), request.getLongitude());
+            responseObserver.onNext(CamJoinResponse.newBuilder().build());
+            responseObserver.onCompleted();
+        }
+        catch (Exception e){
+            LOGGER.info(e.getMessage());
+            responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
+        }
     }
 
     @Override
-    public void camJoin(CamJoinRequest request, StreamObserver<CamJoinResponse> responseObserver) {
-        super.camJoin(request, responseObserver);
+    public void camInfo(CamInfoRequest request, StreamObserver<CamInfoResponse> responseObserver) {
+        super.camInfo(request, responseObserver);
     }
 
     public void report(ReportRequest request, StreamObserver<ReportResponse> responseObserver) { //TODO: Validation/Verification of arguments
@@ -38,26 +49,25 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
         List<pt.tecnico.sauron.silo.domain.Observation> observationsList = new ArrayList<pt.tecnico.sauron.silo.domain.Observation>();
 
         LOGGER.info("Received name: " + n);
-
-        for (int i = 0; i < ol.size(); i++) {
-            Observation o = ol.get(i);
-            LOGGER.info("Received Observation " + i + " Object type: " + o.getType() + " Object identifier: " + o.getIdentifier() + " Time: " + o.getDate() +
-                    " Camera name: " + o.getName() + " Camera latitude: " + o.getLatitude() + " Camera longitude: " + o.getLongitude());
-
-            Object obj = new Object(o.getType(), o.getIdentifier());
-            Timestamp time = new Timestamp(System.currentTimeMillis());   // TODO: check if time calculation is correct
-            Camera camera = new Camera(o.getName(), o.getLatitude(), o.getLongitude());
-
-            pt.tecnico.sauron.silo.domain.Observation observation = new pt.tecnico.sauron.silo.domain.Observation(obj, time, camera);
-            observationsList.add(observation);
-        }
-
         try {
-            silo.report(observationsList);
-
-            responseObserver.onNext(ReportResponse.newBuilder().build());
-            responseObserver.onCompleted();
-            LOGGER.info("Sent response");
+            for (int i = 0; i < ol.size(); i++) {
+                Observation o = ol.get(i);
+                LOGGER.info("Received Observation " + i + " Object type: " + o.getType() + " Object identifier: " + o.getIdentifier() + " Time: " + o.getDate() +
+                        " Camera name: " + o.getName() + " Camera latitude: " + o.getLatitude() + " Camera longitude: " + o.getLongitude());
+    
+                Object obj = new Object(o.getType().ordinal(), o.getIdentifier());
+                Timestamp time = new Timestamp(System.currentTimeMillis());   // TODO: check if time calculation is correct
+                Camera camera = new Camera(o.getName(), o.getLatitude(), o.getLongitude());
+    
+                pt.tecnico.sauron.silo.domain.Observation observation = new pt.tecnico.sauron.silo.domain.Observation(obj, time, camera);
+                observationsList.add(observation);
+            }
+    
+                silo.report(observationsList);
+    
+                responseObserver.onNext(ReportResponse.newBuilder().build());
+                responseObserver.onCompleted();
+                LOGGER.info("Sent response");
         }
         catch (Exception e) {
             LOGGER.info(e.getMessage());
@@ -74,7 +84,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
         LOGGER.info("Received type: " + t + " | identifier: " + i);
 
-        try {
+        try {/*
             Timestamp date = silo.track(t.getNumber(), i);
             Long milliseconds = date.getTime();
             com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(milliseconds/1000).build();
@@ -84,6 +94,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
             responseObserver.onNext(TrackResponse.newBuilder().setObservation(obs).build());
             responseObserver.onCompleted();
             LOGGER.info("Sent Observation(type: " + t + " | identifier: " + i + "ts: " + date.toString());
+       */
         }
         catch (Exception e) {
             LOGGER.info(e.getMessage());
