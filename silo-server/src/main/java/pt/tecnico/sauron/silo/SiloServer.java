@@ -26,7 +26,16 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
     @Override
     public void camJoin(CamJoinRequest request, StreamObserver<CamJoinResponse> responseObserver) {
-        super.camJoin(request, responseObserver);
+        try{
+            //check name
+            silo.registerCamera(request.getName(), request.getLatitude(), request.getLongitude());
+            responseObserver.onNext(CamJoinResponse.newBuilder().build());
+            responseObserver.onCompleted();
+        }
+        catch (Exception e){
+            LOGGER.info(e.getMessage());
+            responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
+        }
     }
 
     @Override

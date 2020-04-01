@@ -20,20 +20,12 @@ public class Silo {
     }
 
     public void registerCamera(String name, double latitude, double longitude) throws InvalidCameraNameException, InvalidCoordinateException {
-
-        //TODO maybe check latitude and longitude?
-        if(!(name.length() >= 3 && name.length() <= 15)) {
-            throw new InvalidCameraNameException(name);
+        if(cameras.containsKey(name)){
+            throw new InvalidCameraNameException("Invalid Name - Duplicate " + '"' + name +'"' );
         }
-        else{
-            if(cameras.containsKey(name)){
-//                System.out.printf("Catched!\n");
-                throw new InvalidCameraNameException(name + "(duplicate");
-            }
-            else {
-                Camera camera = new Camera(name, latitude, longitude);
-                cameras.put(name, camera);
-            }
+        else {
+            Camera camera = new Camera(name, latitude, longitude);
+            cameras.put(name, camera);
         }
     }
 
