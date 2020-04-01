@@ -110,4 +110,12 @@ public class SpotterApp {
 			System.out.println(t + "," + o.getIdentifier() + "," + o.getDate() + "," + o.getName() + "," + o.getLatitude() + "," + o.getLongitude());
 		}
 	}
+
+	private static void checkObservation(Observation observation) {
+
+	}
+
+	private static boolean checkType(Observation observation, Type t) {
+		return observation.getType() == t;
+	}
 }
