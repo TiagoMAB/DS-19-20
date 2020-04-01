@@ -41,7 +41,11 @@ public class Silo {
         throw new NoObservationFoundException(i);
     }
 
+<<<<<<< HEAD
     public void registerCamera(String name, double latitude, double longitude) throws InvalidCameraNameException {
+=======
+    public void registerCamera(String name, double latitude, double longitude) throws InvalidCameraNameException, InvalidCoordinateException, InvalidCameraName, DuplicateCameraName {
+>>>>>>> remotes/master/master
         //TODO maybe check latitude and longitude?
         if(!(name.length() >= 3 && name.length() <= 15)) {
             throw new InvalidCameraNameException(name);
