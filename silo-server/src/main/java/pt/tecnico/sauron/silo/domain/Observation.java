@@ -22,7 +22,7 @@ public class Observation implements Comparable<Observation> {
         this.object = object;
     }
 
-    public Timestamp getTime() {
+    public Timestamp getTimestamp() {
         return this.timestamp;
     }
 
@@ -36,7 +36,7 @@ public class Observation implements Comparable<Observation> {
 
     @Override
     public int compareTo(Observation o) {
-        if (this.getTime().before(o.getTime())) {
+        if (this.getTimestamp().before(o.getTimestamp())) {
             return -1;
         }
         else {
