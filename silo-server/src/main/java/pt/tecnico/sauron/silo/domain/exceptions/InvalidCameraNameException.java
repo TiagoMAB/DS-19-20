@@ -1,3 +1,4 @@
+
 package pt.tecnico.sauron.silo.domain.exceptions;
 
 public class InvalidCameraNameException extends Exception {

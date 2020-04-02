@@ -19,16 +19,6 @@ public class Silo {
         }
     }
 
-    public void registerCamera(String name, double latitude, double longitude) throws InvalidCameraNameException, InvalidCoordinateException {
-        if(cameras.containsKey(name)){
-            throw new InvalidCameraNameException("Invalid Name - Duplicate " + '"' + name +'"' );
-        }
-        else {
-            Camera camera = new Camera(name, latitude, longitude);
-            cameras.put(name, camera);
-        }
-    }
-
     public Observation track(Object.Type t, String i) throws NoObservationFoundException {                                  //TODO: validation of identifier?
 
         //searches list of observations from the most recent to the oldest for a match in both type and identifier
@@ -45,7 +35,26 @@ public class Silo {
 
         throw new NoObservationFoundException(i);
     }
+    
+    public Camera camInfo(String name) throws CameraNameNotFoundException {
+        if(cameras.containsKey(name)){
+            return cameras.get(name);
+        }
+        else{
+            throw new CameraNameNotFoundException("Camera name not found: " + name);
+        }
+    }
 
+    public void camJoin(String name, double latitude, double longitude) throws InvalidCameraNameException, InvalidCoordinateException {
+        if(cameras.containsKey(name)){
+            throw new InvalidCameraNameException("Invalid Name - Duplicate " + '"' + name +'"' );
+        }
+        else {
+            Camera camera = new Camera(name, latitude, longitude);
+            cameras.put(name, camera);
+        }
+    }
+    
     public List<Observation> trackMatch(Object.Type t, String s) throws NoObservationFoundException, InvalidPartialIdentifierException {
 
         List<Observation> list = new ArrayList<>();
