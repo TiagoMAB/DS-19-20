@@ -23,6 +23,9 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
     public void camJoin(CamJoinRequest request, StreamObserver<CamJoinResponse> responseObserver) {
         try{        
             //check name
+            LOGGER.info("camJoin()...");
+            LOGGER.info("Received name: " + request.getName() + " received latitude: " + request.getLatitude() + " received longitude: " + request.getLongitude());
+
             silo.camJoin(request.getName(), request.getLatitude(), request.getLongitude());
             responseObserver.onNext(CamJoinResponse.newBuilder().build());
             responseObserver.onCompleted();
@@ -66,7 +69,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
         try {
             for (int i = 0; i < ol.size(); i++) {
                 Observation o = ol.get(i);
-                LOGGER.info("Received Observation " + i + " Object type: " + o.getType() + " Object identifier: " + o.getIdentifier() + " Time: " + o.getDate() +
+                LOGGER.info("Received Observation " + i + " Object type: " + o.getType() + " Object identifier: " + o.getIdentifier() +
                         " Camera name: " + o.getName() + " Camera latitude: " + o.getLatitude() + " Camera longitude: " + o.getLongitude());
 
                 Object obj = new Object(o.getType().ordinal(), o.getIdentifier());
@@ -225,7 +228,18 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
     @Override
     public void ctrlClear(CtrlClearRequest request, StreamObserver<CtrlClearResponse> responseObserver) {
-        super.ctrlClear(request, responseObserver);
+        CtrlClearResponse.Builder response = CtrlClearResponse.newBuilder();
+
+        try {
+            silo.clear();
+        }
+        catch (Exception e) {
+            LOGGER.info(e.getMessage());
+            responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
+        }
+
+        responseObserver.onNext(response.build());
+        responseObserver.onCompleted();
     }
 
     @Override

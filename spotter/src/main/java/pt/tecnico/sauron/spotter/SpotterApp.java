@@ -24,7 +24,7 @@ public class SpotterApp {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
 		}
 
-		if (args.length < 3) {
+		if (args.length < 2) {
 			System.out.println("Argument(s) missing!");
 			System.out.printf("Usage: java %s host server host port %n", SpotterApp.class.getName());
 			return;
@@ -59,6 +59,8 @@ public class SpotterApp {
 						if (tokens[2].contains("*")) {
 							// TODO: error check response type, all fields of response
 							TrackMatchResponse getResponse = frontend.trackMatch(TrackMatchRequest.newBuilder().setType(type).setPartialIdentifier(tokens[2]).build());
+
+							// TODO: order by identifier here
 
 							printObservationsList(getResponse.getObservationsList());
 						}
