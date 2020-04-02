@@ -47,7 +47,7 @@ public class Camera {
     }
 
     public void setLongitude(double longitude) throws InvalidCoordinateException {
-        if (longitude >= -90 && longitude <= 90) {
+        if (longitude >= -180 && longitude <= 180) {
             this.longitude = longitude;
         }
         else {
