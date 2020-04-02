@@ -62,9 +62,15 @@ public class SpotterApp {
 						else {
 							TrackResponse getResponse = frontend.track(TrackRequest.newBuilder().setType(type).setIdentifier(tokens[2]).build());
 							Observation o = getResponse.getObservation();
-							String t = o.getType() == Type.CAR ? "car" : "person";
 
-							System.out.println(t + "," + o.getIdentifier() + "," + o.getDate() + "," + o.getName() + "," + o.getLatitude() + "," + o.getLongitude());
+							if (o == Observation.getDefaultInstance()) {
+								System.out.println();
+							}
+							else {
+								String t = o.getType() == Type.CAR ? "car" : "person";
+								System.out.println(t + "," + o.getIdentifier() + "," + o.getDate() + "," + o.getName() + "," + o.getLatitude() + "," + o.getLongitude());
+							}
+
 							continue;
 						}
 					}
@@ -107,11 +113,15 @@ public class SpotterApp {
 	}
 
 	private static void printObservationsList(List<Observation> observationsList) {
-		for (int i = 0; i < observationsList.size(); i++) {
-			Observation o = observationsList.get(i);
-			String t = o.getType() == Type.CAR ? "car" : "person";
+		if (observationsList.size() == 0)
+			System.out.println();
+		else {
+			for (int i = 0; i < observationsList.size(); i++) {
+				Observation o = observationsList.get(i);
+				String t = o.getType() == Type.CAR ? "car" : "person";
 
-			System.out.println(t + "," + o.getIdentifier() + "," + o.getDate() + "," + o.getName() + "," + o.getLatitude() + "," + o.getLongitude());
+				System.out.println(t + "," + o.getIdentifier() + "," + o.getDate() + "," + o.getName() + "," + o.getLatitude() + "," + o.getLongitude());
+			}
 		}
 	}
 }
