@@ -39,8 +39,8 @@ public class TrackMatchIT extends BaseIT {
     public static void oneTimeSetUp() {
         frontend.camJoin(CamJoinRequest.newBuilder().setName(name).setLatitude(latitude).setLongitude(longitude).build());
 
-        frontend.report(ReportRequest.newBuilder().addObservations(validObs1).build());
         frontend.report(ReportRequest.newBuilder().addObservations(validObs2).build());
+        frontend.report(ReportRequest.newBuilder().addObservations(validObs1).build());
 
         observationsList1.add(validObs1);
         observationsList1.add(validObs2);
