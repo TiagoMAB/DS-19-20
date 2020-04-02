@@ -6,7 +6,10 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import pt.tecnico.sauron.silo.grpc.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
 
@@ -29,7 +32,7 @@ public class BaseIT {
 			System.out.println(msg);
 			throw e;
 		}
-
+		
 		final String host = testProps.getProperty("server.host");
 		final int port = Integer.parseInt(testProps.getProperty("server.port"));
 		frontend = new SiloFrontend(host, port);
@@ -52,6 +55,14 @@ public class BaseIT {
 		return TraceRequest.newBuilder().setType(t).setIdentifier(identifier).build();
 	}
 
+	protected ReportRequest reportBuildRequest(Observation o) {
+		return ReportRequest.newBuilder().addObservations(o).build();
+	}
+	
+	protected ReportRequest reportBuildRequest(List<Observation> all_os) {
+		return ReportRequest.newBuilder().addAllObservations(all_os).build();
+	}
+	
 	protected void assertEqualsObservation(Observation obs1, Observation obs2) {
 		assertEquals(obs1.getType(), obs2.getType());
 		assertEquals(obs1.getIdentifier(), obs2.getIdentifier());
@@ -59,4 +70,5 @@ public class BaseIT {
 		assertEquals(obs1.getLatitude(), obs2.getLatitude());
 		assertEquals(obs1.getLongitude(), obs2.getLongitude());
 	}
+	
 }

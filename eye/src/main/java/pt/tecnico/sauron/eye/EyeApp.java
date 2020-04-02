@@ -130,9 +130,9 @@ public class EyeApp {
 			String identifier = strings[1];
 
 			Observation.Builder obs_builder = Observation.newBuilder();
-			obs_builder.setName(camName);
 			obs_builder.setType(type);
 			obs_builder.setIdentifier(identifier);
+			obs_builder.setName(camName);
 			obs_builder.setDate(timestamp);
 			obs_builder.setLatitude(latitude);
 			obs_builder.setLongitude(longitude);
