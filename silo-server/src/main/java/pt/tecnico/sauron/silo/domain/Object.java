@@ -29,6 +29,7 @@ public class Object {
         for (Type type: Type.values()) {
             if (type.ordinal() == t) {
                 this.type = type;
+                return;
             }
         }
 

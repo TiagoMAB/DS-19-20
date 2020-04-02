@@ -8,10 +8,7 @@ import io.grpc.Status;
 import org.junit.jupiter.api.*;
 
 import io.grpc.StatusRuntimeException;
-import pt.tecnico.sauron.silo.grpc.CamJoinRequest;
-import pt.tecnico.sauron.silo.grpc.Observation;
-import pt.tecnico.sauron.silo.grpc.ReportRequest;
-import pt.tecnico.sauron.silo.grpc.Type;
+import pt.tecnico.sauron.silo.grpc.*;
 
 import java.sql.Timestamp;
 
@@ -27,8 +24,8 @@ public class TrackIT extends BaseIT {
 
     private static String notFoundIdentifier = "111111";
 
-    private static Observation validObs = Observation.newBuilder().setType(type).setIdentifier(identifier).setDate(ts).setName(name).setLatitude(latitude).setLongitude(longitude).build();
-    private static Observation invalidTypeObs = Observation.newBuilder().setIdentifier(identifier).setDate(ts).setName(name).setLatitude(latitude).setLongitude(longitude).build();
+    private static Observation validObs = Observation.newBuilder().setType(type).setIdentifier(identifier).setName(name).setLatitude(latitude).setLongitude(longitude).build();
+    private static Observation invalidTypeObs = Observation.newBuilder().setIdentifier(identifier).setName(name).setLatitude(latitude).setLongitude(longitude).build();
 
 
     @BeforeAll
@@ -39,7 +36,9 @@ public class TrackIT extends BaseIT {
     }
 
     @AfterAll
-    public static void oneTimeTearDown() { }
+    public static void oneTimeTearDown() {
+        frontend.ctrlClear(CtrlClearRequest.newBuilder().build());
+    }
 
     @BeforeEach
     public void setUp() {
@@ -51,13 +50,14 @@ public class TrackIT extends BaseIT {
 
     @Test
     public void validObservationTest() {
-        assertEquals(validObs, frontend.track(trackBuildRequest(type, name)).getObservation());
+        Observation responseObs = frontend.track(trackBuildRequest(type, identifier)).getObservation();
+        assertEqualsObservation(validObs, responseObs);
     }
 
     @Test
     public void invalidTypeTest() {
         assertEquals(INVALID_ARGUMENT,
-                assertThrows(StatusRuntimeException.class, () -> frontend.track(trackBuildRequest(invalidTypeObs.getType(), name))).getStatus()
+                assertThrows(StatusRuntimeException.class, () -> frontend.track(trackBuildRequest(invalidTypeObs.getType(), identifier))).getStatus()
                         .getCode());
     }
 

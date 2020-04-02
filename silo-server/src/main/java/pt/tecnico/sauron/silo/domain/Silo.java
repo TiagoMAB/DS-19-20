@@ -130,4 +130,10 @@ public class Silo {
         pattern = pattern + "\\Z";
         return pattern;
     }
+
+    public void clear() {
+        objects.clear();
+        observations.clear();
+        cameras.clear();
+    }
 }

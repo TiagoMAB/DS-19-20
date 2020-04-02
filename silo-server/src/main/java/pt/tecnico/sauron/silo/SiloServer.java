@@ -28,6 +28,9 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
     public void camJoin(CamJoinRequest request, StreamObserver<CamJoinResponse> responseObserver) {
         try{
             //check name
+            LOGGER.info("camJoin()...");
+            LOGGER.info("Received name: " + request.getName() + " received latitude: " + request.getLatitude() + " received longitude: " + request.getLongitude());
+
             silo.registerCamera(request.getName(), request.getLatitude(), request.getLongitude());
             responseObserver.onNext(CamJoinResponse.newBuilder().build());
             responseObserver.onCompleted();
@@ -56,6 +59,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
                 LOGGER.info("Received Observation " + i + " Object type: " + o.getType() + " Object identifier: " + o.getIdentifier() + " Time: " + o.getDate() +
                         " Camera name: " + o.getName() + " Camera latitude: " + o.getLatitude() + " Camera longitude: " + o.getLongitude());
 
+                LOGGER.info("Type ordinal: " + o.getType().ordinal());
                 Object obj = new Object(o.getType().ordinal(), o.getIdentifier());
                 Timestamp time = new Timestamp(System.currentTimeMillis());   // TODO: check if time calculation is correct
                 Camera camera = new Camera(o.getName(), o.getLatitude(), o.getLongitude());
@@ -143,7 +147,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
                 com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(milliseconds/1000).build();
 
                 //Converts internal representation of observation to a data transfer object
-                Observation obs = Observation.newBuilder().setType(t).setIdentifier(i).setDate(ts).setName(name).setLatitude(latitude).setLongitude(longitude).build();
+                Observation obs = Observation.newBuilder().setType(t).setIdentifier(o.getObject().getIdentifier()).setDate(ts).setName(name).setLatitude(latitude).setLongitude(longitude).build();
 
                 //Adds observation (dto) to list of observations to be sent
                 response.addObservations(obs);
@@ -213,7 +217,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
     @Override
     public void ctrlClear(CtrlClearRequest request, StreamObserver<CtrlClearResponse> responseObserver) {
-        super.ctrlClear(request, responseObserver);
+        silo.clear();
     }
 
     @Override

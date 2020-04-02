@@ -1,7 +1,10 @@
 package pt.tecnico.sauron.silo.client;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import pt.tecnico.sauron.silo.grpc.Observation;
 import pt.tecnico.sauron.silo.grpc.TrackMatchRequest;
 import pt.tecnico.sauron.silo.grpc.TrackRequest;
 import pt.tecnico.sauron.silo.grpc.Type;
@@ -46,5 +49,13 @@ public class BaseIT {
 
 	protected TrackMatchRequest trackMatchBuildRequest(Type t, String partialIdentifier) {
 		return TrackMatchRequest.newBuilder().setType(t).setPartialIdentifier(partialIdentifier).build();
+	}
+
+	protected void assertEqualsObservation(Observation obs1, Observation obs2) {
+		assertEquals(obs1.getType(), obs2.getType());
+		assertEquals(obs1.getIdentifier(), obs2.getIdentifier());
+		assertEquals(obs1.getName(), obs2.getName());
+		assertEquals(obs1.getLatitude(), obs2.getLatitude());
+		assertEquals(obs1.getLongitude(), obs2.getLongitude());
 	}
 }
