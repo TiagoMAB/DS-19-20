@@ -143,7 +143,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
                 com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(milliseconds/1000).build();
 
                 //Converts internal representation of observation to a data transfer object
-                Observation obs = Observation.newBuilder().setType(t).setIdentifier(i).setDate(ts).setName(name).setLatitude(latitude).setLongitude(longitude).build();
+                Observation obs = Observation.newBuilder().setType(t).setIdentifier(o.getObject().getIdentifier()).setDate(ts).setName(name).setLatitude(latitude).setLongitude(longitude).build();
 
                 //Adds observation (dto) to list of observations to be sent
                 response.addObservations(obs);
