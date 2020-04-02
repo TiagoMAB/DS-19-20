@@ -72,7 +72,6 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
                 LOGGER.info("Received Observation " + i + " Object type: " + o.getType() + " Object identifier: " + o.getIdentifier() +
                         " Camera name: " + o.getName() + " Camera latitude: " + o.getLatitude() + " Camera longitude: " + o.getLongitude());
 
-                LOGGER.info("Type ordinal: " + o.getType().ordinal());
                 Object obj = new Object(o.getType().ordinal(), o.getIdentifier());
                 Timestamp time = new Timestamp(System.currentTimeMillis());   // TODO: check if time calculation is correct
                 Camera camera = new Camera(o.getName(), o.getLatitude(), o.getLongitude());
