@@ -23,7 +23,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
     public void camJoin(CamJoinRequest request, StreamObserver<CamJoinResponse> responseObserver) {
         try{        
             //check name
-            silo.registerCamera(request.getName(), request.getLatitude(), request.getLongitude());
+            silo.camJoin(request.getName(), request.getLatitude(), request.getLongitude());
             responseObserver.onNext(CamJoinResponse.newBuilder().build());
             responseObserver.onCompleted();
         }

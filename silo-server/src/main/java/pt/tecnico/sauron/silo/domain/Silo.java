@@ -45,7 +45,7 @@ public class Silo {
         }
     }
 
-    public void registerCamera(String name, double latitude, double longitude) throws InvalidCameraNameException, InvalidCoordinateException {
+    public void camJoin(String name, double latitude, double longitude) throws InvalidCameraNameException, InvalidCoordinateException {
         if(cameras.containsKey(name)){
             throw new InvalidCameraNameException("Invalid Name - Duplicate " + '"' + name +'"' );
         }
