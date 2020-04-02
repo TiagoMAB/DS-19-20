@@ -22,14 +22,17 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
     @Override
     public void camJoin(CamJoinRequest request, StreamObserver<CamJoinResponse> responseObserver) {
-        try{        
+        LOGGER.info("camJoin()...");
+
+        try{
             //check name
-            LOGGER.info("camJoin()...");
             LOGGER.info("Received name: " + request.getName() + " received latitude: " + request.getLatitude() + " received longitude: " + request.getLongitude());
 
             silo.camJoin(request.getName(), request.getLatitude(), request.getLongitude());
             responseObserver.onNext(CamJoinResponse.newBuilder().build());
             responseObserver.onCompleted();
+
+            LOGGER.info("camJoin() successful... ");
         }
         catch (Exception e){
             LOGGER.info(e.getMessage());
@@ -44,9 +47,8 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
             Camera camera = silo.camInfo(request.getName());
             double latitude = camera.getLatitude();
             double longitude = camera.getLongitude();
-            
-            responseObserver.onNext(CamInfoResponse.newBuilder().setLatitude(latitude).build());
-            responseObserver.onNext(CamInfoResponse.newBuilder().setLongitude(longitude).build());
+
+            responseObserver.onNext(CamInfoResponse.newBuilder().setLongitude(longitude).setLatitude(latitude).build());
             responseObserver.onCompleted();
         }
         catch (Exception e){
@@ -84,7 +86,8 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
             responseObserver.onNext(ReportResponse.newBuilder().build());
             responseObserver.onCompleted();
-            LOGGER.info("Sent response");
+
+            LOGGER.info("report() successful... ");
         }
         catch (Exception e) {
             LOGGER.info(e.getMessage());
@@ -121,7 +124,8 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
             //Signals that the response was built successfully
             responseObserver.onNext(TrackResponse.newBuilder().setObservation(obs).build());
             responseObserver.onCompleted();
-            LOGGER.info("Sent Observation(type: " + t + " | identifier: " + i + "ts: " + timestamp.toString());
+
+            LOGGER.info("track() response... " + o);
         }
         catch (NoObservationFoundException e) {
             LOGGER.info(e.getMessage());
@@ -168,7 +172,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
                 //Adds observation (dto) to list of observations to be sent
                 response.addObservations(obs);
-                LOGGER.info("Sent Observation(type: " + t + " | identifier: " + i + "ts: " + timestamp.toString());
+                LOGGER.info("trackMatch() response... " + o);
 
             }
         }
@@ -220,7 +224,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
                 //Adds observation (dto) to list of observations to be sent
                 response.addObservations(obs);
-                LOGGER.info("Sent Observation(type: " + t + " | identifier: " + i + "ts: " + timestamp.toString());
+                LOGGER.info("trace() response... " + o);
             }
         }
         catch (NoObservationFoundException e) {

@@ -43,4 +43,9 @@ public class Observation implements Comparable<Observation> {
             return 1;
         }
     }
+
+    @Override
+    public String toString() {
+        return "Observation reported by " + this.camera + "\" of " + this.object + " with timestamp: " + timestamp;
+    }
 }
