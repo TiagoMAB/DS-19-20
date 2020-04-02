@@ -25,9 +25,10 @@ public class TrackIT extends BaseIT {
     private static Timestamp t = new Timestamp(1000);
     private static com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(t.getTime()/1000).build();
 
+    private static String notFoundIdentifier = "111111";
+
     private static Observation validObs = Observation.newBuilder().setType(type).setIdentifier(identifier).setDate(ts).setName(name).setLatitude(latitude).setLongitude(longitude).build();
     private static Observation invalidTypeObs = Observation.newBuilder().setIdentifier(identifier).setDate(ts).setName(name).setLatitude(latitude).setLongitude(longitude).build();
-    private static Observation notFoundObs = Observation.newBuilder().setType(type).setIdentifier("111111").setDate(ts).setName(name).setLatitude(latitude).setLongitude(longitude).build();
 
 
     @BeforeAll
@@ -50,20 +51,20 @@ public class TrackIT extends BaseIT {
 
     @Test
     public void validObservationTest() {
-        assertEquals(validObs, frontend.track(trackBuildRequest(validObs.getType(), validObs.getName())).getObservation());
+        assertEquals(validObs, frontend.track(trackBuildRequest(type, name)).getObservation());
     }
 
     @Test
-    public void invalidTypeObservationTest() {
+    public void invalidTypeTest() {
         assertEquals(INVALID_ARGUMENT,
-                assertThrows(StatusRuntimeException.class, () -> frontend.track(trackBuildRequest(invalidTypeObs.getType(), invalidTypeObs.getName()))).getStatus()
+                assertThrows(StatusRuntimeException.class, () -> frontend.track(trackBuildRequest(invalidTypeObs.getType(), name))).getStatus()
                         .getCode());
     }
 
     @Test
-    public void notFoundObservationTest() {
+    public void observationNotFoundTest() {
         assertEquals(INVALID_ARGUMENT,
-                assertThrows(StatusRuntimeException.class, () -> frontend.track(trackBuildRequest(notFoundObs.getType(), notFoundObs.getName()))).getStatus()
+                assertThrows(StatusRuntimeException.class, () -> frontend.track(trackBuildRequest(type, notFoundIdentifier))).getStatus()
                         .getCode());
     }
 }

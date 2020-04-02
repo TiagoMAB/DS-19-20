@@ -2,6 +2,7 @@ package pt.tecnico.sauron.silo.client;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import pt.tecnico.sauron.silo.grpc.TrackMatchRequest;
 import pt.tecnico.sauron.silo.grpc.TrackRequest;
 import pt.tecnico.sauron.silo.grpc.Type;
 
@@ -43,4 +44,7 @@ public class BaseIT {
 		return TrackRequest.newBuilder().setType(t).setIdentifier(name).build();
 	}
 
+	protected TrackMatchRequest trackMatchBuildRequest(Type t, String partialIdentifier) {
+		return TrackMatchRequest.newBuilder().setType(t).setPartialIdentifier(partialIdentifier).build();
+	}
 }
