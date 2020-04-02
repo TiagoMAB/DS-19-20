@@ -36,9 +36,9 @@ public class Silo {
         throw new NoObservationFoundException(i);
     }
     
-    public double getCameraLatitude(String name) throws CameraNameNotFoundException {
+    public Camera getCamera(String name) throws CameraNameNotFoundException {
         if(cameras.containsKey(name)){
-            return cameras.get(name).getLatitude();
+            return cameras.get(name);
         }
         else{
             throw new CameraNameNotFoundException("Camera name not found: " + name);

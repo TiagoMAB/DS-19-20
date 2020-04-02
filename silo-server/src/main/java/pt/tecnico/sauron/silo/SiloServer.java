@@ -37,8 +37,9 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
     public void camInfo(CamInfoRequest request, StreamObserver<CamInfoResponse> responseObserver) {
         try {
             //get camera Info
-            double latitude = silo.getCameraLatitude(request.getName());
-            double longitude = silo.getCameraLongitude(request.getName());
+            Camera camera = silo.getCamera(request.getName());
+            double latitude = camera.getLatitude();
+            double longitude = camera.getLongitude();
             
             responseObserver.onNext(CamInfoResponse.newBuilder().setLatitude(latitude).build());
             responseObserver.onNext(CamInfoResponse.newBuilder().setLongitude(longitude).build());

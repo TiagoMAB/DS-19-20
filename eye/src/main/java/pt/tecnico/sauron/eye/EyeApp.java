@@ -68,7 +68,7 @@ public class EyeApp {
 					if(line.length() == 1){
 						//process car observation
 						//System.out.println("SEND LINE");
-						send(camName, timestamp, frontend);
+						send(camName, timestamp, frontend, latitude, longitude);
 
 						continue;
 					}
@@ -108,7 +108,7 @@ public class EyeApp {
 					e.printStackTrace();
 				}
 			}
-			send(camName, timestamp, frontend);
+			send(camName, timestamp, frontend, latitude, longitude);
 
 			/*
 			for (String[] observation : observations) {
@@ -123,18 +123,27 @@ public class EyeApp {
 		}
 	}
 
-	private static void send(String camName, Timestamp timestamp, SiloFrontend frontend) {
+	private static void send(String camName, Timestamp timestamp, SiloFrontend frontend, double latitude, double longitude) {
+		ReportRequest.Builder req_builder = ReportRequest.newBuilder();
 		for (String[] strings : observations_in) {
 			Type type = getType(strings);
 			String identifier = strings[1];
 
-			Observation observation = Observation.newBuilder().setName(camName).setType(type).
-					setIdentifier(identifier).
-					setDate(timestamp).build();
-
-			ReportResponse getResponse = frontend.report(ReportRequest.newBuilder().
-					 					 addObservations(observation).build());
+			Observation.Builder obs_builder = Observation.newBuilder();
+			obs_builder.setName(camName);
+			obs_builder.setType(type);
+			obs_builder.setIdentifier(identifier);
+			obs_builder.setDate(timestamp);
+			obs_builder.setLatitude(latitude);
+			obs_builder.setLongitude(longitude);
+			
+		 	Observation observation = obs_builder.build();
+			//send
+		 	frontend.report(req_builder.addObservations(observation).build());
 		}
+		
+		//cleanuo after each send
+		observations_in.clear();
 	}
 
 	private static Type getType(String[] observation) {

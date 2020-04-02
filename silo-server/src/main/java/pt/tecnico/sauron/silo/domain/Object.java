@@ -25,13 +25,13 @@ public class Object {
     }
 
     public void setType(int t) throws InvalidObjectTypeException {
-
+        
         for (Type type: Type.values()) {
             if (type.ordinal() == t) {
                 this.type = type;
+                return;
             }
         }
-
         throw new InvalidObjectTypeException();
     }
 
