@@ -19,10 +19,10 @@ enum Type {
 
 message Observation {                           //TODO: check between nested type or normal
 
-    string name = 1;
-    Type type = 2;
-    string identifier = 3;
-    google.protobuf.Timestamp date = 4;
+    Type type = 1;
+    string identifier = 2;
+    google.protobuf.Timestamp date = 3;
+    string name = 4;
     double latitude = 5;
     double longitude = 6;
 
