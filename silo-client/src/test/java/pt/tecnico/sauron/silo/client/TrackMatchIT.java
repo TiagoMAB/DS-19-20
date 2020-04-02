@@ -64,8 +64,8 @@ public class TrackMatchIT extends BaseIT {
     public void validObservationTest1() {
         List<Observation> responseObsList = frontend.trackMatch(trackMatchBuildRequest(type, partialIdentifier1)).getObservationsList();
         assertEquals(responseObsList.size(), 2);
-        assertEqualsObservation(responseObsList.get(0), observationsList1.get(0));
-        assertEqualsObservation(responseObsList.get(1), observationsList1.get(1));
+        assertEqualsObservation(observationsList1.get(0), responseObsList.get(0));
+        assertEqualsObservation(observationsList1.get(1), responseObsList.get(1));
     }
 
     @Test

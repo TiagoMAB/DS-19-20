@@ -69,7 +69,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
         try {
             for (int i = 0; i < ol.size(); i++) {
                 Observation o = ol.get(i);
-                LOGGER.info("Received Observation " + i + " Object type: " + o.getType() + " Object identifier: " + o.getIdentifier() + " Time: " + o.getDate() +
+                LOGGER.info("Received Observation " + i + " Object type: " + o.getType() + " Object identifier: " + o.getIdentifier() +
                         " Camera name: " + o.getName() + " Camera latitude: " + o.getLatitude() + " Camera longitude: " + o.getLongitude());
 
                 LOGGER.info("Type ordinal: " + o.getType().ordinal());
@@ -229,7 +229,18 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
     @Override
     public void ctrlClear(CtrlClearRequest request, StreamObserver<CtrlClearResponse> responseObserver) {
-        silo.clear();
+        CtrlClearResponse.Builder response = CtrlClearResponse.newBuilder();
+
+        try {
+            silo.clear();
+        }
+        catch (Exception e) {
+            LOGGER.info(e.getMessage());
+            responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
+        }
+
+        responseObserver.onNext(response.build());
+        responseObserver.onCompleted();
     }
 
     @Override

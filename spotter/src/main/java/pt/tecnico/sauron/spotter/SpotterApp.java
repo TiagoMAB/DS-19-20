@@ -60,6 +60,8 @@ public class SpotterApp {
 							// TODO: error check response type, all fields of response
 							TrackMatchResponse getResponse = frontend.trackMatch(TrackMatchRequest.newBuilder().setType(type).setPartialIdentifier(tokens[2]).build());
 
+							// TODO: order by identifier here
+
 							printObservationsList(getResponse.getObservationsList());
 						}
 						else {
