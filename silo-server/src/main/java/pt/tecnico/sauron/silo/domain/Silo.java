@@ -6,20 +6,38 @@ import java.util.*;
 
 public class Silo {
 
-    private HashMap<String, Object> objects = new HashMap<String, Object>();
     private TreeSet<Observation> observations = new TreeSet<Observation>();
     private HashMap<String, Camera> cameras = new HashMap<String, Camera>();
 
     public Silo() { }
 
-    public void report(List<Observation> ol) {
+    public synchronized void camJoin(String name, double latitude, double longitude) throws InvalidCameraNameException, InvalidCoordinateException {
+        if(cameras.containsKey(name)){
+            throw new InvalidCameraNameException("Invalid Name - Duplicate " + '"' + name +'"' );
+        }
+        else {
+            Camera camera = new Camera(name, latitude, longitude);
+            cameras.put(name, camera);
+        }
+    }
+
+    public synchronized Camera camInfo(String name) throws CameraNameNotFoundException {
+        if(cameras.containsKey(name)){
+            return cameras.get(name);
+        }
+        else{
+            throw new CameraNameNotFoundException("Camera name not found: " + name);
+        }
+    }
+
+    public synchronized void report(List<Observation> ol) {
         Iterator it = ol.iterator();
         while (it.hasNext()) {
             observations.add((Observation) it.next());
         }
     }
 
-    public Observation track(Object.Type t, String i) throws NoObservationFoundException {                                  //TODO: validation of identifier?
+    public synchronized Observation track(Object.Type t, String i) throws NoObservationFoundException {                                  //TODO: validation of identifier?
 
         //searches list of observations from the most recent to the oldest for a match in both type and identifier
         Iterator it = observations.descendingIterator();
@@ -36,25 +54,6 @@ public class Silo {
         throw new NoObservationFoundException(i);
     }
     
-    public Camera camInfo(String name) throws CameraNameNotFoundException {
-        if(cameras.containsKey(name)){
-            return cameras.get(name);
-        }
-        else{
-            throw new CameraNameNotFoundException("Camera name not found: " + name);
-        }
-    }
-
-    public void camJoin(String name, double latitude, double longitude) throws InvalidCameraNameException, InvalidCoordinateException {
-        if(cameras.containsKey(name)){
-            throw new InvalidCameraNameException("Invalid Name - Duplicate " + '"' + name +'"' );
-        }
-        else {
-            Camera camera = new Camera(name, latitude, longitude);
-            cameras.put(name, camera);
-        }
-    }
-    
     public List<Observation> trackMatch(Object.Type t, String s) throws NoObservationFoundException, InvalidPartialIdentifierException {
 
         List<Observation> list = new ArrayList<>();
@@ -64,18 +63,19 @@ public class Silo {
         String pattern = getPattern(s);
 
         //searches list of observations from the most recent to the oldest for a match in both type and identifier
-        Iterator it = observations.descendingIterator();
-        while (it.hasNext()) {
-            Observation observation = (Observation) it.next();
+        synchronized (this) {
+            Iterator it = observations.descendingIterator();
+            while (it.hasNext()) {
+                Observation observation = (Observation) it.next();
 
-            Object o = observation.getObject();
+                Object o = observation.getObject();
 
-            if (o.getType() == t && o.getIdentifier().matches(pattern) && !objects.contains(o)) {
-                list.add(observation);
-                objects.add(o);
+                if (o.getType() == t && o.getIdentifier().matches(pattern) && !objects.contains(o)) {
+                    list.add(observation);
+                    objects.add(o);
+                }
             }
         }
-
         if (list.isEmpty()) {
             throw new NoObservationFoundException(s);
         }
@@ -85,7 +85,7 @@ public class Silo {
 
     }
 
-    public List<Observation> trace(Object.Type t, String s) throws NoObservationFoundException {                            //TODO: validation of identifier?
+    public synchronized List<Observation> trace(Object.Type t, String s) throws NoObservationFoundException {                            //TODO: validation of identifier?
 
         List<Observation> list = new ArrayList<>();
 
@@ -141,7 +141,6 @@ public class Silo {
     }
 
     public void clear() {
-        objects.clear();
         observations.clear();
         cameras.clear();
     }

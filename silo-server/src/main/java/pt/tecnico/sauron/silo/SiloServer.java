@@ -4,6 +4,7 @@ import io.grpc.stub.StreamObserver;
 import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Object;
 import pt.tecnico.sauron.silo.domain.Silo;
+import pt.tecnico.sauron.silo.domain.exceptions.NoObservationFoundException;
 import pt.tecnico.sauron.silo.grpc.*;
 
 import java.sql.Timestamp;
@@ -122,6 +123,11 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
             responseObserver.onCompleted();
             LOGGER.info("Sent Observation(type: " + t + " | identifier: " + i + "ts: " + timestamp.toString());
         }
+        catch (NoObservationFoundException e) {
+            LOGGER.info(e.getMessage());
+            responseObserver.onNext(TrackResponse.getDefaultInstance());
+            responseObserver.onCompleted();
+        }
         catch (Exception e) {
             LOGGER.info(e.getMessage());
             responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
@@ -165,6 +171,11 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
                 LOGGER.info("Sent Observation(type: " + t + " | identifier: " + i + "ts: " + timestamp.toString());
 
             }
+        }
+        catch (NoObservationFoundException e) {
+            LOGGER.info(e.getMessage());
+            responseObserver.onNext(TrackMatchResponse.getDefaultInstance());
+            responseObserver.onCompleted();
         }
         catch (Exception e) {
             LOGGER.info(e.getMessage());
@@ -211,6 +222,11 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
                 response.addObservations(obs);
                 LOGGER.info("Sent Observation(type: " + t + " | identifier: " + i + "ts: " + timestamp.toString());
             }
+        }
+        catch (NoObservationFoundException e) {
+            LOGGER.info(e.getMessage());
+            responseObserver.onNext(TraceResponse.getDefaultInstance());
+            responseObserver.onCompleted();
         }
         catch (Exception e) {
             LOGGER.info(e.getMessage());
