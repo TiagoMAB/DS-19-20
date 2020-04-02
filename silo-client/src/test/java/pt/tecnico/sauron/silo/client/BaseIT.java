@@ -6,8 +6,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import pt.tecnico.sauron.silo.grpc.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
@@ -62,7 +60,7 @@ public class BaseIT {
 	protected ReportRequest reportBuildRequest(List<Observation> all_os) {
 		return ReportRequest.newBuilder().addAllObservations(all_os).build();
 	}
-	
+
 	protected void assertEqualsObservation(Observation obs1, Observation obs2) {
 		assertEquals(obs1.getType(), obs2.getType());
 		assertEquals(obs1.getIdentifier(), obs2.getIdentifier());

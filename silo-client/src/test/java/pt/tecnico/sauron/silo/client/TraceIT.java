@@ -6,6 +6,7 @@ import pt.tecnico.sauron.silo.grpc.*;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static io.grpc.Status.Code.INVALID_ARGUMENT;
@@ -87,8 +88,7 @@ public class TraceIT extends BaseIT {
 
     @Test
     public void observationNotFoundTest() {
-        assertEquals(INVALID_ARGUMENT,
-                assertThrows(StatusRuntimeException.class, () -> frontend.trace(traceBuildRequest(type, notFoundIdentifier))).getStatus()
-                        .getCode());
+        List<Observation> responseObsList = frontend.trace(traceBuildRequest(type, notFoundIdentifier)).getObservationsList();
+        assertEquals(Collections.emptyList(), responseObsList);
     }
 }

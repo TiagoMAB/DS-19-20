@@ -4,6 +4,8 @@ import io.grpc.StatusRuntimeException;
 import pt.tecnico.sauron.silo.client.SiloFrontend;
 import pt.tecnico.sauron.silo.grpc.*;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -54,17 +56,24 @@ public class SpotterApp {
 
 						if (tokens[2].contains("*")) {
 							TrackMatchResponse getResponse = frontend.trackMatch(TrackMatchRequest.newBuilder().setType(type).setPartialIdentifier(tokens[2]).build());
+							List<Observation> observationsList = getResponse.getObservationsList();
 
-							// TODO: order by identifier here
+							Collections.sort(observationsList, Comparator.comparing(Observation::getIdentifier));
 
 							printObservationsList(getResponse.getObservationsList());
 						}
 						else {
 							TrackResponse getResponse = frontend.track(TrackRequest.newBuilder().setType(type).setIdentifier(tokens[2]).build());
 							Observation o = getResponse.getObservation();
-							String t = o.getType() == Type.CAR ? "car" : "person";
 
-							System.out.println(t + "," + o.getIdentifier() + "," + o.getDate() + "," + o.getName() + "," + o.getLatitude() + "," + o.getLongitude());
+							if (o == Observation.getDefaultInstance()) {
+								System.out.println();
+							}
+							else {
+								String t = o.getType() == Type.CAR ? "car" : "person";
+								System.out.println(t + "," + o.getIdentifier() + "," + o.getDate() + "," + o.getName() + "," + o.getLatitude() + "," + o.getLongitude());
+							}
+
 							continue;
 						}
 					}
@@ -107,11 +116,15 @@ public class SpotterApp {
 	}
 
 	private static void printObservationsList(List<Observation> observationsList) {
-		for (int i = 0; i < observationsList.size(); i++) {
-			Observation o = observationsList.get(i);
-			String t = o.getType() == Type.CAR ? "car" : "person";
+		if (observationsList.size() == 0)
+			System.out.println();
+		else {
+			for (int i = 0; i < observationsList.size(); i++) {
+				Observation o = observationsList.get(i);
+				String t = o.getType() == Type.CAR ? "car" : "person";
 
-			System.out.println(t + "," + o.getIdentifier() + "," + o.getDate() + "," + o.getName() + "," + o.getLatitude() + "," + o.getLongitude());
+				System.out.println(t + "," + o.getIdentifier() + "," + o.getDate() + "," + o.getName() + "," + o.getLatitude() + "," + o.getLongitude());
+			}
 		}
 	}
 }
