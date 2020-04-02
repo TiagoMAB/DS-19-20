@@ -223,7 +223,12 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
     @Override
     public void ctrlPing(CtrlPingRequest request, StreamObserver<CtrlPingResponse> responseObserver) {
-        super.ctrlPing(request, responseObserver);
+
+        String input = request.getInputText();
+        String output = "Hello " + input + "!";
+        CtrlPingResponse response = CtrlPingResponse.newBuilder().setOutputText(output).build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
 
     @Override

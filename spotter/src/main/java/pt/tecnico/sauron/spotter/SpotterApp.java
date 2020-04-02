@@ -12,12 +12,11 @@ public class SpotterApp {
 	private static final String EXIT_CMD = "exit";
 	private static final String SPOT_CMD = "spot";
 	private static final String TRAIL_CMD = "trail";
+	private static final String PING_CMD = "ping";
+	private static final String CLEAR_CMD = "clear";
 	
 	public static void main(String[] args) {
 		System.out.println(SpotterApp.class.getSimpleName());
-
-		// TODO: use patterns for identifier checks
-		// String[] patterns = {"^\\d{2}[A-Z]{2}\\d{2}", "^[A-Z]{2}\\d{4}", "^\\d{4}[A-Z]{2}", "^\\d{2}[A-Z]{4}", "^[A-Z]{4}\\d{2}", "^[A-Z]{2}\\d{2}[A-Z]{2}"};
 
 		System.out.printf("Received %d arguments%n", args.length);
 		for (int i = 0; i < args.length; i++) {
@@ -35,8 +34,6 @@ public class SpotterApp {
 
 		try (SiloFrontend frontend = new SiloFrontend(host, port); Scanner scanner = new Scanner(System.in)) {
 			while (true) {
-				// TODO: maybe add a prompt message
-				// TODO: functions to abstract code
 				try {
 					String line = scanner.nextLine();
 					String[] tokens = line.split(" ");
@@ -55,9 +52,7 @@ public class SpotterApp {
 							continue;
 						}
 
-						// TODO: add error checking for identifier token with patterns
 						if (tokens[2].contains("*")) {
-							// TODO: error check response type, all fields of response
 							TrackMatchResponse getResponse = frontend.trackMatch(TrackMatchRequest.newBuilder().setType(type).setPartialIdentifier(tokens[2]).build());
 
 							// TODO: order by identifier here
@@ -65,7 +60,6 @@ public class SpotterApp {
 							printObservationsList(getResponse.getObservationsList());
 						}
 						else {
-							// TODO: error check response type, all fields of response
 							TrackResponse getResponse = frontend.track(TrackRequest.newBuilder().setType(type).setIdentifier(tokens[2]).build());
 							Observation o = getResponse.getObservation();
 							String t = o.getType() == Type.CAR ? "car" : "person";
@@ -85,9 +79,17 @@ public class SpotterApp {
 							continue;
 						}
 
-						// TODO: error check response type, all fields of response
 						TraceResponse getResponse = frontend.trace(TraceRequest.newBuilder().setType(type).setIdentifier(tokens[2]).build());
 						printObservationsList(getResponse.getObservationsList());
+					}
+
+					else if (tokens.length == 2 && PING_CMD.equals(tokens[0])) {
+						CtrlPingResponse getResponse = frontend.ctrlPing(CtrlPingRequest.newBuilder().setInputText(tokens[1]).build());
+						System.out.println(getResponse.getOutputText());
+					}
+
+					else if (tokens.length == 1 && CLEAR_CMD.equals(tokens[0])) {
+						frontend.ctrlClear(CtrlClearRequest.newBuilder().build());
 					}
 
 					else {
@@ -105,19 +107,11 @@ public class SpotterApp {
 	}
 
 	private static void printObservationsList(List<Observation> observationsList) {
-		for (int i = 0; i < observationsList.size(); i++) { // TODO: assumes list is ordered, error check order
+		for (int i = 0; i < observationsList.size(); i++) {
 			Observation o = observationsList.get(i);
 			String t = o.getType() == Type.CAR ? "car" : "person";
 
 			System.out.println(t + "," + o.getIdentifier() + "," + o.getDate() + "," + o.getName() + "," + o.getLatitude() + "," + o.getLongitude());
 		}
-	}
-
-	private static void checkObservation(Observation observation) {
-
-	}
-
-	private static boolean checkType(Observation observation, Type t) {
-		return observation.getType() == t;
 	}
 }

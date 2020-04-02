@@ -4,10 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import pt.tecnico.sauron.silo.grpc.Observation;
-import pt.tecnico.sauron.silo.grpc.TrackMatchRequest;
-import pt.tecnico.sauron.silo.grpc.TrackRequest;
-import pt.tecnico.sauron.silo.grpc.Type;
+import pt.tecnico.sauron.silo.grpc.*;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -43,12 +40,16 @@ public class BaseIT {
 		
 	}
 
-	protected TrackRequest trackBuildRequest(Type t, String name) {
-		return TrackRequest.newBuilder().setType(t).setIdentifier(name).build();
+	protected TrackRequest trackBuildRequest(Type t, String identifier) {
+		return TrackRequest.newBuilder().setType(t).setIdentifier(identifier).build();
 	}
 
 	protected TrackMatchRequest trackMatchBuildRequest(Type t, String partialIdentifier) {
 		return TrackMatchRequest.newBuilder().setType(t).setPartialIdentifier(partialIdentifier).build();
+	}
+
+	protected TraceRequest traceBuildRequest(Type t, String identifier) {
+		return TraceRequest.newBuilder().setType(t).setIdentifier(identifier).build();
 	}
 
 	protected void assertEqualsObservation(Observation obs1, Observation obs2) {
