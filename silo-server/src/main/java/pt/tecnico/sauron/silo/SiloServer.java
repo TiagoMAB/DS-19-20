@@ -61,6 +61,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
         List<pt.tecnico.sauron.silo.domain.Observation> observationsList = new ArrayList<pt.tecnico.sauron.silo.domain.Observation>();
 
         LOGGER.info("Received name: " + n);
+        LOGGER.info("Observations List: " + ol.toString());
         try {
             for (int i = 0; i < ol.size(); i++) {
                 Observation o = ol.get(i);

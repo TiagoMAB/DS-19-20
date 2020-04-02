@@ -24,7 +24,7 @@ public class Camera {
             this.name = name;
         }
         else {
-            throw new InvalidCameraNameException("Repeated name " + '"' + name +'"' );
+            throw new InvalidCameraNameException("Invalid name " + '"' + name +'"' );
         }
 
     }
