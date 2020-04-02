@@ -13,8 +13,9 @@ option java_multiple_files = true;            //TODO: check if needed
 //Types
 //
 enum Type {
-    CAR = 0;
-    PERSON = 1;
+    UNKNOWN = 0;
+    CAR = 1;
+    PERSON = 2;
 }
 
 message Observation {                           //TODO: check between nested type or normal
