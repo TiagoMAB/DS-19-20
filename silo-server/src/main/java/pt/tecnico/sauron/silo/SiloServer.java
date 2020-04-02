@@ -20,19 +20,32 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
     private final Silo silo = new Silo();
 
     @Override
-    public void camInfo(CamInfoRequest request, StreamObserver<CamInfoResponse> responseObserver) {
-        super.camInfo(request, responseObserver);
-    }
-
-    @Override
     public void camJoin(CamJoinRequest request, StreamObserver<CamJoinResponse> responseObserver) {
-        try{
+        try{        
             //check name
             LOGGER.info("camJoin()...");
             LOGGER.info("Received name: " + request.getName() + " received latitude: " + request.getLatitude() + " received longitude: " + request.getLongitude());
 
-            silo.registerCamera(request.getName(), request.getLatitude(), request.getLongitude());
+            silo.camJoin(request.getName(), request.getLatitude(), request.getLongitude());
             responseObserver.onNext(CamJoinResponse.newBuilder().build());
+            responseObserver.onCompleted();
+        }
+        catch (Exception e){
+            LOGGER.info(e.getMessage());
+            responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
+        }
+    }
+
+    @Override
+    public void camInfo(CamInfoRequest request, StreamObserver<CamInfoResponse> responseObserver) {
+        try {
+            //get camera Info
+            Camera camera = silo.camInfo(request.getName());
+            double latitude = camera.getLatitude();
+            double longitude = camera.getLongitude();
+            
+            responseObserver.onNext(CamInfoResponse.newBuilder().setLatitude(latitude).build());
+            responseObserver.onNext(CamInfoResponse.newBuilder().setLongitude(longitude).build());
             responseObserver.onCompleted();
         }
         catch (Exception e){
@@ -52,7 +65,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
         List<pt.tecnico.sauron.silo.domain.Observation> observationsList = new ArrayList<pt.tecnico.sauron.silo.domain.Observation>();
 
         LOGGER.info("Received name: " + n);
-
+        LOGGER.info("Observations List: " + ol.toString());
         try {
             for (int i = 0; i < ol.size(); i++) {
                 Observation o = ol.get(i);
@@ -67,7 +80,6 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
                 pt.tecnico.sauron.silo.domain.Observation observation = new pt.tecnico.sauron.silo.domain.Observation(obj, time, camera);
                 observationsList.add(observation);
             }
-
             silo.report(observationsList);
 
             responseObserver.onNext(ReportResponse.newBuilder().build());
