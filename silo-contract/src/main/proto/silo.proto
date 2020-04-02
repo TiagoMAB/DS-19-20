@@ -136,12 +136,15 @@ message TraceRequest {
 message TraceResponse {
 
     repeated Observation observations = 1;
+
 }
 
 //
 //ctrl_ping command request message
 //
 message CtrlPingRequest {
+
+    string inputText = 1;
 
 }
 
@@ -150,7 +153,7 @@ message CtrlPingRequest {
 //
 message CtrlPingResponse {
 
-    string state = 1;
+    string outputText = 1;
 
 }
 
