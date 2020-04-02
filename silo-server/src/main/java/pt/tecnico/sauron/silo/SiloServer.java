@@ -57,24 +57,24 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
     @Override
     public void report(ReportRequest request, StreamObserver<ReportResponse> responseObserver) {
         LOGGER.info("report()...");
-
-        //TODO: check the use of n, if camera already exists IMPORTANT
         String n = request.getName();
-        List<Observation> ol = request.getObservationsList();
 
-        List<pt.tecnico.sauron.silo.domain.Observation> observationsList = new ArrayList<pt.tecnico.sauron.silo.domain.Observation>();
-
-        LOGGER.info("Received name: " + n);
-        LOGGER.info("Observations List: " + ol.toString());
         try {
+            Camera camera = silo.camInfo(n);
+
+            List<Observation> ol = request.getObservationsList();
+
+            List<pt.tecnico.sauron.silo.domain.Observation> observationsList = new ArrayList<pt.tecnico.sauron.silo.domain.Observation>();
+
+            LOGGER.info("Received name: " + n);
+            LOGGER.info("Observations List: " + ol.toString());
+
             for (int i = 0; i < ol.size(); i++) {
                 Observation o = ol.get(i);
-                LOGGER.info("Received Observation " + i + " Object type: " + o.getType() + " Object identifier: " + o.getIdentifier() +
-                        " Camera name: " + o.getName() + " Camera latitude: " + o.getLatitude() + " Camera longitude: " + o.getLongitude());
+                LOGGER.info("Received Observation " + i + " Object type: " + o.getType() + " Object identifier: " + o.getIdentifier());
 
                 Object obj = new Object(o.getType().ordinal(), o.getIdentifier());
-                Timestamp time = new Timestamp(System.currentTimeMillis());   // TODO: check if time calculation is correct
-                Camera camera = new Camera(o.getName(), o.getLatitude(), o.getLongitude());
+                Timestamp time = new Timestamp(System.currentTimeMillis());
 
                 pt.tecnico.sauron.silo.domain.Observation observation = new pt.tecnico.sauron.silo.domain.Observation(obj, time, camera);
                 observationsList.add(observation);
