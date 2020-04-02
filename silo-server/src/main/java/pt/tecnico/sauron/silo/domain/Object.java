@@ -65,7 +65,6 @@ public class Object {
             this.identifier = identifier;
             return;
         }
-
         throw new InvalidIdentifierException(identifier);
 
     }
