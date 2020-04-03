@@ -69,6 +69,14 @@ public class BaseIT {
 		return CamJoinRequest.newBuilder().setName(name).setLatitude(latitude).setLongitude(longitude).build();
 	}
 
+	protected CamInfoRequest camInfoBuildRequest(String name) {
+		return CamInfoRequest.newBuilder().setName(name).build();
+	}
+
+	protected CamJoinRequest camJoinBuildRequest(String name, double latitude, double longitude) {
+		return CamJoinRequest.newBuilder().setName(name).setLatitude(latitude).setLongitude(longitude).build();
+	}
+
 	protected void assertEqualsObservation(Observation obs1, Observation obs2) {
 		assertEquals(obs1.getType(), obs2.getType());
 		assertEquals(obs1.getIdentifier(), obs2.getIdentifier());
