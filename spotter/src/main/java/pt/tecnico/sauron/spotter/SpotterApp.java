@@ -80,7 +80,7 @@ public class SpotterApp {
 								String t = o.getType() == Type.CAR ? "car" : "person";
 
 								// converts date into format for printing
-								LocalDateTime date = Instant.ofEpochSecond(o.getDate().getSeconds(), o.getDate().getNanos()).atZone(ZoneId.of("GMT+0")).toLocalDateTime();
+								LocalDateTime date = Instant.ofEpochSecond(o.getDate().getSeconds(), o.getDate().getNanos()).atZone(ZoneId.of("GMT+1")).toLocalDateTime();
 								System.out.println(t + "," + o.getIdentifier() + "," + date + "," + o.getName() + "," + o.getLatitude() + "," + o.getLongitude());
 							}
 
@@ -154,7 +154,7 @@ public class SpotterApp {
 				Observation o = observationsList.get(i);
 				String t = o.getType() == Type.CAR ? "car" : "person";
 
-				LocalDateTime date = Instant.ofEpochSecond(o.getDate().getSeconds(), o.getDate().getNanos()).atZone(ZoneId.of("GMT+0")).toLocalDateTime();
+				LocalDateTime date = Instant.ofEpochSecond(o.getDate().getSeconds(), o.getDate().getNanos()).atZone(ZoneId.of("GMT+1")).toLocalDateTime();
 				System.out.println(t + "," + o.getIdentifier() + "," + date + "," + o.getName() + "," + o.getLatitude() + "," + o.getLongitude());
 			}
 		}
