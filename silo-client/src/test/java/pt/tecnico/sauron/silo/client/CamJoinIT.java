@@ -49,21 +49,21 @@ public class CamJoinIT extends BaseIT {
     }
 
     @Test
-    public void invalidNameTest1() {
+    public void invalidName1Test() {
         assertEquals(INVALID_ARGUMENT,
                 assertThrows(StatusRuntimeException.class, () ->  frontend.camJoin(camJoinBuildRequest(invalidName1, validLatitude, validLongitude))).getStatus()
                         .getCode());
     }
 
     @Test
-    public void invalidNameTest2() {
+    public void invalidName2Test() {
         assertEquals(INVALID_ARGUMENT,
                 assertThrows(StatusRuntimeException.class, () ->  frontend.camJoin(camJoinBuildRequest(invalidName2, validLatitude, validLongitude))).getStatus()
                         .getCode());
     }
 
     @Test
-    public void invalidNameTest3() {
+    public void invalidName3Test() {
         assertEquals(INVALID_ARGUMENT,
                 assertThrows(StatusRuntimeException.class, () ->  frontend.camJoin(camJoinBuildRequest(invalidName3, validLatitude, validLongitude))).getStatus()
                         .getCode());
