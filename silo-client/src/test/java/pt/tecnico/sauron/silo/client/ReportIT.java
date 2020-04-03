@@ -19,9 +19,7 @@ public class ReportIT extends BaseIT {
 	private static String validCamName = "Trabalho";
 	private static String invalidCamNameLen = "Porta do Trabalho";
 	private static double latitude = 5;
-	private static double invalidLatitude = 5;
 	private static double longitude = 10;
-	private static double invalidLongitude = 10;
 	private static Type car = Type.CAR, person = Type.PERSON;
 	private static String carIdentifier = "AB1234", personIdentifier = "345678", invalidIdentifier="";
 	private static Timestamp t = new Timestamp(1000);
@@ -71,7 +69,6 @@ public class ReportIT extends BaseIT {
 	@Test
 	public void reportListObservationData() {
 		Observation carValidObs = Observation.newBuilder().setType(car).setIdentifier(carIdentifier).build();
-		
 		Observation personValidObs = Observation.newBuilder().setType(person).setIdentifier(personIdentifier).build();
 
 		List<Observation> allObs = new ArrayList<Observation>();
@@ -108,12 +105,11 @@ public class ReportIT extends BaseIT {
 
 	@Test
 	public void invalidCameraName() {
-		Observation invalidCameraLenObs = Observation.newBuilder().setType(car).setIdentifier(invalidIdentifier).build();
-
+		Observation carValidObs = Observation.newBuilder().setType(car).setIdentifier(carIdentifier).build();
 
 		assertEquals(INVALID_ARGUMENT,
 				assertThrows(StatusRuntimeException.class, () ->
-						frontend.report(reportBuildRequest(invalidCamNameLen, invalidCameraLenObs))).getStatus().getCode());
+						frontend.report(reportBuildRequest(invalidCamNameLen, carValidObs))).getStatus().getCode());
 	}
 
 	@Test
@@ -124,28 +120,5 @@ public class ReportIT extends BaseIT {
 				assertThrows(StatusRuntimeException.class, () ->
 						frontend.report(reportBuildRequest(validCamName, invalidTypeObs))).getStatus().getCode());
 		
-	}
-
-	@Test
-	public void invalidLatitude() {
-		Observation InvalidLatitudeObs = Observation.newBuilder().setType(car).setIdentifier(invalidIdentifier).build();
-
-		assertEquals(INVALID_ARGUMENT,
-				assertThrows(StatusRuntimeException.class, () ->
-						frontend.report(reportBuildRequest(validCamName, InvalidLatitudeObs))).getStatus().getCode());
-	}
-
-	@Test
-	public void invalidLongitude() {
-		Observation InvalidLongitudeObs = Observation.newBuilder().setType(car).setIdentifier(invalidIdentifier).build();
-		assertEquals(INVALID_ARGUMENT,
-				assertThrows(StatusRuntimeException.class, () ->
-						frontend.report(reportBuildRequest(validCamName, InvalidLongitudeObs))).getStatus().getCode());
-	}
-
-	@Test
-	public void emptyObservationsReport() {
-
-
 	}
 }

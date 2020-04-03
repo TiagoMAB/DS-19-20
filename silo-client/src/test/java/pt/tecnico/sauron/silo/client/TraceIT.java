@@ -24,15 +24,12 @@ public class TraceIT extends BaseIT {
     private static Type type = Type.PERSON;
     private static String identifier1 = "123456";
     private static String identifier2 = "345678";
-    private static Timestamp t = new Timestamp(1000);
-    private static com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(t.getTime()/1000).build();
 
     private static String notFoundIdentifier = "111111";
 
     private static Observation validObs1 = Observation.newBuilder().setType(type).setIdentifier(identifier1).build();
-    private static Observation validObs2 = Observation.newBuilder().setType(type).setIdentifier(identifier1).build();
-    private static Observation validObs3 = Observation.newBuilder().setType(type).setIdentifier(identifier2).build();
-    private static Observation invalidTypeObs = Observation.newBuilder().setIdentifier(identifier1).setName(name1).setLatitude(latitude1).setLongitude(longitude1).build();
+    private static Observation validObs2 = Observation.newBuilder().setType(type).setIdentifier(identifier2).build();
+    private static Observation invalidTypeObs = Observation.newBuilder().setIdentifier(identifier1).build();
 
     private static List<Observation> observationsList1 = new ArrayList<Observation>();
     private static List<Observation> observationsList2 = new ArrayList<Observation>();
@@ -43,14 +40,12 @@ public class TraceIT extends BaseIT {
         frontend.camJoin(CamJoinRequest.newBuilder().setName(name2).setLatitude(latitude2).setLongitude(longitude2).build());
 
         frontend.report(ReportRequest.newBuilder().setName(name1).addObservations(validObs1).build());
+        frontend.report(ReportRequest.newBuilder().setName(name2).addObservations(validObs1).build());
         frontend.report(ReportRequest.newBuilder().setName(name2).addObservations(validObs2).build());
-        frontend.report(ReportRequest.newBuilder().setName(name2).addObservations(validObs3).build());
 
-
-
-        observationsList1.add(validObs2);
         observationsList1.add(validObs1);
-        observationsList2.add(validObs3);
+        observationsList1.add(validObs1);
+        observationsList2.add(validObs2);
     }
 
     @AfterAll
@@ -72,6 +67,14 @@ public class TraceIT extends BaseIT {
         assertEquals(responseObsList.size(), 2);
         assertEqualsObservation(observationsList1.get(0), responseObsList.get(0));
         assertEqualsObservation(observationsList1.get(1), responseObsList.get(1));
+
+        assertEquals(name2, responseObsList.get(0).getName());
+        assertEquals(latitude2, responseObsList.get(0).getLatitude());
+        assertEquals(longitude2, responseObsList.get(0).getLongitude());
+
+        assertEquals(name1, responseObsList.get(1).getName());
+        assertEquals(latitude1, responseObsList.get(1).getLatitude());
+        assertEquals(longitude1, responseObsList.get(1).getLongitude());
     }
 
     @Test
@@ -79,6 +82,10 @@ public class TraceIT extends BaseIT {
         List<Observation> responseObsList = frontend.trace(traceBuildRequest(type, identifier2)).getObservationsList();
         assertEquals(responseObsList.size(), 1);
         assertEqualsObservation(responseObsList.get(0), observationsList2.get(0));
+
+        assertEquals(name2, responseObsList.get(0).getName());
+        assertEquals(latitude2, responseObsList.get(0).getLatitude());
+        assertEquals(longitude2, responseObsList.get(0).getLongitude());
     }
 
     @Test

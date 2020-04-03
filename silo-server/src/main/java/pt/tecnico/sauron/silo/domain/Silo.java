@@ -22,7 +22,7 @@ public class Silo {
     }
 
     public synchronized Camera camInfo(String name) throws CameraNameNotFoundException, InvalidCameraNameException {
-        if (name.isBlank() || name.length() < 3 || name.length() > 15 || !name.matches("[A-Za-z0-9]+") {
+        if (name.isBlank() || name.length() < 3 || name.length() > 15 || !name.matches("[A-Za-z0-9]+")) {
             throw new InvalidCameraNameException("Invalid Name - Duplicate " + '"' + name +'"' );
         }
 

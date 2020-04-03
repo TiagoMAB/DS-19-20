@@ -19,8 +19,6 @@ public class TrackIT extends BaseIT {
     private static double longitude = 10;
     private static Type type = Type.PERSON;
     private static String identifier = "123456";
-    private static Timestamp t = new Timestamp(1000);
-    private static com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(t.getTime()/1000).build();
 
     private static String notFoundIdentifier = "111111";
 

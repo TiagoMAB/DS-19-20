@@ -21,8 +21,6 @@ public class TrackMatchIT extends BaseIT {
     private static double longitude = 10;
     private static Type type = Type.CAR;
     private static String identifier1 = "AB1234", identifier2 = "AB34CD";
-    private static Timestamp t = new Timestamp(1000);
-    private static com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(t.getTime()/1000).build();
 
     private static Observation validObs1 = Observation.newBuilder().setType(type).setIdentifier(identifier1).build();
     private static Observation validObs2 = Observation.newBuilder().setType(type).setIdentifier(identifier2).build();
@@ -67,6 +65,14 @@ public class TrackMatchIT extends BaseIT {
         assertEquals(responseObsList.size(), 2);
         assertEqualsObservation(observationsList1.get(0), responseObsList.get(0));
         assertEqualsObservation(observationsList1.get(1), responseObsList.get(1));
+
+        assertEquals(name, responseObsList.get(0).getName());
+        assertEquals(latitude, responseObsList.get(0).getLatitude());
+        assertEquals(longitude, responseObsList.get(0).getLongitude());
+
+        assertEquals(name, responseObsList.get(1).getName());
+        assertEquals(latitude, responseObsList.get(1).getLatitude());
+        assertEquals(longitude, responseObsList.get(1).getLongitude());
     }
 
     @Test
@@ -74,6 +80,10 @@ public class TrackMatchIT extends BaseIT {
         List<Observation> responseObsList = frontend.trackMatch(trackMatchBuildRequest(type, partialIdentifier2)).getObservationsList();
         assertEquals(responseObsList.size(), 1);
         assertEqualsObservation(responseObsList.get(0), observationsList2.get(0));
+
+        assertEquals(name, responseObsList.get(0).getName());
+        assertEquals(latitude, responseObsList.get(0).getLatitude());
+        assertEquals(longitude, responseObsList.get(0).getLongitude());
     }
 
     @Test
