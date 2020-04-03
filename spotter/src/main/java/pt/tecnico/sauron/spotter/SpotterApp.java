@@ -21,6 +21,7 @@ public class SpotterApp {
 	private static final String TRAIL_CMD = "trail";
 	private static final String PING_CMD = "ping";
 	private static final String CLEAR_CMD = "clear";
+	private static final String HELP_CMD = "help";
 	
 	public static void main(String[] args) {
 		System.out.println(SpotterApp.class.getSimpleName());
@@ -106,6 +107,24 @@ public class SpotterApp {
 
 					else if (tokens.length == 1 && CLEAR_CMD.equals(tokens[0])) {
 						frontend.ctrlClear(CtrlClearRequest.newBuilder().build());
+					}
+
+					else if (tokens.length == 1 && HELP_CMD.equals(tokens[0])) {
+						System.out.println("Commands supported:");
+						System.out.println();
+						System.out.println("spot - Searches for most recent observation for each object with type and identifier that matches the given type and identifier or partial identifier. Examples:");
+						System.out.println("\"spot person 123456\" - Prints most recent observation of person with identifier 123456");
+						System.out.println("\"spot car AB*\" - Prints most recent observation of all cars with identifier starting with AB, ordered by identifier");
+						System.out.println();
+						System.out.println("trail - Searches for all observations (ordered by date) for object with type and identifier that matches the given type and identifier. Example:");
+						System.out.println("\"trail person 345678\" - Prints a list of observations of person with identifier 345678, ordered by date");
+						System.out.println();
+						System.out.println("exit - Closes the spotter client app");
+						System.out.println();
+						System.out.println("ping - Sends a message to the server and prints the message that the server replied with. Example:");
+						System.out.println("\"ping Test\" - Sends \"Test\" to the server and if successful, receives the message \"Message received by silo server: Test\"");
+						System.out.println();
+						System.out.println("clear - Sends a message to the server to clear its data structures");
 					}
 
 					else {

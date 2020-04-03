@@ -270,7 +270,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
     public void ctrlPing(CtrlPingRequest request, StreamObserver<CtrlPingResponse> responseObserver) {
 
         String input = request.getInputText();
-        String output = "Hello " + input + "!";
+        String output = "Message received by silo server: " + input;
         CtrlPingResponse response = CtrlPingResponse.newBuilder().setOutputText(output).build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
