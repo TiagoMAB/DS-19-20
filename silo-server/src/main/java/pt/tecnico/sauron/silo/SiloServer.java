@@ -86,12 +86,16 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
                 Observation o = ol.get(i);
                 LOGGER.info("Received Observation " + i + " Object type: " + o.getType() + " Object identifier: " + o.getIdentifier());
 
+                // Creates object and timestamp information for observation
                 Object obj = new Object(o.getType().ordinal(), o.getIdentifier());
                 Timestamp time = new Timestamp(System.currentTimeMillis());
 
+                // Creates observation with camera gotten from camInfo, object and timestamp from previous 2 lines
                 pt.tecnico.sauron.silo.domain.Observation observation = new pt.tecnico.sauron.silo.domain.Observation(obj, time, camera);
                 observationsList.add(observation);
             }
+
+            // Sends list of observations updated with time and camera information to silo
             silo.report(observationsList);
 
             LOGGER.info("report() successful... ");

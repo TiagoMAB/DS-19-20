@@ -36,6 +36,8 @@ public class Silo {
 
     public synchronized void report(List<Observation> ol) {
         Iterator it = ol.iterator();
+
+        // adds all  observations reported to the server list of observations
         while (it.hasNext()) {
             observations.add((Observation) it.next());
         }
