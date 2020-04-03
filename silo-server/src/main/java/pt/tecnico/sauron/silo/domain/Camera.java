@@ -54,4 +54,9 @@ public class Camera {
             throw new InvalidCoordinateException(longitude);
         }
     }
+
+    @Override
+    public String toString() {
+        return "Camera named \"" + this.name + "\" located at (" + this.latitude + " | " + this.longitude + ")";
+    }
 }

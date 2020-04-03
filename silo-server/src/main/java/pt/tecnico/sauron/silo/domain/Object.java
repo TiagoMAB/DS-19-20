@@ -27,7 +27,7 @@ public class Object {
     public void setType(int t) throws InvalidObjectTypeException {
         
         for (Type type: Type.values()) {
-            if (type.ordinal() == t) {
+            if (type.ordinal() == t - 1) {
                 this.type = type;
                 return;
             }
@@ -71,10 +71,15 @@ public class Object {
 
     public static Type findType(int t) throws InvalidObjectTypeException {
         for (Type type: Type.values()) {
-            if (type.ordinal() == t) {
+            if (type.ordinal() == t - 1) {
                 return type;
             }
         }
         throw new InvalidObjectTypeException();
+    }
+
+    @Override
+    public String toString() {
+        return "Object identified by \"" + this.identifier + "\" of type:" + this.type;
     }
 }

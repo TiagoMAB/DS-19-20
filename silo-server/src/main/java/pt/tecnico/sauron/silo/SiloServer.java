@@ -4,6 +4,7 @@ import io.grpc.stub.StreamObserver;
 import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Object;
 import pt.tecnico.sauron.silo.domain.Silo;
+import pt.tecnico.sauron.silo.domain.exceptions.NoObservationFoundException;
 import pt.tecnico.sauron.silo.grpc.*;
 
 import java.sql.Timestamp;
@@ -21,16 +22,21 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
     @Override
     public void camJoin(CamJoinRequest request, StreamObserver<CamJoinResponse> responseObserver) {
-        try{        
-            //check name
-            LOGGER.info("camJoin()...");
-            LOGGER.info("Received name: " + request.getName() + " received latitude: " + request.getLatitude() + " received longitude: " + request.getLongitude());
+        LOGGER.info("camJoin()...");
+        LOGGER.info("Arguments received... name: " + request.getName() + " | latitude: " + request.getLatitude() + " | longitude: " + request.getLongitude());
 
+        try{
+            //Creates camera in the server
             silo.camJoin(request.getName(), request.getLatitude(), request.getLongitude());
+
+            //Signals that the response was built successfully
             responseObserver.onNext(CamJoinResponse.newBuilder().build());
             responseObserver.onCompleted();
+
+            LOGGER.info("camJoin() successful... ");
         }
-        catch (Exception e){
+        catch (Exception e) {
+
             LOGGER.info(e.getMessage());
             responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
         }
@@ -38,17 +44,23 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
     @Override
     public void camInfo(CamInfoRequest request, StreamObserver<CamInfoResponse> responseObserver) {
+        LOGGER.info("camJoin()...");
+        LOGGER.info("Arguments received... name: " + request.getName());
+
         try {
-            //get camera Info
+            //Gets the camera information from the server
             Camera camera = silo.camInfo(request.getName());
             double latitude = camera.getLatitude();
             double longitude = camera.getLongitude();
-            
-            responseObserver.onNext(CamInfoResponse.newBuilder().setLatitude(latitude).build());
-            responseObserver.onNext(CamInfoResponse.newBuilder().setLongitude(longitude).build());
+
+            //Signals that the response was built successfully
+            responseObserver.onNext(CamInfoResponse.newBuilder().setLongitude(longitude).setLatitude(latitude).build());
             responseObserver.onCompleted();
+
+            LOGGER.info("camInfo() response... " + camera);
         }
-        catch (Exception e){
+        catch (Exception e) {
+
             LOGGER.info(e.getMessage());
             responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
         }
@@ -81,24 +93,27 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
             }
             silo.report(observationsList);
 
+            LOGGER.info("report() successful... ");
+
+            //Signals that the response was built successfully
             responseObserver.onNext(ReportResponse.newBuilder().build());
             responseObserver.onCompleted();
-            LOGGER.info("Sent response");
         }
         catch (Exception e) {
+
             LOGGER.info(e.getMessage());
             responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
         }
     }
 
     @Override
-    public void track(TrackRequest request, StreamObserver<TrackResponse> responseObserver) {               //TODO: Validation/Verification of arguments
+    public void track(TrackRequest request, StreamObserver<TrackResponse> responseObserver) {
         LOGGER.info("track()...");
 
         Type t = request.getType();
         String i = request.getIdentifier();
 
-        LOGGER.info("Received type: " + t + " | identifier: " + i);
+        LOGGER.info("Arguments received... type: " + t + " | identifier: " + i);
 
         try {
             //Calls track and gets the observation asked (if one was found)
@@ -117,12 +132,20 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
             //Converts internal representation of observation to a data transfer object
             Observation obs = Observation.newBuilder().setType(t).setIdentifier(i).setDate(ts).setName(name).setLatitude(latitude).setLongitude(longitude).build();
 
+            LOGGER.info("track() response... " + o);
+
             //Signals that the response was built successfully
             responseObserver.onNext(TrackResponse.newBuilder().setObservation(obs).build());
             responseObserver.onCompleted();
-            LOGGER.info("Sent Observation(type: " + t + " | identifier: " + i + "ts: " + timestamp.toString());
+        }
+        catch (NoObservationFoundException e) {
+
+            LOGGER.info("track() no observation was found... ");
+            responseObserver.onNext(TrackResponse.getDefaultInstance());
+            responseObserver.onCompleted();
         }
         catch (Exception e) {
+
             LOGGER.info(e.getMessage());
             responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
         }
@@ -136,7 +159,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
         Type t = request.getType();
         String i = request.getPartialIdentifier();
 
-        LOGGER.info("Received type: " + t + " | identifier: " + i);
+        LOGGER.info("Arguments received... type: " + t + " | partial identifier: " + i);
 
         List<pt.tecnico.sauron.silo.domain.Observation> observations = new ArrayList<>();
         TrackMatchResponse.Builder response = TrackMatchResponse.newBuilder();
@@ -162,18 +185,25 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
                 //Adds observation (dto) to list of observations to be sent
                 response.addObservations(obs);
-                LOGGER.info("Sent Observation(type: " + t + " | identifier: " + i + "ts: " + timestamp.toString());
+                LOGGER.info("trackMatch() response... " + o);
 
             }
+
+            //Signals that the response was built successfully
+            responseObserver.onNext(response.build());
+            responseObserver.onCompleted();
+        }
+        catch (NoObservationFoundException e) {
+
+            LOGGER.info("trackMatch() no observation was found... ");
+            responseObserver.onNext(TrackMatchResponse.getDefaultInstance());
+            responseObserver.onCompleted();
         }
         catch (Exception e) {
+
             LOGGER.info(e.getMessage());
             responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
         }
-
-        //Signals that the response was built successfully
-        responseObserver.onNext(response.build());
-        responseObserver.onCompleted();
     }
 
     @Override
@@ -183,7 +213,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
         Type t = request.getType();
         String i = request.getIdentifier();
 
-        LOGGER.info("Received type: " + t + " | identifier: " + i);
+        LOGGER.info("Arguments received... type: " + t + " | identifier: " + i);
 
         List<pt.tecnico.sauron.silo.domain.Observation> observations = new ArrayList<pt.tecnico.sauron.silo.domain.Observation>();
         TraceResponse.Builder response = TraceResponse.newBuilder();
@@ -209,16 +239,26 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
                 //Adds observation (dto) to list of observations to be sent
                 response.addObservations(obs);
-                LOGGER.info("Sent Observation(type: " + t + " | identifier: " + i + "ts: " + timestamp.toString());
+
+                LOGGER.info("trace() response... " + o);
             }
+
+            //Signals that the response was built successfully
+            responseObserver.onNext(response.build());
+            responseObserver.onCompleted();
+        }
+        catch (NoObservationFoundException e) {
+
+            LOGGER.info("trace() no observation was found... ");
+            responseObserver.onNext(TraceResponse.getDefaultInstance());
+            responseObserver.onCompleted();
         }
         catch (Exception e) {
+
             LOGGER.info(e.getMessage());
             responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
         }
 
-        responseObserver.onNext(response.build());
-        responseObserver.onCompleted();
     }
 
     @Override
@@ -237,14 +277,15 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
         try {
             silo.clear();
+
+            responseObserver.onNext(response.build());
+            responseObserver.onCompleted();
         }
         catch (Exception e) {
+
             LOGGER.info(e.getMessage());
             responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
         }
-
-        responseObserver.onNext(response.build());
-        responseObserver.onCompleted();
     }
 
     @Override
