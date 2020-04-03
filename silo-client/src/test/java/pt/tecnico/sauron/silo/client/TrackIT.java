@@ -63,8 +63,7 @@ public class TrackIT extends BaseIT {
 
     @Test
     public void observationNotFoundTest() {
-        assertEquals(INVALID_ARGUMENT,
-                assertThrows(StatusRuntimeException.class, () -> frontend.track(trackBuildRequest(type, notFoundIdentifier))).getStatus()
-                        .getCode());
+        Observation responseObs = frontend.track(trackBuildRequest(type, notFoundIdentifier)).getObservation();
+        assertEquals(Observation.getDefaultInstance(), responseObs);
     }
 }

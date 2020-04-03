@@ -11,6 +11,7 @@ import pt.tecnico.sauron.silo.grpc.*;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class TrackMatchIT extends BaseIT {
@@ -91,8 +92,7 @@ public class TrackMatchIT extends BaseIT {
 
     @Test
     public void observationNotFoundTest() {
-        assertEquals(INVALID_ARGUMENT,
-                assertThrows(StatusRuntimeException.class, () -> frontend.trackMatch(trackMatchBuildRequest(type, notFoundPartialIdentifier))).getStatus()
-                        .getCode());
+        List<Observation> responseObsList = frontend.trackMatch(trackMatchBuildRequest(type, notFoundPartialIdentifier)).getObservationsList();
+        assertEquals(Collections.emptyList(), responseObsList);
     }
 }
