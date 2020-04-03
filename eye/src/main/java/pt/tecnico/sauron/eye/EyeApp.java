@@ -60,6 +60,8 @@ public class EyeApp {
 					if (EXIT_CMD.equals(line))
 						return;
 					
+					line = line + '\n';
+					
 					// line processing
 					if(line.length() == 1){
 						//process car observation
@@ -67,8 +69,6 @@ public class EyeApp {
 
 						continue;
 					}
-
-					line = line + '\n';
 					
 					//remove \n
 					line = line.substring(0, line.length() - 1);
