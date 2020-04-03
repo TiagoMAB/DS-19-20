@@ -1,6 +1,5 @@
 package pt.tecnico.sauron.eye;
 
-import com.google.protobuf.Timestamp;
 import io.grpc.StatusRuntimeException;
 import pt.tecnico.sauron.silo.client.SiloFrontend;
 import pt.tecnico.sauron.silo.grpc.*;
@@ -17,7 +16,6 @@ public class EyeApp {
 	private static final String CAR = "car";
 	private static final String PERSON = "person";
 	public static List<String[]> observations_in = new ArrayList<>();
-	public static List<Observation> observations = new ArrayList<>();
 
 	public static void main(String[] args) {
 		System.out.println(EyeApp.class.getSimpleName());
@@ -30,8 +28,8 @@ public class EyeApp {
 		}
 
 		// check arguments
-		if (args.length < 2) {
-			System.out.println("Argument(s) missing!");
+		if (args.length != 5) {
+			System.out.println("Too few or too many arguments. Correct format is: $eye #address #port #camera_name #camera_latitude #camera_longitude");
 			return;
 		}
 
@@ -40,9 +38,6 @@ public class EyeApp {
 		final String camName = args[2];
 		final double latitude = Double.parseDouble(args[3]);
 		final double longitude = Double.parseDouble(args[4]);
-		long millis = System.currentTimeMillis();
-		Timestamp timestamp = Timestamp.newBuilder().setSeconds(millis / 1000)
-				.setNanos((int) ((millis % 1000) * 1000000)).build();
 		
 		try (SiloFrontend frontend = new SiloFrontend(host, port); Scanner scanner = new Scanner(System.in)) {
 			try {
@@ -50,6 +45,7 @@ public class EyeApp {
 					setName(camName).
 					setLatitude(latitude).
 					setLongitude(longitude).build());
+				System.out.println("Camera successfuly connected to server: " + camName);
 
 			} catch (StatusRuntimeException e) {
 				System.out.println("Error on joining camera to server: " + e.getStatus().getDescription());
@@ -68,7 +64,7 @@ public class EyeApp {
 					if(line.length() == 1){
 						//process car observation
 						//System.out.println("SEND LINE");
-						send(camName, timestamp, frontend, latitude, longitude);
+						send(camName, frontend);
 
 						continue;
 					}
@@ -83,37 +79,28 @@ public class EyeApp {
 					}
 						
 					String[] tokens = line.split(",");
+					if (tokens.length != 2) {
+						System.out.println("Invalid input format, aborting...");
+						return;
+					}
+
 					// sleep line
 					if(SLEEP_LINE.equals(tokens[0])){
 						Thread.sleep(Long.parseLong(tokens[1]));
 						//System.out.println("SLEEP");
 						continue;
 					}
-					
-					if(tokens[0].equals(CAR)){
-						//process car observation
-						//System.out.println("CAR LINE");
-						observations_in.add(new String[]{tokens[0], tokens[1]});
-						continue;
-					}
 
-					if(tokens[0].equals(PERSON)){
-						//process person observation
-						//System.out.println("PERSON LINE");
-						observations_in.add(new String[]{tokens[0], tokens[1]});
-					}
+					observations_in.add(new String[]{tokens[0], tokens[1]});
+
 				} catch (StatusRuntimeException e) {
 					System.out.println(e.getStatus().getDescription());
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
-			send(camName, timestamp, frontend, latitude, longitude);
+			send(camName, frontend);
 
-			/*
-			for (String[] observation : observations) {
-				System.out.println(Arrays.toString(observation));
-			}*/
 		}
 		catch (StatusRuntimeException e) {
 			System.out.println(e.getStatus().getDescription());
@@ -123,8 +110,8 @@ public class EyeApp {
 		}
 	}
 
-	private static void send(String camName, Timestamp timestamp, SiloFrontend frontend, double latitude, double longitude) {
-		ReportRequest.Builder req_builder = ReportRequest.newBuilder();
+	private static void send(String camName, SiloFrontend frontend) {
+		ReportRequest.Builder req_builder = ReportRequest.newBuilder().setName(camName);
 		for (String[] strings : observations_in) {
 			Type type = getType(strings);
 			String identifier = strings[1];
@@ -132,16 +119,20 @@ public class EyeApp {
 			Observation.Builder obs_builder = Observation.newBuilder();
 			obs_builder.setType(type);
 			obs_builder.setIdentifier(identifier);
-			obs_builder.setName(camName);
-			obs_builder.setDate(timestamp);
-			obs_builder.setLatitude(latitude);
-			obs_builder.setLongitude(longitude);
 			
 		 	Observation observation = obs_builder.build();
-			//send
-		 	frontend.report(req_builder.addObservations(observation).build());
+			req_builder.addObservations(observation);
 		}
-		
+
+		//send
+		try {
+			frontend.report(req_builder.build());
+			System.out.println("Observations registered successfully");
+		}
+		catch (StatusRuntimeException e) {
+			System.out.println(e.getStatus().getDescription());
+		}
+
 		//cleanuo after each send
 		observations_in.clear();
 	}
@@ -150,8 +141,7 @@ public class EyeApp {
 		if (observation[0].equals(CAR)) return Type.CAR;
 		else if (observation[0].equals(PERSON)) return Type.PERSON;
 		else {
-			System.out.println("Invalid type, must be either \"car\" or \"person\"");
-			return null;
+			return Type.UNKNOWN;
 		}
 	}
 }
