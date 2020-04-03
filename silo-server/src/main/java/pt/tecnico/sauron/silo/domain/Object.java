@@ -77,4 +77,9 @@ public class Object {
         }
         throw new InvalidObjectTypeException();
     }
+
+    @Override
+    public String toString() {
+        return "Object identified by \"" + this.identifier + "\" of type:" + this.type;
+    }
 }
