@@ -4,10 +4,15 @@ import io.grpc.StatusRuntimeException;
 import pt.tecnico.sauron.silo.client.SiloFrontend;
 import pt.tecnico.sauron.silo.grpc.*;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Scanner;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 
 public class SpotterApp {
 
@@ -56,8 +61,8 @@ public class SpotterApp {
 
 						if (tokens[2].contains("*")) {
 							TrackMatchResponse getResponse = frontend.trackMatch(TrackMatchRequest.newBuilder().setType(type).setPartialIdentifier(tokens[2]).build());
-							List<Observation> observationsList = getResponse.getObservationsList();
 
+							List<Observation> observationsList = new ArrayList<Observation>(getResponse.getObservationsList());
 							Collections.sort(observationsList, Comparator.comparing(Observation::getIdentifier));
 
 							printObservationsList(getResponse.getObservationsList());
@@ -71,7 +76,9 @@ public class SpotterApp {
 							}
 							else {
 								String t = o.getType() == Type.CAR ? "car" : "person";
-								System.out.println(t + "," + o.getIdentifier() + "," + o.getDate() + "," + o.getName() + "," + o.getLatitude() + "," + o.getLongitude());
+
+								LocalDateTime date = Instant.ofEpochSecond(o.getDate().getSeconds(), o.getDate().getNanos()).atZone(ZoneId.of("GMT+0")).toLocalDateTime();
+								System.out.println(t + "," + o.getIdentifier() + "," + date + "," + o.getName() + "," + o.getLatitude() + "," + o.getLongitude());
 							}
 
 							continue;
@@ -123,7 +130,8 @@ public class SpotterApp {
 				Observation o = observationsList.get(i);
 				String t = o.getType() == Type.CAR ? "car" : "person";
 
-				System.out.println(t + "," + o.getIdentifier() + "," + o.getDate() + "," + o.getName() + "," + o.getLatitude() + "," + o.getLongitude());
+				LocalDateTime date = Instant.ofEpochSecond(o.getDate().getSeconds(), o.getDate().getNanos()).atZone(ZoneId.of("GMT+0")).toLocalDateTime();
+				System.out.println(t + "," + o.getIdentifier() + "," + date + "," + o.getName() + "," + o.getLatitude() + "," + o.getLongitude());
 			}
 		}
 	}
