@@ -150,7 +150,7 @@ public class Silo {
         return pattern;
     }
 
-    public void clear() {
+    public synchronized void clear() {
         observations.clear();
         cameras.clear();
     }
