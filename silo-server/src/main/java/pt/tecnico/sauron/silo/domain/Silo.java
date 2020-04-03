@@ -13,7 +13,7 @@ public class Silo {
 
     public synchronized void camJoin(String name, double latitude, double longitude) throws InvalidCameraNameException, InvalidCoordinateException {
         if(cameras.containsKey(name)){
-            throw new InvalidCameraNameException("Invalid Name - Duplicate " + '"' + name +'"' );
+            throw new InvalidCameraNameException("Duplicate " + '"' + name +'"' );
         }
         else {
             Camera camera = new Camera(name, latitude, longitude);
@@ -21,7 +21,11 @@ public class Silo {
         }
     }
 
-    public synchronized Camera camInfo(String name) throws CameraNameNotFoundException {
+    public synchronized Camera camInfo(String name) throws CameraNameNotFoundException, InvalidCameraNameException {
+        if (name.isBlank() || name.length() < 3 || name.length() > 15 || !name.matches("[A-Za-z0-9]+") {
+            throw new InvalidCameraNameException("Invalid Name - Duplicate " + '"' + name +'"' );
+        }
+
         if(cameras.containsKey(name)){
             return cameras.get(name);
         }
@@ -111,13 +115,16 @@ public class Silo {
 
     public String getPattern(String s) throws InvalidPartialIdentifierException {
 
+        //doesn't allow blank partial identifiers
         if (s.isBlank()) {
             throw new InvalidPartialIdentifierException();
         }
 
+        //creates the pattern for search and creates a counter of * characters
         String pattern = "\\A";
         int anyCount = 0;
 
+       //cycle that transforms partial identifier to pattern and checks if there is any invalid character in the identifier
         for (int i = 0; i < s.length() && anyCount <= 1; i++) {
             if (s.charAt(i) == '*') {
                 pattern = pattern + ".*";
@@ -132,6 +139,7 @@ public class Silo {
 
         }
 
+        //if number of * characters is different than 1, the partial identifier is invalid
         if (anyCount != 1) {
             throw new InvalidPartialIdentifierException();
         }
