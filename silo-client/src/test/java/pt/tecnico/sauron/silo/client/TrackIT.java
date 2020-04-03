@@ -19,20 +19,18 @@ public class TrackIT extends BaseIT {
     private static double longitude = 10;
     private static Type type = Type.PERSON;
     private static String identifier = "123456";
-    private static Timestamp t = new Timestamp(1000);
-    private static com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(t.getTime()/1000).build();
 
     private static String notFoundIdentifier = "111111";
 
-    private static Observation validObs = Observation.newBuilder().setType(type).setIdentifier(identifier).setName(name).setLatitude(latitude).setLongitude(longitude).build();
-    private static Observation invalidTypeObs = Observation.newBuilder().setIdentifier(identifier).setName(name).setLatitude(latitude).setLongitude(longitude).build();
+    private static Observation validObs = Observation.newBuilder().setType(type).setIdentifier(identifier).build();
+    private static Observation invalidTypeObs = Observation.newBuilder().setIdentifier(identifier).build();
 
 
     @BeforeAll
     public static void oneTimeSetUp() {
         frontend.camJoin(CamJoinRequest.newBuilder().setName(name).setLatitude(latitude).setLongitude(longitude).build());
 
-        frontend.report(ReportRequest.newBuilder().addObservations(validObs).build());
+        frontend.report(ReportRequest.newBuilder().setName(name).addObservations(validObs).build());
     }
 
     @AfterAll
@@ -52,6 +50,9 @@ public class TrackIT extends BaseIT {
     public void validObservationTest() {
         Observation responseObs = frontend.track(trackBuildRequest(type, identifier)).getObservation();
         assertEqualsObservation(validObs, responseObs);
+        assertEquals(name, responseObs.getName());
+        assertEquals(latitude, responseObs.getLatitude());
+        assertEquals(longitude, responseObs.getLongitude());
     }
 
     @Test
