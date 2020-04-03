@@ -54,8 +54,9 @@ javac -version
 
 mvn -version
 ```
+### Installing
 
-### Installing - First Step
+#### Installing - First Step
 
 * To compile and install all modules (execute this command before executing all others):
 
@@ -65,7 +66,7 @@ mvn clean install -DskipTests
 
 The integration tests are skipped because they require the servers to be running.
 
-### Installing - Running Server
+#### Installing - Running Server
 
 * To start the server (assuming that you are in the current directory):
 
@@ -74,7 +75,7 @@ cd silo-server
 mvn clean compile exec:java
 ```
 
-### Installing - Running Tests
+#### Installing - Running Tests
 
 * To run the integration tests (assuming that you are in the current directory and the server is already running):
 
@@ -83,7 +84,7 @@ cd silo-server
 mvn verify
 ```
 
-### Installing - Running Eye
+#### Installing - Running Eye
 
 * To start the client eye (assuming that you are in the current directory):
 
@@ -106,7 +107,7 @@ Where #camera_longitude is the longitude of the camera reporting (example: 93) (
 ./eye/target/appassembler/bin/eye localhost 8080 Alameda 38.737000 -9.136596
 ```
 
-### Installing - Running Spotter
+#### Installing - Running Spotter
 
 * To start the client spotter (assuming that you are in the current directory):
 
