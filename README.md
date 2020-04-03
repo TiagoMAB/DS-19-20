@@ -119,7 +119,7 @@ Where #port is the port of the server (the defined value for this server is: 808
 
 * Usage example:
 ```
-./eye/target/appassembler/bin/eye localhost 8080
+./spotter/target/appassembler/bin/spotter localhost 8080
 ```
 
 ## Built With
