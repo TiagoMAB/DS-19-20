@@ -1,7 +1,6 @@
 package pt.tecnico.sauron.silo.domain;
 
-import pt.tecnico.sauron.silo.domain.exceptions.InvalidCameraNameException;
-import pt.tecnico.sauron.silo.domain.exceptions.InvalidCoordinateException;
+import pt.tecnico.sauron.silo.domain.exceptions.*;
 
 public class Camera {
 
