@@ -24,9 +24,9 @@ public class TrackMatchIT extends BaseIT {
     private static Timestamp t = new Timestamp(1000);
     private static com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(t.getTime()/1000).build();
 
-    private static Observation validObs1 = Observation.newBuilder().setType(type).setIdentifier(identifier1).setName(name).setLatitude(latitude).setLongitude(longitude).build();
-    private static Observation validObs2 = Observation.newBuilder().setType(type).setIdentifier(identifier2).setName(name).setLatitude(latitude).setLongitude(longitude).build();
-    private static Observation invalidTypeObs = Observation.newBuilder().setIdentifier(identifier1).setName(name).setLatitude(latitude).setLongitude(longitude).build();
+    private static Observation validObs1 = Observation.newBuilder().setType(type).setIdentifier(identifier1).build();
+    private static Observation validObs2 = Observation.newBuilder().setType(type).setIdentifier(identifier2).build();
+    private static Observation invalidTypeObs = Observation.newBuilder().setIdentifier(identifier1).build();
 
     private static String partialIdentifier1 = "AB*";
     private static String partialIdentifier2 = "*D";
@@ -40,8 +40,8 @@ public class TrackMatchIT extends BaseIT {
     public static void oneTimeSetUp() {
         frontend.camJoin(CamJoinRequest.newBuilder().setName(name).setLatitude(latitude).setLongitude(longitude).build());
 
-        frontend.report(ReportRequest.newBuilder().addObservations(validObs2).build());
-        frontend.report(ReportRequest.newBuilder().addObservations(validObs1).build());
+        frontend.report(ReportRequest.newBuilder().setName(name).addObservations(validObs2).build());
+        frontend.report(ReportRequest.newBuilder().setName(name).addObservations(validObs1).build());
 
         observationsList1.add(validObs1);
         observationsList1.add(validObs2);

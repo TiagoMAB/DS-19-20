@@ -29,9 +29,9 @@ public class TraceIT extends BaseIT {
 
     private static String notFoundIdentifier = "111111";
 
-    private static Observation validObs1 = Observation.newBuilder().setType(type).setIdentifier(identifier1).setName(name1).setLatitude(latitude1).setLongitude(longitude1).build();
-    private static Observation validObs2 = Observation.newBuilder().setType(type).setIdentifier(identifier1).setName(name2).setLatitude(latitude2).setLongitude(longitude2).build();
-    private static Observation validObs3 = Observation.newBuilder().setType(type).setIdentifier(identifier2).setName(name2).setLatitude(latitude2).setLongitude(longitude2).build();
+    private static Observation validObs1 = Observation.newBuilder().setType(type).setIdentifier(identifier1).build();
+    private static Observation validObs2 = Observation.newBuilder().setType(type).setIdentifier(identifier1).build();
+    private static Observation validObs3 = Observation.newBuilder().setType(type).setIdentifier(identifier2).build();
     private static Observation invalidTypeObs = Observation.newBuilder().setIdentifier(identifier1).setName(name1).setLatitude(latitude1).setLongitude(longitude1).build();
 
     private static List<Observation> observationsList1 = new ArrayList<Observation>();
@@ -42,9 +42,11 @@ public class TraceIT extends BaseIT {
         frontend.camJoin(CamJoinRequest.newBuilder().setName(name1).setLatitude(latitude1).setLongitude(longitude1).build());
         frontend.camJoin(CamJoinRequest.newBuilder().setName(name2).setLatitude(latitude2).setLongitude(longitude2).build());
 
-        frontend.report(ReportRequest.newBuilder().addObservations(validObs1).build());
-        frontend.report(ReportRequest.newBuilder().addObservations(validObs2).build());
-        frontend.report(ReportRequest.newBuilder().addObservations(validObs3).build());
+        frontend.report(ReportRequest.newBuilder().setName(name1).addObservations(validObs1).build());
+        frontend.report(ReportRequest.newBuilder().setName(name2).addObservations(validObs2).build());
+        frontend.report(ReportRequest.newBuilder().setName(name2).addObservations(validObs3).build());
+
+
 
         observationsList1.add(validObs2);
         observationsList1.add(validObs1);

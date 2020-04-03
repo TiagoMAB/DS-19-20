@@ -60,6 +60,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
         String n = request.getName();
 
         try {
+            // Calls camInfo to get camera information for camera with name n, throws exception if camera with that name doesn't exist
             Camera camera = silo.camInfo(n);
 
             List<Observation> ol = request.getObservationsList();
