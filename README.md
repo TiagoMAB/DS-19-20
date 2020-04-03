@@ -55,7 +55,7 @@ javac -version
 mvn -version
 ```
 
-### Installing
+### Installing - First Step
 
 * To compile and install all modules (execute this command before executing all others):
 
