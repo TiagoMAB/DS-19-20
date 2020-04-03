@@ -16,7 +16,7 @@ public class CamJoinIT extends BaseIT {
     private static String validName2 = "AlamedaIST";
     private static double validLatitude = 38.737000;
     private static double validLongitude = -9.136596;
-    private static CamInfoResponse validresponse = CamInfoResponse.newBuilder().setLatitude(validLatitude).setLongitude(validLongitude).build();
+    private static CamInfoResponse validResponse = CamInfoResponse.newBuilder().setLatitude(validLatitude).setLongitude(validLongitude).build();
 
     private static String invalidName1 = "AL";
     private static String invalidName2 = "AlamedaCameraPlus";
@@ -30,7 +30,7 @@ public class CamJoinIT extends BaseIT {
     }
 
     @AfterAll
-    public static void oneTimeTearDown() { }
+    public static void oneTimeTearDown() { frontend.ctrlClear(CtrlClearRequest.newBuilder().build()); }
 
     @BeforeEach
     public void setUp() {
@@ -41,11 +41,11 @@ public class CamJoinIT extends BaseIT {
     }
 
     @Test
-    public void validCameraTest() {
+    public void validCameraJoinTest() {
         frontend.camJoin(camJoinBuildRequest(validName, validLatitude, validLongitude));
         CamInfoResponse response = frontend.camInfo(camInfoBuildRequest(validName));
 
-        assertEquals(response, validresponse);
+        assertEquals(response, validResponse);
     }
 
     @Test
@@ -85,8 +85,13 @@ public class CamJoinIT extends BaseIT {
 
     @Test
     public void duplicateCameraTest() {
+        frontend.camJoin(camJoinBuildRequest(validName2, validLatitude, validLongitude));
+        CamInfoResponse response = frontend.camInfo(camInfoBuildRequest(validName2));
+
+        assertEquals(response, validResponse);
+
         assertEquals(INVALID_ARGUMENT,
-                assertThrows(StatusRuntimeException.class, () ->  frontend.camJoin(camJoinBuildRequest(validName, validLatitude, validLongitude))).getStatus()
+                assertThrows(StatusRuntimeException.class, () ->  frontend.camJoin(camJoinBuildRequest(validName2, validLatitude, validLongitude))).getStatus()
                         .getCode());
     }
 }
