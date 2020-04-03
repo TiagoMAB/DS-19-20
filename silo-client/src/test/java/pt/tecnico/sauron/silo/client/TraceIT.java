@@ -62,7 +62,7 @@ public class TraceIT extends BaseIT {
     }
 
     @Test
-    public void validObservationTest1() {
+    public void validObservation1Test() {
         List<Observation> responseObsList = frontend.trace(traceBuildRequest(type, identifier1)).getObservationsList();
         assertEquals(responseObsList.size(), 2);
         assertEqualsObservation(observationsList1.get(0), responseObsList.get(0));
@@ -78,7 +78,7 @@ public class TraceIT extends BaseIT {
     }
 
     @Test
-    public void validObservationTest2() {
+    public void validObservation2Test() {
         List<Observation> responseObsList = frontend.trace(traceBuildRequest(type, identifier2)).getObservationsList();
         assertEquals(responseObsList.size(), 1);
         assertEqualsObservation(responseObsList.get(0), observationsList2.get(0));

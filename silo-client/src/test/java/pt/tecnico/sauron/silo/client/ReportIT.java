@@ -52,7 +52,7 @@ public class ReportIT extends BaseIT {
 	// tests 
 	
 	@Test
-	public void validReportObservationData() {
+	public void validReportObservationDataTest() {
 		Observation carValidObs = Observation.newBuilder().setType(car).setIdentifier(carIdentifier).build();
 		
 		//report observation
@@ -67,7 +67,7 @@ public class ReportIT extends BaseIT {
 	}
 	
 	@Test
-	public void reportListObservationData() {
+	public void reportListObservationDataTest() {
 		Observation carValidObs = Observation.newBuilder().setType(car).setIdentifier(carIdentifier).build();
 		Observation personValidObs = Observation.newBuilder().setType(person).setIdentifier(personIdentifier).build();
 
@@ -95,7 +95,7 @@ public class ReportIT extends BaseIT {
 	
 
 	@Test
-	public void invalidIdentifier() {
+	public void invalidIdentifierTest() {
 		Observation invalidIdentifierObs = Observation.newBuilder().setType(car).setIdentifier(invalidIdentifier).build();
 
 		assertEquals(INVALID_ARGUMENT,
@@ -104,7 +104,7 @@ public class ReportIT extends BaseIT {
 	}
 
 	@Test
-	public void invalidCameraName() {
+	public void invalidCameraNameTest() {
 		Observation carValidObs = Observation.newBuilder().setType(car).setIdentifier(carIdentifier).build();
 
 		assertEquals(INVALID_ARGUMENT,
@@ -113,7 +113,7 @@ public class ReportIT extends BaseIT {
 	}
 
 	@Test
-	public void invalidType() {
+	public void invalidTypeTest() {
 		Observation invalidTypeObs = Observation.newBuilder().setIdentifier(carIdentifier).build();
 
 		assertEquals(INVALID_ARGUMENT,
