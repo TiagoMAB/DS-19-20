@@ -31,9 +31,9 @@ public class SiloClientApp {
 		}
 
 		final String host = args[0];
-		final int port = Integer.parseInt(args[1]);
-
-		try (SiloFrontend frontend = new SiloFrontend(host, port); Scanner scanner = new Scanner(System.in)) {
+		final String port = args[1];
+/*
+		try (SiloFrontend frontend = new SiloFrontend(host, port, 0); Scanner scanner = new Scanner(System.in)) {
 			while (true) {
 				System.out.print("> Set the name (`exit` to quit)\n> ");
 				try {
@@ -99,6 +99,6 @@ public class SiloClientApp {
 		} finally {
 			System.out.println("> Closing");
 		}
-	}
-	
+*/	}
+
 }

@@ -3,17 +3,41 @@ package pt.tecnico.sauron.silo.client;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import pt.tecnico.sauron.silo.grpc.*;
+import pt.ulisboa.tecnico.sdis.zk.ZKNaming;
+import pt.ulisboa.tecnico.sdis.zk.ZKNamingException;
+import pt.ulisboa.tecnico.sdis.zk.ZKRecord;
+
+import java.util.Random;
+import java.util.ArrayList;
 
 public class SiloFrontend implements AutoCloseable {
 
-    private final ManagedChannel channel;
-    private final SiloGrpc.SiloBlockingStub stub;
+    private ManagedChannel channel;
+    private SiloGrpc.SiloBlockingStub stub;
+    private String path = "/grpc/sauron/silo";
 
-    public SiloFrontend(String host, int port) {
+    public SiloFrontend(String host, String port, int instance) throws ZKNamingException {
 
-        this.channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
+        ZKNaming zkNaming = new ZKNaming(host,port);
+        ZKRecord record;
+
+        //if instance not provided chooses random instance, otherwise finds instance provided
+        if (instance == 0) {
+
+            //gets list of instances
+            ArrayList<ZKRecord> records = (ArrayList) zkNaming.listRecords(path);       //TODO: check if we can do this downcast
+
+            //chooses random instance
+            Random rand = new Random();
+            record = records.get(rand.nextInt(records.size()));
+        } else {
+            record = zkNaming.lookup(path + "/" + instance);
+        }
+
+        String target = record.getURI();
+
+        this.channel = ManagedChannelBuilder.forTarget(target).usePlaintext().build();
         this.stub = SiloGrpc.newBlockingStub(channel);
-
     }
 
     public CamJoinResponse camJoin(CamJoinRequest request) {

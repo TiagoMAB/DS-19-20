@@ -26,16 +26,21 @@ public class SpotterApp {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
 		}
 
-		if (args.length < 2) {
+		if (args.length < 3) {
 			System.out.println("Argument(s) missing!");
 			System.out.printf("Usage: java %s host server host port %n", SpotterApp.class.getName());
 			return;
 		}
 
 		final String host = args[0];
-		final int port = Integer.parseInt(args[1]);
+		final String port = args[1];
+		int instance = 0;				//TODO: check if final
 
-		try (SiloFrontend frontend = new SiloFrontend(host, port); Scanner scanner = new Scanner(System.in)) {
+		if (args.length == 3) {
+			instance = Integer.parseInt(args[2]);
+		}
+
+		try (SiloFrontend frontend = new SiloFrontend(host, port, instance); Scanner scanner = new Scanner(System.in)) {
 			while (true) {
 				try {
 					String line = scanner.nextLine();
@@ -141,7 +146,11 @@ public class SpotterApp {
 				}
 			}
 
-		} finally {
+		}
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		finally {
 			System.out.println("> Closing");
 		}
 	}
