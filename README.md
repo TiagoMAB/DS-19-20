@@ -34,7 +34,7 @@ This change is important for code dependency management, to make sure that your 
 | T6       | test T3                       | _Daniel Pereira_       |
 
 
-## Getting Started
+## Getting Started (Initialization and configuration guide)
 
 The overall system is composed of multiple modules.
 The main server is the _silo_.
@@ -47,17 +47,18 @@ See the [project statement](https://github.com/tecnico-distsys/Sauron/blob/maste
 Java Developer Kit 11 is required running on Linux, Windows or Mac.
 Maven 3 is also required.
 
-To confirm that you have them installed, open a terminal and type:
+* To confirm that you have them installed, open a terminal and type:
 
 ```
 javac -version
 
 mvn -version
 ```
-
 ### Installing
 
-To compile and install all modules:
+#### Installing - First Step
+
+* To compile and install all modules (execute this command before executing all others):
 
 ```
 mvn clean install -DskipTests
@@ -65,6 +66,62 @@ mvn clean install -DskipTests
 
 The integration tests are skipped because they require the servers to be running.
 
+#### Installing - Running Server
+
+* To start the server (assuming that you are in the current directory):
+
+```
+cd silo-server
+mvn clean compile exec:java
+```
+
+#### Installing - Running Tests
+
+* To run the integration tests (assuming that you are in the current directory and the server is already running):
+
+```
+cd silo-server
+mvn verify
+```
+
+#### Installing - Running Eye
+
+* To start the client eye (assuming that you are in the current directory):
+
+```
+./eye/target/appassembler/bin/eye #address #port #camera_name #camera_latitude #camera_longitude
+```
+
+Where #address is the address of the server (the predefined value for this server is: localhost)
+
+Where #port is the port of the server (the predefined value for this server is: 8080)
+
+Where #camera_name is the name of the camera reporting (example: Tagus)
+
+Where #camera_latitude is the latitude of the camera reporting (example: 23) (must be a value between -90 e 90)
+
+Where #camera_longitude is the longitude of the camera reporting (example: 93) (must be a value between -180 e 180)
+
+* Usage example:
+```
+./eye/target/appassembler/bin/eye localhost 8080 Alameda 38.737000 -9.136596
+```
+
+#### Installing - Running Spotter
+
+* To start the client spotter (assuming that you are in the current directory):
+
+```
+./spotter/target/appassembler/bin/spotter #address #port
+```
+
+Where #address is the address of the server (the defined value for this server is: localhost)
+Where #port is the port of the server (the defined value for this server is: 8080)
+
+* Usage example:
+```
+./spotter/target/appassembler/bin/spotter localhost 8080
+```
 
 ## Built With
 

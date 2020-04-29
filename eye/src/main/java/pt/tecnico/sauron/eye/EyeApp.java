@@ -55,25 +55,25 @@ public class EyeApp {
 			while (scanner.hasNextLine()) {
 				try {
 					line = scanner.nextLine();
-					line = line + '\n';
+
 					// exit
 					if (EXIT_CMD.equals(line))
 						return;
 					
+					line = line + '\n';
+					
 					// line processing
 					if(line.length() == 1){
 						//process car observation
-						//System.out.println("SEND LINE");
 						send(camName, frontend);
 
 						continue;
 					}
-
+					
 					//remove \n
 					line = line.substring(0, line.length() - 1);
 					// comment
 					if(COMMENT_LINE == line.charAt(0)){
-						//System.out.println("COMMENT LINE");
 						continue;
 
 					}
@@ -87,7 +87,6 @@ public class EyeApp {
 					// sleep line
 					if(SLEEP_LINE.equals(tokens[0])){
 						Thread.sleep(Long.parseLong(tokens[1]));
-						//System.out.println("SLEEP");
 						continue;
 					}
 
@@ -133,7 +132,7 @@ public class EyeApp {
 			System.out.println(e.getStatus().getDescription());
 		}
 
-		//cleanuo after each send
+		//cleanup after each send
 		observations_in.clear();
 	}
 
