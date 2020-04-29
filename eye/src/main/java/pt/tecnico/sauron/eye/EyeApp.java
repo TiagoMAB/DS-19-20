@@ -4,6 +4,8 @@ import io.grpc.StatusRuntimeException;
 import pt.tecnico.sauron.silo.client.SiloFrontend;
 import pt.tecnico.sauron.silo.grpc.*;
 import pt.tecnico.sauron.silo.grpc.Observation;
+import pt.ulisboa.tecnico.sdis.zk.*;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,18 +30,23 @@ public class EyeApp {
 		}
 
 		// check arguments
-		if (args.length != 5) {
+		if (args.length != 5 && args.length != 6) {
 			System.out.println("Too few or too many arguments. Correct format is: $eye #address #port #camera_name #camera_latitude #camera_longitude");
 			return;
 		}
 
-		final String host = args[0];
-		final int port = Integer.parseInt(args[1]);
+		final String zkhost = args[0];
+		final String zkport = args[1];
 		final String camName = args[2];
 		final double latitude = Double.parseDouble(args[3]);
 		final double longitude = Double.parseDouble(args[4]);
-		
-		try (SiloFrontend frontend = new SiloFrontend(host, port); Scanner scanner = new Scanner(System.in)) {
+		int instance = 0;				//TODO: check if final
+
+		if (args.length == 6) {
+			instance = Integer.parseInt(args[5]);
+		}
+
+		try (SiloFrontend frontend = new SiloFrontend(zkhost, zkport, instance); Scanner scanner = new Scanner(System.in)) {
 			try {
 				CamJoinResponse getResponse = frontend.camJoin(CamJoinRequest.newBuilder().
 					setName(camName).
@@ -103,6 +110,9 @@ public class EyeApp {
 		}
 		catch (StatusRuntimeException e) {
 			System.out.println(e.getStatus().getDescription());
+		}
+		catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
 		finally {
 			System.out.println("> Closing");

@@ -3,6 +3,8 @@ package pt.tecnico.sauron.silo;
 import io.grpc.BindableService;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import pt.ulisboa.tecnico.sdis.zk.ZKNaming;
+import pt.ulisboa.tecnico.sdis.zk.ZKNamingException;
 
 import java.io.IOException;
 import java.util.Scanner;
@@ -25,28 +27,60 @@ public class SiloServerApp {
 			return;
 		}
 
-		final int port = Integer.parseInt(args[0]);
+		final String zooHost = args[0];
+		final String zooPort = args[1];
+		final String host = args[2];
+		final String port = args[3];
+		final String path = args[4];
 		final BindableService impl = new SiloServer();
 
-		// Create a new server to listen on port.
-		Server server = ServerBuilder.forPort(port).addService(impl).build();
+		ZKNaming zkNaming = null;
 
-		// Start the server.
-		server.start();
+		try {
 
-		// Server threads are running in the background.
-		System.out.println("Server started");
+			zkNaming = new ZKNaming(zooHost, zooPort);
 
-		// Create new thread where we wait for the user input.
-		new Thread(() -> {
-			System.out.println("<Press enter to shutdown>");
-			new Scanner(System.in).nextLine();
+			zkNaming.rebind(path, host, port);
 
-			server.shutdown();
-		}).start();
+			// Create a new server to listen on port
+			Server server = ServerBuilder.forPort(Integer.parseInt(port)).addService(impl).build();
 
-		// Do not exit the main thread. Wait until server is terminated.
-		server.awaitTermination();
+			// Start the server
+			server.start();
+
+			// Server threads are running in the background.
+			System.out.println("Server started");
+
+			//TODO: check if Thread needed
+
+			// Create new thread where we wait for the user input.
+			new Thread(() -> {
+				System.out.println("<Press enter to shutdown>");
+				new Scanner(System.in).nextLine();
+
+				server.shutdown();
+			}).start();
+
+			// Do not exit the main thread. Wait until server is terminated.
+			server.awaitTermination();
+		}
+		//TODO: check messy code
+		catch (ZKNamingException e) {
+			//TODO: handle exception
+			System.out.println(e.getMessage());
+		}
+		finally {
+			if (zkNaming != null) {
+				try {
+					zkNaming.unbind(path, host, String.valueOf(port));
+				}
+				catch (ZKNamingException e) {
+					//TODO: handle exception
+					System.out.println(e.getMessage());
+				}
+			}
+		}
+
 	}
 	
 }

@@ -41,6 +41,11 @@
 			<version>${version.junit}</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>pt.ulisboa.tecnico.sdis</groupId>
+			<artifactId>zk-naming</artifactId>
+			<version>1.0.3</version>
+		</dependency>
 	</dependencies>
 
 	<build>
