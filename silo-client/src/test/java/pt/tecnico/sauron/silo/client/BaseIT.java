@@ -32,8 +32,13 @@ public class BaseIT {
 		}
 		
 		final String host = testProps.getProperty("server.host");
-		final int port = Integer.parseInt(testProps.getProperty("server.port"));
-		frontend = new SiloFrontend(host, port);
+		final String port = testProps.getProperty("server.port");
+		try {
+			frontend = new SiloFrontend(host, port, 0);
+		}
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	@AfterAll
