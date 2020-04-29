@@ -55,10 +55,12 @@ public class EyeApp {
 			while (scanner.hasNextLine()) {
 				try {
 					line = scanner.nextLine();
-					line = line + '\n';
+
 					// exit
 					if (EXIT_CMD.equals(line))
 						return;
+					
+					line = line + '\n';
 					
 					// line processing
 					if(line.length() == 1){
@@ -67,7 +69,7 @@ public class EyeApp {
 
 						continue;
 					}
-
+					
 					//remove \n
 					line = line.substring(0, line.length() - 1);
 					// comment

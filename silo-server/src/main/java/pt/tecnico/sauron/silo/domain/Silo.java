@@ -63,7 +63,7 @@ public class Silo {
     public List<Observation> trackMatch(Object.Type t, String s) throws NoObservationFoundException, InvalidPartialIdentifierException {
 
         List<Observation> list = new ArrayList<>();
-        HashSet<Object> objects = new HashSet<>();
+        HashSet<String> identifiers = new HashSet<>();
 
         //evaluates identifier provided and returns a valid pattern for search in data
         String pattern = getPattern(s);
@@ -76,9 +76,9 @@ public class Silo {
 
                 Object o = observation.getObject();
 
-                if (o.getType() == t && o.getIdentifier().matches(pattern) && !objects.contains(o)) {
+                if (o.getType() == t && o.getIdentifier().matches(pattern) && !identifiers.contains(o.getIdentifier())) {
                     list.add(observation);
-                    objects.add(o);
+                    identifiers.add(o.getIdentifier());
                 }
             }
         }
