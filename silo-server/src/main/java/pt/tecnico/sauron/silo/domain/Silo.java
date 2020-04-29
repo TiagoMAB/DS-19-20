@@ -13,7 +13,8 @@ public class Silo {
 
     public synchronized void camJoin(String name, double latitude, double longitude) throws InvalidCameraNameException, InvalidCoordinateException {
         if(cameras.containsKey(name)){
-            throw new InvalidCameraNameException("Duplicate " + '"' + name +'"' );
+            if(cameras.get(name).getLatitude() != latitude || cameras.get(name).getLongitude() != longitude)
+                throw new InvalidCameraNameException("Duplicate " + '"' + name +'"' );
         }
         else {
             Camera camera = new Camera(name, latitude, longitude);
