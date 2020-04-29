@@ -7,10 +7,21 @@ import pt.ulisboa.tecnico.sdis.zk.ZKNaming;
 import pt.ulisboa.tecnico.sdis.zk.ZKNamingException;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.util.Date;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
+
+class GossipProtocol extends TimerTask {				//TODO: check if static inside class or this way
+
+	public void run() {
+		System.out.println("Print " );
+	}
+}
 
 public class SiloServerApp {
-	
+
 	public static void main(String[] args) throws IOException, InterruptedException {
 		System.out.println(SiloServerApp.class.getSimpleName());
 		
@@ -32,7 +43,7 @@ public class SiloServerApp {
 		final String host = args[2];
 		final String port = args[3];
 		final String path = args[4];
-		final BindableService impl = new SiloServer();
+		final BindableService impl = new SiloServer(Integer.parseInt(path.substring(path.length() - 1)), host, port);		//TODO: change this later IMPORTANT or let it be, we'll see
 
 		ZKNaming zkNaming = null;
 
@@ -48,10 +59,10 @@ public class SiloServerApp {
 			// Start the server
 			server.start();
 
+
+
 			// Server threads are running in the background.
 			System.out.println("Server started");
-
-			//TODO: check if Thread needed
 
 			// Create new thread where we wait for the user input.
 			new Thread(() -> {
@@ -59,6 +70,7 @@ public class SiloServerApp {
 				new Scanner(System.in).nextLine();
 
 				server.shutdown();
+
 			}).start();
 
 			// Do not exit the main thread. Wait until server is terminated.
@@ -80,7 +92,5 @@ public class SiloServerApp {
 				}
 			}
 		}
-
 	}
-	
 }

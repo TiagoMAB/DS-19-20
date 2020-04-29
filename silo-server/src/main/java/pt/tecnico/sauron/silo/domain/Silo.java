@@ -9,8 +9,6 @@ public class Silo {
     private TreeSet<Observation> observations = new TreeSet<Observation>();
     private HashMap<String, Camera> cameras = new HashMap<String, Camera>();
 
-    public Silo() { }
-
     public synchronized void camJoin(String name, double latitude, double longitude) throws InvalidCameraNameException, InvalidCoordinateException {
         if(cameras.containsKey(name)){
             throw new InvalidCameraNameException("Duplicate " + '"' + name +'"' );

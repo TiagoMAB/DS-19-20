@@ -9,17 +9,17 @@ public class UpdateLog {                //TODO: check if needs synchronized
     private int seq_number = 0;
     private List<Update> updates = new ArrayList<Update>();
 
-    UpdateLog(int instance) {
+    public UpdateLog(int instance) {
         this.instance = instance;
     }
 
-    void addUpdate(Camera c) {
+    public void addUpdate(Camera c) {
         Update update = new Update(instance, seq_number, c);
         updates.add(update);
         seq_number++;
     }
 
-    void addUpdate(Camera c, List<Observation> obs) {
+    public void addUpdate(Camera c, List<Observation> obs) {
         Update update = new Update(instance, seq_number, c, obs);
         updates.add(update);
         seq_number++;

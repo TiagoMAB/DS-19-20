@@ -1,24 +1,51 @@
 package pt.tecnico.sauron.silo;
 
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import pt.tecnico.sauron.silo.domain.Camera;
 import pt.tecnico.sauron.silo.domain.Object;
 import pt.tecnico.sauron.silo.domain.Silo;
+import pt.tecnico.sauron.silo.domain.UpdateLog;
 import pt.tecnico.sauron.silo.domain.exceptions.NoObservationFoundException;
 import pt.tecnico.sauron.silo.grpc.*;
+import pt.ulisboa.tecnico.sdis.zk.ZKNaming;
+import pt.ulisboa.tecnico.sdis.zk.ZKRecord;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Instant;
+import java.util.*;
 import java.util.logging.Logger;
 
 import static io.grpc.Status.INVALID_ARGUMENT;
 
 public class SiloServer extends SiloGrpc.SiloImplBase {
 
+    private class GossipProtocol extends TimerTask {				//TODO: check if static inside class or this way
+
+        public void run() {
+            System.out.println("Print " );
+
+        }
+    }
+
     private static final Logger LOGGER = Logger.getLogger(SiloServer.class.getName());
 
+    private final UpdateLog log;
     private final Silo silo = new Silo();
+    private final String host;
+    private final String port;
+
+    public SiloServer(int instance, String host, String port) {
+        this.log = new UpdateLog(instance);
+        this.host = host;
+        this.port = port;
+
+        Timer timer = new Timer();
+        TimerTask gossip = new pt.tecnico.sauron.silo.GossipProtocol();
+
+        timer.schedule(gossip, Date.from(Instant.now().plusSeconds(30)), 30000);
+    }
 
     @Override
     public void camJoin(CamJoinRequest request, StreamObserver<CamJoinResponse> responseObserver) {
@@ -28,6 +55,9 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
         try{
             //Creates camera in the server
             silo.camJoin(request.getName(), request.getLatitude(), request.getLongitude());
+
+            //Adds camJoin operation to update log
+            log.addUpdate(silo.camInfo(request.getName()));
 
             //Signals that the response was built successfully
             responseObserver.onNext(CamJoinResponse.newBuilder().build());
@@ -97,6 +127,9 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
             // Sends list of observations updated with time and camera information to silo
             silo.report(observationsList);
+
+            //Adds report operation to update log
+            log.addUpdate(camera, observationsList);
 
             LOGGER.info("report() successful... ");
 

@@ -15,14 +15,14 @@ public class Update {
     private final Camera camera;
     private List<Observation> observations;
 
-    Update(int i, int s, Camera c) {
+    public Update(int i, int s, Camera c) {
         this.instance = i;
         this.seq_number = s;
         this.camera = c;
         this.type = Type.camJoin;
     }
 
-    Update(int i, int s, Camera c, List<Observation> obs) {
+    public Update(int i, int s, Camera c, List<Observation> obs) {
         this.instance = i;
         this.seq_number = s;
         this.camera = c;
