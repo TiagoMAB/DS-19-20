@@ -87,7 +87,7 @@ If the goal is to see a demo of several Observation inputs, run the program with
 
 ---
 
-### 3.2 - List an object's most recent observation
+### 3.2. List an object's most recent observation
 
 * In folder A41-Sauron, navigate to folder silo-server and run the server:
 
@@ -157,7 +157,7 @@ exit
 
 ----
 
-### 3.3 - List most recent observation of all objects that match a partial identifier
+### 3.3. List most recent observation of all objects that match a partial identifier
 
 * In folder A41-Sauron, navigate to folder silo-server and run the server:
 
@@ -228,7 +228,7 @@ exit
 
 ----
 
-### 3.4 - List an object's observations
+### 3.4. List an object's observations
 
 * In folder A41-Sauron, navigate to folder silo-server and run the server:
 
