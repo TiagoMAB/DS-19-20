@@ -51,27 +51,25 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
                     Update.Builder update = Update.newBuilder().setInstance(instance).setSeqNumber(seq_number).setName(name).setLatitude(latitude).setLongitude(longitude);
 
-                    if (u.getObservations() != null) {
-                        for (pt.tecnico.sauron.silo.domain.Observation o : u.getObservations()) {
-                            LOGGER.info("Observation: " + o.getObject().getIdentifier());
-                            Type t;                                 //TODO: clean
-                            if (o.getObject().getType() == Object.Type.car) {
-                                t = Type.CAR;
-                            } else {
-                                t = Type.PERSON;
-                            }
-
-                            //Converts java.sql.timestamp to protobuf.timestamp
-                            Timestamp timestamp = o.getTimestamp();
-                            Long milliseconds = timestamp.getTime();
-                            com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(milliseconds / 1000).build();
-
-                            //Converts internal representation of observation to a data transfer object
-                            Observation obs = Observation.newBuilder().setType(t).setIdentifier(o.getObject().getIdentifier()).setDate(ts).setName(name).setLatitude(latitude).setLongitude(longitude).build();
-
-                            //Adds observation (dto) to list of observations to be sent
-                            update.addObservations(obs);
+                    for (pt.tecnico.sauron.silo.domain.Observation o : u.getObservations()) {
+                        LOGGER.info("Observation: " + o.getObject().getIdentifier());
+                        Type t;                                 //TODO: clean
+                        if (o.getObject().getType() == Object.Type.car) {
+                            t = Type.CAR;
+                        } else {
+                            t = Type.PERSON;
                         }
+
+                        //Converts java.sql.timestamp to protobuf.timestamp
+                        Timestamp timestamp = o.getTimestamp();
+                        Long milliseconds = timestamp.getTime();
+                        com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(milliseconds / 1000).build();
+
+                        //Converts internal representation of observation to a data transfer object
+                        Observation obs = Observation.newBuilder().setType(t).setIdentifier(o.getObject().getIdentifier()).setDate(ts).setName(name).setLatitude(latitude).setLongitude(longitude).build();
+
+                        //Adds observation (dto) to list of observations to be sent
+                        update.addObservations(obs);
                     }
                     request.addUpdates(update.build());
                 }
@@ -104,7 +102,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
     private static final Logger LOGGER = Logger.getLogger(SiloServer.class.getName());
 
     private final UpdateLog log;
-    private final Silo silo = new Silo();
+    private final Silo silo;
     private final String zkhost;
     private final String zkport;
     private final String host;
@@ -112,6 +110,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
     public SiloServer(int instance, String zkhost, String zkport, String host, String port) {
         this.log = new UpdateLog(instance);
+        this.silo = new Silo();
         this.zkhost = zkhost;
         this.zkport = zkport;
         this.host = host;
@@ -410,11 +409,15 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
     @Override
     public void gossip(GossipRequest request, StreamObserver<GossipResponse> responseObserver) {
 
-
         try {
             for (Update update : request.getUpdatesList()) {
+                if (log.skipUpdate(update.getInstance(), update.getSeqNumber())) {
+                    continue;
+                }
+
                 if (update.getObservationsList().isEmpty()) {
                     silo.camJoin(update.getName(), update.getLatitude(), update.getLongitude());
+                    log.addUpdate(silo.camInfo(update.getName()), update.getInstance());
                 } else {
                     // Calls camInfo to get camera information for camera with name n, throws exception if camera with that name doesn't exist
                     Camera camera = silo.camInfo(update.getName());
@@ -446,6 +449,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
                     // Sends list of observations updated with time and camera information to silo
                     silo.report(observationsList);
 
+                    log.addUpdate(camera, observationsList, update.getInstance());
                 }
             }
             //Signals that the response was built successfully

@@ -7,11 +7,7 @@ import pt.ulisboa.tecnico.sdis.zk.ZKNaming;
 import pt.ulisboa.tecnico.sdis.zk.ZKNamingException;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.util.Date;
 import java.util.Scanner;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class SiloServerApp {
 

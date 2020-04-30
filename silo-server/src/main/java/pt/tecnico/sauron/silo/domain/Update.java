@@ -1,5 +1,6 @@
 package pt.tecnico.sauron.silo.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Update {
@@ -20,6 +21,7 @@ public class Update {
         this.seq_number = s;
         this.camera = c;
         this.type = Type.camJoin;
+        this.observations = new ArrayList<>();
     }
 
     public Update(int i, int s, Camera c, List<Observation> obs) {
