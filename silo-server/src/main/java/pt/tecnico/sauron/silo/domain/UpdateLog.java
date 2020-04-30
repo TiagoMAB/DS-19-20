@@ -24,4 +24,8 @@ public class UpdateLog {                //TODO: check if needs synchronized
         updates.add(update);
         seq_number++;
     }
+
+    public List<Update> getUpdates() {
+        return updates;
+    }
 }

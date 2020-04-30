@@ -35,8 +35,8 @@ message Observation {                           //TODO: check between nested typ
 message CamJoinRequest {
 
     string name = 1;
-    double latitude = 2;                        //TODO: check between double or float
-    double longitude = 3;                       //TODO: check between double or float
+    double latitude = 2;
+    double longitude = 3;
 
 }
 
@@ -169,20 +169,47 @@ message CtrlClearRequest {
 //ctrl_clear command response message
 //
 message CtrlClearResponse {
-                                                //TODO: check if returns string message or not
+
 }
 
 //
 //ctrl_init command request message
 //
 message CtrlInitRequest {
-                                                //TODO: check parameters
+
 }
 
 //
 //ctrl_init command response message
 //
 message CtrlInitResponse {
+
+}
+
+message Update {
+
+    int64 instance = 1;
+    int64 seq_number = 2;
+
+    string name = 3;
+    double latitude = 4;
+    double longitude = 5;
+
+    repeated Observation observations = 6;
+}
+
+//
+//update request message
+//
+message GossipRequest {
+
+    repeated Update updates = 1;
+}
+
+//
+//update response message
+//
+message GossipResponse {
 
 }
 
@@ -199,4 +226,5 @@ service Silo {
     rpc ctrl_ping(CtrlPingRequest) returns (CtrlPingResponse);
     rpc ctrl_clear(CtrlClearRequest) returns (CtrlClearResponse);
     rpc ctrl_init(CtrlInitRequest) returns (CtrlInitResponse);
+    rpc gossip(GossipRequest) returns (GossipResponse);
 }

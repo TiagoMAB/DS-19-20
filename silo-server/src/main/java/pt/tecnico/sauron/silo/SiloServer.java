@@ -26,6 +26,78 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
         public void run() {
             System.out.println("Print " );
 
+            ZKNaming zkNaming = new ZKNaming(zkhost, zkport);
+            ZKRecord record;
+
+            String path = "/grpc/sauron/silo";
+
+            LOGGER.info("GossipProtocol()...");
+            try {
+                ArrayList<ZKRecord> records = (ArrayList) zkNaming.listRecords(path);
+
+                GossipRequest.Builder request = GossipRequest.newBuilder();
+
+                LOGGER.info("Updates...");
+                List<pt.tecnico.sauron.silo.domain.Update> updates = log.getUpdates();
+
+                for (pt.tecnico.sauron.silo.domain.Update u: updates) {
+                    int instance = u.getInstance();
+                    int seq_number = u.getSeq_number();
+                    String name = u.getCamera().getName();
+                    double latitude = u.getCamera().getLatitude();
+                    double longitude = u.getCamera().getLongitude();
+
+                    LOGGER.info("Instance: " + instance + " update number: " + seq_number + " Camera name:" + name);
+
+                    Update.Builder update = Update.newBuilder().setInstance(instance).setSeqNumber(seq_number).setName(name).setLatitude(latitude).setLongitude(longitude);
+
+                    if (u.getObservations() != null) {
+                        for (pt.tecnico.sauron.silo.domain.Observation o : u.getObservations()) {
+                            LOGGER.info("Observation: " + o.getObject().getIdentifier());
+                            Type t;                                 //TODO: clean
+                            if (o.getObject().getType() == Object.Type.car) {
+                                t = Type.CAR;
+                            } else {
+                                t = Type.PERSON;
+                            }
+
+                            //Converts java.sql.timestamp to protobuf.timestamp
+                            Timestamp timestamp = o.getTimestamp();
+                            Long milliseconds = timestamp.getTime();
+                            com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(milliseconds / 1000).build();
+
+                            //Converts internal representation of observation to a data transfer object
+                            Observation obs = Observation.newBuilder().setType(t).setIdentifier(o.getObject().getIdentifier()).setDate(ts).setName(name).setLatitude(latitude).setLongitude(longitude).build();
+
+                            //Adds observation (dto) to list of observations to be sent
+                            update.addObservations(obs);
+                        }
+                    }
+                    request.addUpdates(update.build());
+                }
+
+
+                //if instance not provided chooses random instance, otherwise finds instance provided
+                for (ZKRecord zkr: records) {
+                    if (zkr.getURI().equals(host + ":" + port)) {
+                        continue;
+                    }
+                    LOGGER.info("Sending data to " + zkr.getPath());
+                    String target = zkr.getURI();
+
+                    ManagedChannel channel = ManagedChannelBuilder.forTarget(target).usePlaintext().build();
+                    SiloGrpc.SiloBlockingStub stub = SiloGrpc.newBlockingStub(channel);
+
+                    stub.gossip(request.build());       //TODO: clean repeated build
+                    LOGGER.info("Sent data to " + zkr.getPath());
+                }
+
+            }
+            catch (Exception e) {
+                //TODO: handle excpetion
+                LOGGER.info(e.getMessage());
+                System.out.println("Error during timertask gossip");
+            }
         }
     }
 
@@ -33,16 +105,20 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
     private final UpdateLog log;
     private final Silo silo = new Silo();
+    private final String zkhost;
+    private final String zkport;
     private final String host;
     private final String port;
 
-    public SiloServer(int instance, String host, String port) {
+    public SiloServer(int instance, String zkhost, String zkport, String host, String port) {
         this.log = new UpdateLog(instance);
+        this.zkhost = zkhost;
+        this.zkport = zkport;
         this.host = host;
         this.port = port;
 
         Timer timer = new Timer();
-        TimerTask gossip = new pt.tecnico.sauron.silo.GossipProtocol();
+        TimerTask gossip = new GossipProtocol();
 
         timer.schedule(gossip, Date.from(Instant.now().plusSeconds(30)), 30000);
     }
@@ -331,4 +407,54 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
         super.ctrlInit(request, responseObserver);
     }
 
+    @Override
+    public void gossip(GossipRequest request, StreamObserver<GossipResponse> responseObserver) {
+
+
+        try {
+            for (Update update : request.getUpdatesList()) {
+                if (update.getObservationsList().isEmpty()) {
+                    silo.camJoin(update.getName(), update.getLatitude(), update.getLongitude());
+                } else {
+                    // Calls camInfo to get camera information for camera with name n, throws exception if camera with that name doesn't exist
+                    Camera camera = silo.camInfo(update.getName());
+
+                    List<Observation> ol = update.getObservationsList();
+
+                    List<pt.tecnico.sauron.silo.domain.Observation> observationsList = new ArrayList<pt.tecnico.sauron.silo.domain.Observation>();
+
+                    LOGGER.info("Received name: " + update.getName());          //TODO: change loggers btw change the whole project pls (send help)
+                    LOGGER.info("Observations List: " + ol);
+
+                    for (int i = 0; i < ol.size(); i++) {
+                        Observation o = ol.get(i);
+                        LOGGER.info("Received Observation " + i + " Object type: " + o.getType() + " Object identifier: " + o.getIdentifier());
+
+                        // Creates object and timestamp information for observation
+                        Object obj = new Object(o.getType().ordinal(), o.getIdentifier());
+
+                        //Converts protobuf.timestamp to java.sql.timestamp
+                        com.google.protobuf.Timestamp ts = o.getDate();
+                        Long milliseconds = ts.getSeconds()*1000;
+                        Timestamp time = new Timestamp(milliseconds);
+
+                        // Creates observation with camera gotten from camInfo, object and timestamp from previous 2 lines
+                        pt.tecnico.sauron.silo.domain.Observation observation = new pt.tecnico.sauron.silo.domain.Observation(obj, time, camera);
+                        observationsList.add(observation);
+                    }
+
+                    // Sends list of observations updated with time and camera information to silo
+                    silo.report(observationsList);
+
+                }
+            }
+            //Signals that the response was built successfully
+            responseObserver.onNext(GossipResponse.newBuilder().build());
+            responseObserver.onCompleted();
+        }
+        catch (Exception e) {
+            LOGGER.info(e.getMessage());
+            responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
+        }
+    }
 }

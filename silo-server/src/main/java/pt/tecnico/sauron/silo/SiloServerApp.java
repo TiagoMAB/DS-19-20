@@ -13,13 +13,6 @@ import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
-class GossipProtocol extends TimerTask {				//TODO: check if static inside class or this way
-
-	public void run() {
-		System.out.println("Print " );
-	}
-}
-
 public class SiloServerApp {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
@@ -43,7 +36,7 @@ public class SiloServerApp {
 		final String host = args[2];
 		final String port = args[3];
 		final String path = args[4];
-		final BindableService impl = new SiloServer(Integer.parseInt(path.substring(path.length() - 1)), host, port);		//TODO: change this later IMPORTANT or let it be, we'll see
+		final BindableService impl = new SiloServer(Integer.parseInt(path.substring(path.length() - 1)), zooHost, zooPort, host, port);		//TODO: change this later IMPORTANT or let it be, we'll see
 
 		ZKNaming zkNaming = null;
 
@@ -58,7 +51,6 @@ public class SiloServerApp {
 
 			// Start the server
 			server.start();
-
 
 
 			// Server threads are running in the background.
