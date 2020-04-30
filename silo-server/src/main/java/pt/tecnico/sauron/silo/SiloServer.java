@@ -116,10 +116,10 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
         this.host = host;
         this.port = port;
 
-        Timer timer = new Timer();
-        TimerTask gossip = new GossipProtocol();
+        //Timer timer = new Timer();
+        //TimerTask gossip = new GossipProtocol();
 
-        timer.schedule(gossip, Date.from(Instant.now().plusSeconds(30)), 30000);
+        //timer.schedule(gossip, Date.from(Instant.now().plusSeconds(30)), 30000);
     }
 
     @Override

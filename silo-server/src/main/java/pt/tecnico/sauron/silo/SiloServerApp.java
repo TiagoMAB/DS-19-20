@@ -48,7 +48,6 @@ public class SiloServerApp {
 			// Start the server
 			server.start();
 
-
 			// Server threads are running in the background.
 			System.out.println("Server started");
 
@@ -56,23 +55,23 @@ public class SiloServerApp {
 			new Thread(() -> {
 				System.out.println("<Press enter to shutdown>");
 				new Scanner(System.in).nextLine();
-
+				System.out.println("<Press enter to shutdown>");
 				server.shutdown();
-
+				System.out.println("<Press enter to shutdown>");
 			}).start();
 
 			// Do not exit the main thread. Wait until server is terminated.
 			server.awaitTermination();
-		}
-		//TODO: check messy code
+		} //TODO: check messy code
 		catch (ZKNamingException e) {
 			//TODO: handle exception
 			System.out.println(e.getMessage());
 		}
 		finally {
 			if (zkNaming != null) {
+
 				try {
-					zkNaming.unbind(path, host, String.valueOf(port));
+					zkNaming.unbind(path, host, port);
 				}
 				catch (ZKNamingException e) {
 					//TODO: handle exception

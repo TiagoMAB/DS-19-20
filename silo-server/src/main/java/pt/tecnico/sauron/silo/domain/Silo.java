@@ -10,7 +10,7 @@ public class Silo {
     private HashMap<String, Camera> cameras = new HashMap<String, Camera>();
 
     public synchronized void camJoin(String name, double latitude, double longitude) throws InvalidCameraNameException, InvalidCoordinateException {
-        if(cameras.containsKey(name)){
+        if(cameras.containsKey(name) && (cameras.get(name).getLatitude() != latitude || cameras.get(name).getLongitude() != longitude)) {
             throw new InvalidCameraNameException("Duplicate " + '"' + name +'"' );
         }
         else {

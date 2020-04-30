@@ -26,9 +26,8 @@ public class SpotterApp {
 			System.out.printf("arg[%d] = %s%n", i, args[i]);
 		}
 
-		if (args.length < 3) {
-			System.out.println("Argument(s) missing!");
-			System.out.printf("Usage: java %s host server host port %n", SpotterApp.class.getName());
+		if (args.length != 3 && args.length != 2) {
+			System.out.println("Too few or too many arguments. Correct format is: $spotter #address #port (#instance_number)");
 			return;
 		}
 

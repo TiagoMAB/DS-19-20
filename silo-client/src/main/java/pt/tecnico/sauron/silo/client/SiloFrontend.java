@@ -2,6 +2,7 @@ package pt.tecnico.sauron.silo.client;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.StatusRuntimeException;
 import pt.tecnico.sauron.silo.grpc.*;
 import pt.ulisboa.tecnico.sdis.zk.ZKNaming;
 import pt.ulisboa.tecnico.sdis.zk.ZKNamingException;
@@ -40,8 +41,14 @@ public class SiloFrontend implements AutoCloseable {
         this.stub = SiloGrpc.newBlockingStub(channel);
     }
 
-    public CamJoinResponse camJoin(CamJoinRequest request) {
-        return stub.camJoin(request);
+    public void camJoin(CamJoinRequest request) {
+        try {
+            stub.camJoin(request);
+        }
+        catch (StatusRuntimeException e) {
+            System.out.println(e.getStatus().getDescription());
+            stub.camJoin(request);
+        }
     }
 
     public CamInfoResponse camInfo(CamInfoRequest request) {

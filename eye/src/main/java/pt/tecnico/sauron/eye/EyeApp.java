@@ -47,17 +47,7 @@ public class EyeApp {
 		}
 
 		try (SiloFrontend frontend = new SiloFrontend(zkhost, zkport, instance); Scanner scanner = new Scanner(System.in)) {
-			try {
-				CamJoinResponse getResponse = frontend.camJoin(CamJoinRequest.newBuilder().
-					setName(camName).
-					setLatitude(latitude).
-					setLongitude(longitude).build());
-				System.out.println("Camera successfuly connected to server: " + camName);
 
-			} catch (StatusRuntimeException e) {
-				System.out.println("Error on joining camera to server: " + e.getStatus().getDescription());
-				return;
-			}
 			String line;
 			while (scanner.hasNextLine()) {
 				try {
@@ -72,7 +62,7 @@ public class EyeApp {
 					// line processing
 					if(line.length() == 1){
 						//process car observation
-						send(camName, frontend);
+						send(camName, latitude, longitude, frontend);
 
 						continue;
 					}
@@ -105,8 +95,7 @@ public class EyeApp {
 					e.printStackTrace();
 				}
 			}
-			send(camName, frontend);
-
+			send(camName, latitude, longitude, frontend);
 		}
 		catch (StatusRuntimeException e) {
 			System.out.println(e.getStatus().getDescription());
@@ -119,12 +108,27 @@ public class EyeApp {
 		}
 	}
 
-	private static void send(String camName, SiloFrontend frontend) {
+	private static void send(String camName, double latitude, double longitude, SiloFrontend frontend) {
+
+		CamJoinRequest camJoinRequest = CamJoinRequest.newBuilder().setName(camName).setLatitude(latitude).setLongitude(longitude).build();
+
+		//Before report, register camera in silo server instance
+		try {
+			frontend.camJoin(camJoinRequest);
+			System.out.println("Camera successfuly connected to server: " + camName);
+
+		} catch (StatusRuntimeException e) {
+			System.out.println("Error on joining camera to server: " + e.getStatus().getDescription());
+			return;
+		}
+
+		//Creates report request
 		ReportRequest.Builder req_builder = ReportRequest.newBuilder().setName(camName);
 		for (String[] strings : observations_in) {
 			Type type = getType(strings);
 			String identifier = strings[1];
 
+			//Creates observation dto
 			Observation.Builder obs_builder = Observation.newBuilder();
 			obs_builder.setType(type);
 			obs_builder.setIdentifier(identifier);
@@ -133,7 +137,7 @@ public class EyeApp {
 			req_builder.addObservations(observation);
 		}
 
-		//send
+		//After registering the camera, report observations
 		try {
 			frontend.report(req_builder.build());
 			System.out.println("Observations registered successfully");
