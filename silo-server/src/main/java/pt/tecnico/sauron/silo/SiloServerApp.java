@@ -11,7 +11,7 @@ import java.util.Scanner;
 
 public class SiloServerApp {
 
-	public static void main(String[] args) throws IOException, InterruptedException {
+	public static void main(String[] args) throws Exception {
 		System.out.println(SiloServerApp.class.getSimpleName());
 		
 		// receive and print arguments
@@ -40,7 +40,7 @@ public class SiloServerApp {
 
 			zkNaming = new ZKNaming(zooHost, zooPort);
 
-			zkNaming.rebind(path, host, port);
+			zkNaming.rebind(path, host, port);						//TODO: check if bind or rebind
 
 			// Create a new server to listen on port
 			Server server = ServerBuilder.forPort(Integer.parseInt(port)).addService(impl).build();
@@ -55,28 +55,15 @@ public class SiloServerApp {
 			new Thread(() -> {
 				System.out.println("<Press enter to shutdown>");
 				new Scanner(System.in).nextLine();
-				System.out.println("<Press enter to shutdown>");
+
 				server.shutdown();
-				System.out.println("<Press enter to shutdown>");
 			}).start();
 
 			// Do not exit the main thread. Wait until server is terminated.
 			server.awaitTermination();
-		} //TODO: check messy code
-		catch (ZKNamingException e) {
-			//TODO: handle exception
-			System.out.println(e.getMessage());
-		}
-		finally {
+		} finally {
 			if (zkNaming != null) {
-
-				try {
-					zkNaming.unbind(path, host, port);
-				}
-				catch (ZKNamingException e) {
-					//TODO: handle exception
-					System.out.println(e.getMessage());
-				}
+				zkNaming.unbind(path, host, port);
 			}
 		}
 	}

@@ -15,9 +15,23 @@ public class SiloFrontend implements AutoCloseable {
 
     private ManagedChannel channel;
     private SiloGrpc.SiloBlockingStub stub;
+
     private String path = "/grpc/sauron/silo";
+    private String host;
+    private String port;
+    private int instance = 0;
+
+    private Cache cache;
+    private int[] ts_vector;
 
     public SiloFrontend(String host, String port, int instance) throws ZKNamingException {
+
+        this.host = host;
+        this.port = port;
+        this.instance = instance;
+
+        this.cache = new Cache(5);
+        this.ts_vector = new int[9];
 
         ZKNaming zkNaming = new ZKNaming(host,port);
         ZKRecord record;
@@ -41,45 +55,48 @@ public class SiloFrontend implements AutoCloseable {
         this.stub = SiloGrpc.newBlockingStub(channel);
     }
 
-    public void camJoin(CamJoinRequest request) {
-        try {
-            stub.camJoin(request);
-        }
-        catch (StatusRuntimeException e) {
-            System.out.println(e.getStatus().getDescription());
-            stub.camJoin(request);
-        }
+    public void camJoin(CamJoinRequest request) {               //TODO: communication error handle failure
+        stub.camJoin(request);
     }
 
-    public CamInfoResponse camInfo(CamInfoRequest request) {
+    public CamInfoResponse camInfo(CamInfoRequest request) {              //TODO: communication error handle failure
         return stub.camInfo(request);
     }
 
-    public ReportResponse report(ReportRequest request) {
+    public ReportResponse report(ReportRequest request) {              //TODO: communication error handle failure
         return stub.report(request);
     }
 
-    public TrackResponse track(TrackRequest request) {
-        return stub.track(request);
+    public TrackResponse track(TrackRequest request) {              //TODO: communication error handle failure
+        TrackResponse r = stub.track(request);
+        cache.addObservation(r.getObservation());
+
+        return r;
     }
 
-    public TrackMatchResponse trackMatch(TrackMatchRequest request) {
-        return stub.trackMatch(request);
+    public TrackMatchResponse trackMatch(TrackMatchRequest request) {              //TODO: communication error handle failure
+        TrackMatchResponse r = stub.trackMatch(request);
+        cache.addSpotObservations(r.getObservationsList());
+
+        return r;
     }
 
-    public TraceResponse trace(TraceRequest request) {
-        return stub.trace(request);
+    public TraceResponse trace(TraceRequest request) {              //TODO: communication error handle failure
+        TraceResponse r = stub.trace(request);
+        cache.addTrailObservations(r.getObservationsList());
+
+        return r;
     }
 
-    public CtrlPingResponse ctrlPing(CtrlPingRequest request) {
+    public CtrlPingResponse ctrlPing(CtrlPingRequest request) {              //TODO: communication error handle failure
         return stub.ctrlPing(request);
     }
 
-    public CtrlClearResponse ctrlClear(CtrlClearRequest request) {
+    public CtrlClearResponse ctrlClear(CtrlClearRequest request) {              //TODO: communication error handle failure
         return stub.ctrlClear(request);
     }
 
-    public CtrlInitResponse ctrlInit(CtrlInitRequest request) {
+    public CtrlInitResponse ctrlInit(CtrlInitRequest request) {              //TODO: communication error handle failure
         return stub.ctrlInit(request);
     }
 
