@@ -228,6 +228,14 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
         LOGGER.info("Arguments received... type: " + t + " | identifier: " + i);
 
+        TrackResponse.Builder response = TrackResponse.newBuilder();
+
+        //Sends ts_vector with response
+        int[] ts_vector = log.getTs_vector();
+        for (int ts_value: ts_vector) {
+            response.addTsVector(ts_value);
+        }
+
         try {
             //Calls track and gets the observation asked (if one was found)
             pt.tecnico.sauron.silo.domain.Observation o = silo.track(Object.findType(t.getNumber()), i);
@@ -248,13 +256,13 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
             LOGGER.info("track() response... " + o);
 
             //Signals that the response was built successfully
-            responseObserver.onNext(TrackResponse.newBuilder().setObservation(obs).build());
+            responseObserver.onNext(response.setObservation(obs).build());
             responseObserver.onCompleted();
         }
         catch (NoObservationFoundException e) {
 
             LOGGER.info("track() no observation was found... ");
-            responseObserver.onNext(TrackResponse.getDefaultInstance());
+            responseObserver.onNext(response.build());
             responseObserver.onCompleted();
         }
         catch (Exception e) {
@@ -276,6 +284,12 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
         List<pt.tecnico.sauron.silo.domain.Observation> observations = new ArrayList<>();
         TrackMatchResponse.Builder response = TrackMatchResponse.newBuilder();
+
+        //Sends ts_vector with response
+        int[] ts_vector = log.getTs_vector();
+        for (int ts_value: ts_vector) {
+            response.addTsVector(ts_value);
+        }
 
         try {
             //Calls trackMatch and gets the list of observations asked (if one was found)
@@ -309,7 +323,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
         catch (NoObservationFoundException e) {
 
             LOGGER.info("trackMatch() no observation was found... ");
-            responseObserver.onNext(TrackMatchResponse.getDefaultInstance());
+            responseObserver.onNext(response.build());
             responseObserver.onCompleted();
         }
         catch (Exception e) {
@@ -330,6 +344,12 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
         List<pt.tecnico.sauron.silo.domain.Observation> observations = new ArrayList<pt.tecnico.sauron.silo.domain.Observation>();
         TraceResponse.Builder response = TraceResponse.newBuilder();
+
+        //Sends ts_vector with response
+        int[] ts_vector = log.getTs_vector();
+        for (int ts_value: ts_vector) {
+            response.addTsVector(ts_value);
+        }
 
         try {
             //Calls trace and gets the list of observations asked (if one was found)
@@ -363,7 +383,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
         catch (NoObservationFoundException e) {
 
             LOGGER.info("trace() no observation was found... ");
-            responseObserver.onNext(TraceResponse.getDefaultInstance());
+            responseObserver.onNext(response.build());
             responseObserver.onCompleted();
         }
         catch (Exception e) {

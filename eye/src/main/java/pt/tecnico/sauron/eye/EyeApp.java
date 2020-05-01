@@ -121,6 +121,10 @@ public class EyeApp {
 			System.out.println("Error on joining camera to server: " + e.getStatus().getDescription());
 			return;
 		}
+		catch (Exception e) {
+			System.out.println("Error on joining camera to server: " + e.getMessage());
+			return;
+		}
 
 		//Creates report request
 		ReportRequest.Builder req_builder = ReportRequest.newBuilder().setName(camName);
@@ -144,6 +148,10 @@ public class EyeApp {
 		}
 		catch (StatusRuntimeException e) {
 			System.out.println(e.getStatus().getDescription());
+		}
+		catch (Exception e) {
+			System.out.println("Error on joining camera to server: " + e.getMessage());
+			return;
 		}
 
 		//cleanup after each send

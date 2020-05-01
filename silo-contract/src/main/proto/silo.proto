@@ -99,7 +99,7 @@ message TrackRequest {
 message TrackResponse {
 
     Observation observation = 1;
-
+    repeated int32 ts_vector = 2;
 }
 
 //
@@ -117,7 +117,8 @@ message TrackMatchRequest {
 //
 message TrackMatchResponse {
 
-    repeated Observation observations = 2;
+    repeated Observation observations = 1;
+    repeated int32 ts_vector = 2;
 
 }
 
@@ -137,6 +138,7 @@ message TraceRequest {
 message TraceResponse {
 
     repeated Observation observations = 1;
+    repeated int32 ts_vector = 2;
 
 }
 

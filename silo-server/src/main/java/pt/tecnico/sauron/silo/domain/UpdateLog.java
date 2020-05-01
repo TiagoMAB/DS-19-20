@@ -16,6 +16,14 @@ public class UpdateLog {                //TODO: check if needs synchronized
         }
     }
 
+    public List<Update> getUpdates() {
+        return updates;
+    }
+
+    public int[] getTs_vector() {
+        return ts_vector;
+    }
+
     public void addUpdate(Camera c) {
         Update update = new Update(instance, ts_vector[instance - 1], c);
         updates.add(update);
@@ -38,10 +46,6 @@ public class UpdateLog {                //TODO: check if needs synchronized
         Update update = new Update(instance, ts_vector[instance - 1], c, obs);
         updates.add(update);
         ts_vector[instance - 1]++;
-    }
-
-    public List<Update> getUpdates() {
-        return updates;
     }
 
     public boolean skipUpdate(int instance, int seq_number) {

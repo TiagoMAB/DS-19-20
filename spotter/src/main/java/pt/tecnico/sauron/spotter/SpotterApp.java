@@ -68,7 +68,7 @@ public class SpotterApp {
 							//sort list of observations by identifier attribute
 							Collections.sort(observationsList, Comparator.comparing(Observation::getIdentifier));
 
-							printObservationsList(getResponse.getObservationsList());
+							printObservationsList(observationsList);
 						}
 
 						// identifier doesn't contain *
