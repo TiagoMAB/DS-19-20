@@ -1,9 +1,6 @@
 package pt.tecnico.sauron.silo.client;
 
-import pt.tecnico.sauron.silo.grpc.Observation;
-import pt.tecnico.sauron.silo.grpc.TraceResponse;
-import pt.tecnico.sauron.silo.grpc.TrackMatchResponse;
-import pt.tecnico.sauron.silo.grpc.TrackResponse;
+import pt.tecnico.sauron.silo.grpc.*;
 
 import java.util.*;
 
@@ -97,26 +94,26 @@ public class Cache {
 
     }
 
-    public TrackResponse coherentTrack(TrackResponse r, String id) {
+    public TrackResponse coherentTrack(TrackResponse r, String id, Type t) {
 
         Observation obs = r.getObservation();
         Observation cached_obs = null;
 
         for (Observation o: spots) {
-            if (o.getIdentifier().equals(id)) {
+            if (o.getIdentifier().equals(id) && o.getType() == t) {
                 cached_obs = o;
             }
         }
 
         if (cached_obs == null) {
             for (Observation o: trails) {
-                if (o.getIdentifier().equals(id)) {
+                if (o.getIdentifier().equals(id) && o.getType() == t) {
                     cached_obs = o;
                 }
             }
         }
 
-        if (cached_obs != null && obs != Observation.getDefaultInstance()) {                    //TODO: check if adds info to cache when track is not coherent (ts_vector diff)
+        if (cached_obs != null && obs != Observation.getDefaultInstance()) {
             Observation response_obs = cached_obs.getDate().getSeconds() > obs.getDate().getSeconds() ? cached_obs : obs;
             return TrackResponse.newBuilder().setObservation(response_obs).build();
         }
@@ -129,7 +126,7 @@ public class Cache {
 
     }
 
-    public TrackMatchResponse coherentTrackMatch(TrackMatchResponse r, String partialId) {
+    public TrackMatchResponse coherentTrackMatch(TrackMatchResponse r, String partialId, Type t) {
 
         List<Observation> obs = r.getObservationsList();
         HashMap<String, Observation> cached_obs = new HashMap<String, Observation>();
@@ -138,13 +135,13 @@ public class Cache {
         String pattern = getPattern(partialId);
 
         for (Observation o: spots) {
-            if (o.getIdentifier().matches(pattern)) {
+            if (o.getIdentifier().matches(pattern) && o.getType() == t) {
                 cached_obs.put(o.getIdentifier(), o);
             }
         }
 
         for (Observation o: trails) {
-            if (o.getIdentifier().matches(pattern) &&
+            if (o.getIdentifier().matches(pattern) && o.getType() == t &&
                     (cached_obs.get(o.getIdentifier()) == null || o.getDate().getSeconds() > cached_obs.get(o.getIdentifier()).getDate().getSeconds())) {
                 cached_obs.put(o.getIdentifier(), o);
             }
@@ -172,10 +169,10 @@ public class Cache {
             }
         }
 
-        return response.build();            //TODO: check if doesn't need default instance when no observations are found
+        return response.build();
     }
 
-    public TraceResponse coherentTrace(TraceResponse r, String id) {
+    public TraceResponse coherentTrace(TraceResponse r, String id, Type t) {
 
         List<Observation> obs = r.getObservationsList();
         List<Observation> cached_obs = new ArrayList<Observation>();
@@ -183,7 +180,7 @@ public class Cache {
         List<Observation> responseList = new ArrayList<>();
 
         for (Observation o: trails) {
-            if (o.getIdentifier().equals(id)) {
+            if (o.getIdentifier().equals(id) && o.getType() == t) {
                 cached_obs.add(o);
             }
         }
@@ -220,7 +217,7 @@ public class Cache {
         Observation cached = null;
 
         for (Observation o: spots) {
-            if (o.getIdentifier().equals(id)) {
+            if (o.getIdentifier().equals(id) && o.getType() == t) {
                 cached = o;
                 break;
             }

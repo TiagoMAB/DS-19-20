@@ -30,7 +30,7 @@ public class SiloFrontend implements AutoCloseable {
         this.port = port;
         this.instance = instance;
 
-        this.cache = new Cache(10);
+        this.cache = new Cache(5);
         this.ts_vector = new ArrayList<>();
         for (int i= 0; i < 9; i++) {
             this.ts_vector.add(0);
@@ -109,7 +109,7 @@ public class SiloFrontend implements AutoCloseable {
             errors = 0;
 
             if (!checkTs(r.getTsVectorList())) {
-                return cache.coherentTrack(r, request.getIdentifier());
+                return cache.coherentTrack(r, request.getIdentifier(), request.getType());
             }
             else {
                 cache.addObservation(r.getObservation());
@@ -138,7 +138,7 @@ public class SiloFrontend implements AutoCloseable {
             errors = 0;
 
             if (!checkTs(r.getTsVectorList())) {
-                return cache.coherentTrackMatch(r, request.getPartialIdentifier());
+                return cache.coherentTrackMatch(r, request.getPartialIdentifier(), request.getType());
             }
             else {
                 cache.addSpotObservations(r.getObservationsList());
@@ -168,7 +168,7 @@ public class SiloFrontend implements AutoCloseable {
             errors = 0;
 
             if (!checkTs(r.getTsVectorList())) {
-                return cache.coherentTrace(r, request.getIdentifier());
+                return cache.coherentTrace(r, request.getIdentifier(), request.getType());
             }
             else {
                 cache.addTrailObservations(r.getObservationsList());
