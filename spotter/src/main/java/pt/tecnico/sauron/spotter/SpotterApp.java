@@ -138,19 +138,17 @@ public class SpotterApp {
 				}
 			}
 		} catch (StatusRuntimeException e) {
-				if (e.getStatus().getCode() == Status.Code.INVALID_ARGUMENT) {
-					System.out.println(e.getStatus().getDescription());
-				}
-				else {
-					System.out.print("Error ");
-				}
-			}
-		catch (Exception e) {
+			if (e.getStatus().getCode() == Status.Code.INVALID_ARGUMENT) {
+				System.out.println(e.getStatus().getDescription());
+			} else {
 				System.out.print("Error ");
 			}
-		finally {
-				System.out.println("> Closing");
-			}
+		} catch (Exception e) {
+			System.out.print("Error ");
+		} finally {
+			System.out.println("> Closing");
+		}
+	}
 
 	private static void printObservationsList(List<Observation> observationsList) {
 		if (observationsList.size() == 0)

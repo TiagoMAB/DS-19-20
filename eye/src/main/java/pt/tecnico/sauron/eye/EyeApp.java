@@ -101,9 +101,6 @@ public class EyeApp {
 		catch (Exception e) {
 			System.out.print("Error ");
 		}
-		catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
 		finally {
 			System.out.println("> Closing");
 		}
