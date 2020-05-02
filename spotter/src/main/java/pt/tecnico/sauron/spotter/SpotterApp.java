@@ -151,7 +151,6 @@ public class SpotterApp {
 		finally {
 				System.out.println("> Closing");
 			}
-	}
 
 	private static void printObservationsList(List<Observation> observationsList) {
 		if (observationsList.size() == 0)

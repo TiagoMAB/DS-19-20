@@ -42,13 +42,12 @@ public class EyeApp {
 		final double latitude = Double.parseDouble(args[3]);
 		final double longitude = Double.parseDouble(args[4]);
 		int instance = 0;
-
+    
 		if (args.length == 6) {
 			instance = Integer.parseInt(args[5]);
 		}
 
 		try (SiloFrontend frontend = new SiloFrontend(zkhost, zkport, instance); Scanner scanner = new Scanner(System.in)) {
-
 			String line;
 			while (scanner.hasNextLine()) {
 				line = scanner.nextLine();
@@ -101,6 +100,9 @@ public class EyeApp {
 		}
 		catch (Exception e) {
 			System.out.print("Error ");
+		}
+		catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
 		finally {
 			System.out.println("> Closing");
