@@ -20,7 +20,7 @@ mvn compile exec:java
 ```
 mvn compile exec:java -D instance=#value
 ```
-#value = 1 (If you want to specify the instance)
+Where #value is the an integer between 1 and 9 (Use the second option if you want to specify the instance)
 
 When running, the server awaits connections from clients.
 
