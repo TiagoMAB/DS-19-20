@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 public class SiloServerApp {
 
-	private static class GossipProtocol extends TimerTask {				//TODO: check if static inside class or this way
+	private static class GossipProtocol extends TimerTask {
 
 		private final String path = "/grpc/sauron/silo";
 		private final String zooHost;
@@ -59,6 +59,7 @@ public class SiloServerApp {
 						LOGGER.info("GossipProtocol() error sending data to " + zkr.getPath());
 					}
 				}
+				LOGGER.info("GossipProtocol() finishing...");
 			}
 			catch (Exception e) {
 				LOGGER.info("GossipProtocol() error during gossip: " + e.getMessage());
@@ -87,7 +88,7 @@ public class SiloServerApp {
 		final String host = args[2];
 		final String port = args[3];
 		final String path = args[4];
-		final BindableService impl = new SiloServer(Integer.parseInt(path.substring(path.length() - 1)));		//TODO: change this later IMPORTANT or let it be, we'll see
+		final BindableService impl = new SiloServer(Integer.parseInt(path.substring(path.length() - 1)));
 
 		ZKNaming zkNaming = null;
 

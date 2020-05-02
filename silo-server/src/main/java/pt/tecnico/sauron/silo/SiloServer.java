@@ -339,6 +339,8 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
         try {
             for (Update update : request.getUpdatesList()) {
+
+                //skips updates already registered in updateLog
                 if (log.skipUpdate(update.getInstance(), update.getSeqNumber())) {
                     continue;
                 }
@@ -354,12 +356,10 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
                     List<pt.tecnico.sauron.silo.domain.Observation> observationsList = new ArrayList<pt.tecnico.sauron.silo.domain.Observation>();
 
-                    LOGGER.info("Received name: " + update.getName());          //TODO: change loggers btw change the whole project pls (send help)
-                    LOGGER.info("Observations List: " + ol);
+                    LOGGER.info("gossip() received update... Instance: " + update.getInstance() + " update number: " + update.getSeqNumber() + " Camera name:" + update.getName());
 
                     for (int i = 0; i < ol.size(); i++) {
                         Observation o = ol.get(i);
-                        LOGGER.info("Received Observation " + i + " Object type: " + o.getType() + " Object identifier: " + o.getIdentifier());
 
                         // Creates object and timestamp information for observation
                         Object obj = new Object(o.getType().ordinal(), o.getIdentifier());
@@ -401,11 +401,11 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
 
     public GossipRequest createGossipRequest(int dest_instance) {
         GossipRequest.Builder request = GossipRequest.newBuilder();
-
-        LOGGER.info("Updates...");
         List<pt.tecnico.sauron.silo.domain.Update> updates = log.getUpdates();
 
         for (pt.tecnico.sauron.silo.domain.Update u: updates) {
+
+            //predicts which updates the other instance already has and doesn't send them
             if (log.skipUpdate(dest_instance, u.getInstance(), u.getSeq_number())) {
                 continue;
             }
@@ -416,13 +416,15 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
             double latitude = u.getCamera().getLatitude();
             double longitude = u.getCamera().getLongitude();
 
-            LOGGER.info("Instance: " + instance + " update number: " + seq_number + " Camera name:" + name);
+            LOGGER.info("createGossipRequest() add update... Instance: " + instance + " update number: " + seq_number + " Camera name:" + name);
 
-            pt.tecnico.sauron.silo.grpc.Update.Builder update = pt.tecnico.sauron.silo.grpc.Update.newBuilder().setInstance(instance).setSeqNumber(seq_number).setName(name).setLatitude(latitude).setLongitude(longitude);
+            pt.tecnico.sauron.silo.grpc.Update.Builder update = pt.tecnico.sauron.silo.grpc.Update.newBuilder().setInstance(instance)
+                    .setSeqNumber(seq_number).setName(name).setLatitude(latitude).setLongitude(longitude);
 
             for (pt.tecnico.sauron.silo.domain.Observation o : u.getObservations()) {
-                LOGGER.info("Observation: " + o.getObject().getIdentifier());
-                Type t;                                 //TODO: clean
+
+                //Gets type (dto)
+                Type t;
                 if (o.getObject().getType() == Object.Type.car) {
                     t = Type.CAR;
                 } else {
@@ -440,6 +442,7 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
                 //Adds observation (dto) to list of observations to be sent
                 update.addObservations(obs);
             }
+
             request.addUpdates(update.build());
         }
 
@@ -449,6 +452,6 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
     public void handleGossipResponse(GossipResponse response) {
 
         log.updateTs_vector(response.getInstance(), response.getTsVectorList());
-        LOGGER.info("Received vector: " + response.getTsVectorList());
+        LOGGER.info("handleGossipResponse() received timestamp vector... " + response.getTsVectorList());
     }
 }

@@ -41,7 +41,7 @@ public class Silo {
         }
     }
 
-    public synchronized Observation track(Object.Type t, String i) throws NoObservationFoundException {                                  //TODO: validation of identifier?
+    public synchronized Observation track(Object.Type t, String i) throws NoObservationFoundException {
 
         //searches list of observations from the most recent to the oldest for a match in both type and identifier
         Iterator it = observations.descendingIterator();
@@ -89,7 +89,7 @@ public class Silo {
 
     }
 
-    public synchronized List<Observation> trace(Object.Type t, String s) throws NoObservationFoundException {                            //TODO: validation of identifier?
+    public synchronized List<Observation> trace(Object.Type t, String s) throws NoObservationFoundException {
 
         List<Observation> list = new ArrayList<>();
 

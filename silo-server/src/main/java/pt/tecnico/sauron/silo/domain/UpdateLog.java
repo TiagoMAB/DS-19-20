@@ -3,7 +3,7 @@ package pt.tecnico.sauron.silo.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UpdateLog {                //TODO: check if needs synchronized
+public class UpdateLog {
 
     private final int instance;
     private List<Update> updates = new ArrayList<Update>();
@@ -22,45 +22,45 @@ public class UpdateLog {                //TODO: check if needs synchronized
         return instance;
     }
 
-    public List<Update> getUpdates() {
+    public synchronized List<Update> getUpdates() {
         return updates;
     }
 
-    public int[] getTs_vector() {
+    public synchronized int[] getTs_vector() {
         return ts_vector[instance - 1];
     }
 
-    public void updateTs_vector(int instance, List<Integer> ts_vector) {
+    public synchronized void updateTs_vector(int instance, List<Integer> ts_vector) {
         for (int index = 0; index < ts_vector.size(); index++) {
             this.ts_vector[instance - 1][index] = ts_vector.get(index);
         }
     }
 
-    public void addUpdate(Camera c) {
+    public synchronized void addUpdate(Camera c) {
         Update update = new Update(instance, ts_vector[instance - 1][instance - 1], c);
         updates.add(update);
         ts_vector[instance - 1][instance - 1]++;
     }
 
-    public void addUpdate(Camera c, List<Observation> obs) {
+    public synchronized void addUpdate(Camera c, List<Observation> obs) {
         Update update = new Update(instance, ts_vector[instance - 1][instance - 1], c, obs);
         updates.add(update);
         ts_vector[instance - 1][instance - 1]++;
     }
 
-    public void addUpdate(Camera c, int instance) {
+    public synchronized void addUpdate(Camera c, int instance) {
         Update update = new Update(instance, ts_vector[this.instance - 1][instance - 1], c);
         updates.add(update);
         ts_vector[this.instance - 1][instance - 1]++;
     }
 
-    public void addUpdate(Camera c, List<Observation> obs, int instance) {
+    public synchronized void addUpdate(Camera c, List<Observation> obs, int instance) {
         Update update = new Update(instance, ts_vector[this.instance - 1][instance - 1], c, obs);
         updates.add(update);
         ts_vector[this.instance - 1][instance - 1]++;
     }
 
-    public boolean skipUpdate(int instance, int seq_number) {
+    public synchronized boolean skipUpdate(int instance, int seq_number) {
         if (instance == this.instance || seq_number < this.ts_vector[this.instance - 1][instance - 1]) {
             return true;
         }
@@ -68,7 +68,7 @@ public class UpdateLog {                //TODO: check if needs synchronized
         return false;
     }
 
-    public boolean skipUpdate(int dest_instance, int update_instance, int seq_number) {
+    public synchronized boolean skipUpdate(int dest_instance, int update_instance, int seq_number) {
         if (dest_instance == update_instance || seq_number < this.ts_vector[dest_instance - 1][update_instance - 1]) {
             return true;
         }

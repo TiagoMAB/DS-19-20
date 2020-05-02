@@ -6,7 +6,7 @@ package pt.tecnico.sauron.silo.grpc;
 
 import "google/protobuf/timestamp.proto";
 
-option java_multiple_files = true;            //TODO: check if needed
+option java_multiple_files = true;
 
 
 //
@@ -18,7 +18,7 @@ enum Type {
     PERSON = 2;
 }
 
-message Observation {                           //TODO: check between nested type or normal
+message Observation {
 
     Type type = 1;
     string identifier = 2;
