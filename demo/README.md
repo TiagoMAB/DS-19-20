@@ -541,7 +541,6 @@ exit
 ```
 
 ----
-
 ### 4.4. Fault tolerance with trace command
 
 * With a server terminal, in folder A41-Sauron, navigate to folder silo-server and run the server with instance number 1:
@@ -555,7 +554,7 @@ mvn clean compile exec:java -D instance=1
 
 ```
 cd eye
-./target/appassembler/bin/eye localhost 2181 Casa 10 30
+./target/appassembler/bin/eye localhost 8080 Casa 10 30
 ```
 
 * Eye will connect with replica 1. Insert three persons with id 12345 and exit client:
@@ -570,12 +569,11 @@ person,12345
 exit
 ```
 
-* Navigate to folder spotter and run client spotter with arguments host port:
+* With a client terminal, in folder A41-Sauron, navigate to folder spotter, run spotter with arguments host port:
 
 ```
-cd ..
 cd spotter
-./target/appassembler/bin/spotter localhost 2181
+./target/appassembler/bin/spotter localhost 8080
 ```
 
 * Ask to list observations for person with identifier 12345:
@@ -599,12 +597,9 @@ mvn clean compile exec:java -D instance=2
 
 ```
 
-* On client terminal, exit the spotter, navigate to eye folder and connect the same camera as before
+* On eye terminal, connect to the same camera as before
 ```
-exit
-cd ..
-cd eye
-./target/appassembler/bin/eye localhost 2181 Casa 10 30
+./target/appassembler/bin/eye localhost 8080 Casa 10 30
 ```
 
 * Eye will connect with replica 2, Insert one person with id 12345 and exit client:
@@ -614,15 +609,7 @@ person,12345
 exit
 ```
 
-* Navigate to folder spotter and run client spotter with arguments host port:
-
-```
-cd ..
-cd spotter
-./target/appassembler/bin/spotter localhost 2181
-```
-
-* Ask to list observations for person with identifier 12345:
+* On spotter terminal, ask to list observations for person with identifier 12345:
 
 ```
 trail person 12345
@@ -646,7 +633,7 @@ exit
 
 ----
 
-### 4.5. Connecting to different server during spotter execution
+### 4.5. Fault tolerance with spot and trace commands
 
 * With a server terminal, in folder A41-Sauron, navigate to folder silo-server and run the server with instance number 1:
 
@@ -659,83 +646,7 @@ mvn clean compile exec:java -D instance=1
 
 ```
 cd eye
-./target/appassembler/bin/eye localhost 2181 Casa 10 30
-```
-
-* Eye will connect with replica 1. Insert one person with id 12345 and exit client:
-
-```
-person,12345
-(Press enter)
-exit
-```
-
-* Navigate to folder spotter and run client spotter with arguments host port:
-
-```
-cd ..
-cd spotter
-./target/appassembler/bin/spotter localhost 2181
-```
-
-* Ask to list most recent observation for person with identifier 12345:
-
-```
-spot person 12345
-```
-
-* On spotter app, the following output will be printed:
-
-```
-person,12345,(data1),Casa,10,30
-```
-
-* On a different server terminal, initiate new server with instance number 2
-```
-mvn clean compile exec:java -D instance=2
-```
-
-* On the first server terminal, wait 30 seconds and exit the server
-
-```
-(Press enter)
-```
-
-* On the client terminal, ask to list most recent observation for person with identifier 12345:
-
-```
-spot person 12345
-```
-
-* On spotter app, the following output will be printed:
-
-```
-person,12345,(data1),Casa,10,30
-```
-
-* Execute the clear command to clear the server and exit spotter app:
-
-```
-clear
-exit
-```
-
-----
-
-### 4.6. Fault tolerance with spot and trace commands
-
-* With a server terminal, in folder A41-Sauron, navigate to folder silo-server and run the server with instance number 1:
-
-```
-cd silo-server
-mvn clean compile exec:java -D instance=1
-```
-
-* With a client terminal, in folder A41-Sauron, go to folder eye and run client eye with arguments host port cameraName latitude longitude:
-
-```
-cd eye
-./target/appassembler/bin/eye localhost 2181 Casa 10 30
+./target/appassembler/bin/eye localhost 8080 Casa 10 30
 ```
 
 * Eye will connect with replica 1. Insert one person with id 12345:
@@ -749,7 +660,7 @@ person,12345
 
 ```
 cd spotter
-./target/appassembler/bin/spotter localhost 2181
+./target/appassembler/bin/spotter localhost 8080
 ```
 
 * Ask to list most recent observation for person with identifier 12345:
@@ -785,7 +696,7 @@ person,12345,(data2),Casa,10,30
 person,12345,(data1),Casa,10,30
 ```
 
-* On the server terminal, exit the server and run the server again with instance number 2:
+* On the server terminal, exit the server and run the server again with instance number 1:
 
 ```
 (Press enter)
