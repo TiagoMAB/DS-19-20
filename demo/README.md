@@ -407,6 +407,17 @@ spot person 12345
 person,12345,(data1),Casa,10,30
 ```
 
+* Ask again to list most recent observations for person with identifier 12345:
+
+```
+trail person 12345
+```
+* On spotter app, the following output will be printed (cached observation):
+
+```
+person,12345,(data1),Casa,10,30
+```
+
 * On a different client terminal, assuming you are in main folder, navigate to eye folder and connect the same camera as before
 ```
 cd eye
