@@ -554,7 +554,7 @@ mvn clean compile exec:java -D instance=1
 
 ```
 cd eye
-./target/appassembler/bin/eye localhost 8080 Casa 10 30
+./target/appassembler/bin/eye localhost 2181 Casa 10 30
 ```
 
 * Eye will connect with replica 1. Insert three persons with id 12345 and exit client:
@@ -573,7 +573,7 @@ exit
 
 ```
 cd spotter
-./target/appassembler/bin/spotter localhost 8080
+./target/appassembler/bin/spotter localhost 2181
 ```
 
 * Ask to list observations for person with identifier 12345:
@@ -599,7 +599,7 @@ mvn clean compile exec:java -D instance=2
 
 * On eye terminal, connect to the same camera as before
 ```
-./target/appassembler/bin/eye localhost 8080 Casa 10 30
+./target/appassembler/bin/eye localhost 2181 Casa 10 30
 ```
 
 * Eye will connect with replica 2, Insert one person with id 12345 and exit client:
@@ -646,7 +646,7 @@ mvn clean compile exec:java -D instance=1
 
 ```
 cd eye
-./target/appassembler/bin/eye localhost 8080 Casa 10 30
+./target/appassembler/bin/eye localhost 2181 Casa 10 30
 ```
 
 * Eye will connect with replica 1. Insert one person with id 12345:
@@ -660,7 +660,7 @@ person,12345
 
 ```
 cd spotter
-./target/appassembler/bin/spotter localhost 8080
+./target/appassembler/bin/spotter localhost 2181
 ```
 
 * Ask to list most recent observation for person with identifier 12345:
