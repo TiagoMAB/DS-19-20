@@ -30,7 +30,7 @@ public class CamJoinIT extends BaseIT {
     }
 
     @AfterAll
-    public static void oneTimeTearDown() { frontend.ctrlClear(CtrlClearRequest.newBuilder().build()); }
+    public static void oneTimeTearDown() throws Exception { frontend.ctrlClear(CtrlClearRequest.newBuilder().build()); }
 
     @BeforeEach
     public void setUp() {
@@ -41,7 +41,7 @@ public class CamJoinIT extends BaseIT {
     }
 
     @Test
-    public void validCameraJoinTest() {
+    public void validCameraJoinTest() throws Exception {
         frontend.camJoin(camJoinBuildRequest(validName, validLatitude, validLongitude));
         CamInfoResponse response = frontend.camInfo(camInfoBuildRequest(validName));
 
@@ -84,14 +84,14 @@ public class CamJoinIT extends BaseIT {
     }
 
     @Test
-    public void duplicateCameraTest() {
+    public void duplicateCameraTest() throws Exception {
         frontend.camJoin(camJoinBuildRequest(validName2, validLatitude, validLongitude));
         CamInfoResponse response = frontend.camInfo(camInfoBuildRequest(validName2));
 
         assertEquals(response, validResponse);
 
         assertEquals(INVALID_ARGUMENT,
-                assertThrows(StatusRuntimeException.class, () ->  frontend.camJoin(camJoinBuildRequest(validName2, validLatitude, validLongitude))).getStatus()
+                assertThrows(StatusRuntimeException.class, () ->  frontend.camJoin(camJoinBuildRequest(validName2, invalidLatitude, validLongitude))).getStatus()
                         .getCode());
     }
 }

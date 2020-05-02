@@ -89,12 +89,12 @@ mvn verify
 * To start the client eye (assuming that you are in the current directory):
 
 ```
-./eye/target/appassembler/bin/eye #address #port #camera_name #camera_latitude #camera_longitude
+./eye/target/appassembler/bin/eye #address #port #camera_name #camera_latitude #camera_longitude #instance
 ```
 
-Where #address is the address of the server (the predefined value for this server is: localhost)
+Where #address is the address of the registry (the predefined value for this registry is: localhost)
 
-Where #port is the port of the server (the predefined value for this server is: 8080)
+Where #port is the port of the registry (the predefined value for this registry is: 2181)
 
 Where #camera_name is the name of the camera reporting (example: Tagus)
 
@@ -102,9 +102,14 @@ Where #camera_latitude is the latitude of the camera reporting (example: 23) (mu
 
 Where #camera_longitude is the longitude of the camera reporting (example: 93) (must be a value between -180 e 180)
 
-* Usage example:
+Where #instance is an optional argument defining the specific instance of silo you want to connect to (example: 1)
+
+* Usage examples:
 ```
 ./eye/target/appassembler/bin/eye localhost 8080 Alameda 38.737000 -9.136596
+```
+```
+./eye/target/appassembler/bin/eye localhost 8080 Alameda 38.737000 -9.136596 1
 ```
 
 #### Installing - Running Spotter
@@ -112,15 +117,21 @@ Where #camera_longitude is the longitude of the camera reporting (example: 93) (
 * To start the client spotter (assuming that you are in the current directory):
 
 ```
-./spotter/target/appassembler/bin/spotter #address #port
+./spotter/target/appassembler/bin/spotter #address #port #instance
 ```
 
-Where #address is the address of the server (the defined value for this server is: localhost)
-Where #port is the port of the server (the defined value for this server is: 8080)
+Where #address is the address of the registry (the predefined value for this registry is: localhost)
+
+Where #port is the port of the registry (the predefined value for this registry is: 2181)
+
+Where #instance is an optional argument defining the specific instance of silo you want to connect to (example: 1)
 
 * Usage example:
 ```
 ./spotter/target/appassembler/bin/spotter localhost 8080
+```
+```
+./spotter/target/appassembler/bin/spotter localhost 8080 1
 ```
 
 ## Built With

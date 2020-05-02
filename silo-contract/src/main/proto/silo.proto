@@ -6,7 +6,7 @@ package pt.tecnico.sauron.silo.grpc;
 
 import "google/protobuf/timestamp.proto";
 
-option java_multiple_files = true;            //TODO: check if needed
+option java_multiple_files = true;
 
 
 //
@@ -18,7 +18,7 @@ enum Type {
     PERSON = 2;
 }
 
-message Observation {                           //TODO: check between nested type or normal
+message Observation {
 
     Type type = 1;
     string identifier = 2;
@@ -35,8 +35,8 @@ message Observation {                           //TODO: check between nested typ
 message CamJoinRequest {
 
     string name = 1;
-    double latitude = 2;                        //TODO: check between double or float
-    double longitude = 3;                       //TODO: check between double or float
+    double latitude = 2;
+    double longitude = 3;
 
 }
 
@@ -99,7 +99,7 @@ message TrackRequest {
 message TrackResponse {
 
     Observation observation = 1;
-
+    repeated int32 ts_vector = 2;
 }
 
 //
@@ -117,7 +117,8 @@ message TrackMatchRequest {
 //
 message TrackMatchResponse {
 
-    repeated Observation observations = 2;
+    repeated Observation observations = 1;
+    repeated int32 ts_vector = 2;
 
 }
 
@@ -137,6 +138,7 @@ message TraceRequest {
 message TraceResponse {
 
     repeated Observation observations = 1;
+    repeated int32 ts_vector = 2;
 
 }
 
@@ -169,14 +171,14 @@ message CtrlClearRequest {
 //ctrl_clear command response message
 //
 message CtrlClearResponse {
-                                                //TODO: check if returns string message or not
+
 }
 
 //
 //ctrl_init command request message
 //
 message CtrlInitRequest {
-                                                //TODO: check parameters
+
 }
 
 //
@@ -184,6 +186,35 @@ message CtrlInitRequest {
 //
 message CtrlInitResponse {
 
+}
+
+message Update {
+
+    int32 instance = 1;
+    int32 seq_number = 2;
+
+    string name = 3;
+    double latitude = 4;
+    double longitude = 5;
+
+    repeated Observation observations = 6;
+}
+
+//
+//update request message
+//
+message GossipRequest {
+
+    repeated Update updates = 1;
+}
+
+//
+//update response message
+//
+message GossipResponse {
+
+    int32 instance = 1;
+    repeated int32 ts_vector = 2;
 }
 
 //
@@ -199,4 +230,5 @@ service Silo {
     rpc ctrl_ping(CtrlPingRequest) returns (CtrlPingResponse);
     rpc ctrl_clear(CtrlClearRequest) returns (CtrlClearResponse);
     rpc ctrl_init(CtrlInitRequest) returns (CtrlInitResponse);
+    rpc gossip(GossipRequest) returns (GossipResponse);
 }

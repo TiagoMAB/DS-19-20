@@ -28,12 +28,12 @@ public class ReportIT extends BaseIT {
 	
 	// one-time initialization and clean-up
 	@BeforeAll
-	public static void oneTimeSetUp(){
+	public static void oneTimeSetUp() throws Exception {
 		frontend.camJoin(CamJoinRequest.newBuilder().setName(validCamName).setLatitude(latitude).setLongitude(longitude).build());
 	}
 
 	@AfterAll
-	public static void oneTimeTearDown() {
+	public static void oneTimeTearDown() throws Exception {
 		frontend.ctrlClear(CtrlClearRequest.newBuilder().build());
 	}
 	
@@ -52,7 +52,7 @@ public class ReportIT extends BaseIT {
 	// tests 
 	
 	@Test
-	public void validReportObservationDataTest() {
+	public void validReportObservationDataTest() throws Exception {
 		Observation carValidObs = Observation.newBuilder().setType(car).setIdentifier(carIdentifier).build();
 		
 		//report observation
@@ -67,7 +67,7 @@ public class ReportIT extends BaseIT {
 	}
 	
 	@Test
-	public void reportListObservationDataTest() {
+	public void reportListObservationDataTest() throws Exception {
 		Observation carValidObs = Observation.newBuilder().setType(car).setIdentifier(carIdentifier).build();
 		Observation personValidObs = Observation.newBuilder().setType(person).setIdentifier(personIdentifier).build();
 

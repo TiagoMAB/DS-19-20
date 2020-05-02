@@ -35,7 +35,7 @@ public class TraceIT extends BaseIT {
     private static List<Observation> observationsList2 = new ArrayList<Observation>();
 
     @BeforeAll
-    public static void oneTimeSetUp() {
+    public static void oneTimeSetUp() throws Exception {
         frontend.camJoin(CamJoinRequest.newBuilder().setName(name1).setLatitude(latitude1).setLongitude(longitude1).build());
         frontend.camJoin(CamJoinRequest.newBuilder().setName(name2).setLatitude(latitude2).setLongitude(longitude2).build());
 
@@ -49,7 +49,7 @@ public class TraceIT extends BaseIT {
     }
 
     @AfterAll
-    public static void oneTimeTearDown() {
+    public static void oneTimeTearDown() throws Exception {
         frontend.ctrlClear(CtrlClearRequest.newBuilder().build());
     }
 
@@ -62,7 +62,7 @@ public class TraceIT extends BaseIT {
     }
 
     @Test
-    public void validObservation1Test() {
+    public void validObservation1Test() throws Exception {
         List<Observation> responseObsList = frontend.trace(traceBuildRequest(type, identifier1)).getObservationsList();
         assertEquals(responseObsList.size(), 2);
         assertEqualsObservation(observationsList1.get(0), responseObsList.get(0));
@@ -78,7 +78,7 @@ public class TraceIT extends BaseIT {
     }
 
     @Test
-    public void validObservation2Test() {
+    public void validObservation2Test() throws Exception {
         List<Observation> responseObsList = frontend.trace(traceBuildRequest(type, identifier2)).getObservationsList();
         assertEquals(responseObsList.size(), 1);
         assertEqualsObservation(responseObsList.get(0), observationsList2.get(0));
@@ -89,14 +89,14 @@ public class TraceIT extends BaseIT {
     }
 
     @Test
-    public void invalidTypeTest() {
+    public void invalidTypeTest() throws Exception {
         assertEquals(INVALID_ARGUMENT,
                 assertThrows(StatusRuntimeException.class, () -> frontend.trace(traceBuildRequest(invalidTypeObs.getType(), identifier1))).getStatus()
                         .getCode());
     }
 
     @Test
-    public void observationNotFoundTest() {
+    public void observationNotFoundTest() throws Exception {
         List<Observation> responseObsList = frontend.trace(traceBuildRequest(type, notFoundIdentifier)).getObservationsList();
         assertEquals(Collections.emptyList(), responseObsList);
     }

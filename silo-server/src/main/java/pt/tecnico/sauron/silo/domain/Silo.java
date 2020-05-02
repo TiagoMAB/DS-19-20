@@ -9,10 +9,8 @@ public class Silo {
     private TreeSet<Observation> observations = new TreeSet<Observation>();
     private HashMap<String, Camera> cameras = new HashMap<String, Camera>();
 
-    public Silo() { }
-
     public synchronized void camJoin(String name, double latitude, double longitude) throws InvalidCameraNameException, InvalidCoordinateException {
-        if(cameras.containsKey(name)){
+        if(cameras.containsKey(name) && (cameras.get(name).getLatitude() != latitude || cameras.get(name).getLongitude() != longitude)) {
             throw new InvalidCameraNameException("Duplicate " + '"' + name +'"' );
         }
         else {
@@ -43,7 +41,7 @@ public class Silo {
         }
     }
 
-    public synchronized Observation track(Object.Type t, String i) throws NoObservationFoundException {                                  //TODO: validation of identifier?
+    public synchronized Observation track(Object.Type t, String i) throws NoObservationFoundException {
 
         //searches list of observations from the most recent to the oldest for a match in both type and identifier
         Iterator it = observations.descendingIterator();
@@ -91,7 +89,7 @@ public class Silo {
 
     }
 
-    public synchronized List<Observation> trace(Object.Type t, String s) throws NoObservationFoundException {                            //TODO: validation of identifier?
+    public synchronized List<Observation> trace(Object.Type t, String s) throws NoObservationFoundException {
 
         List<Observation> list = new ArrayList<>();
 

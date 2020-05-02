@@ -35,7 +35,7 @@ public class TrackMatchIT extends BaseIT {
     private static List<Observation> observationsList2 = new ArrayList<Observation>();
 
     @BeforeAll
-    public static void oneTimeSetUp() {
+    public static void oneTimeSetUp() throws Exception {
         frontend.camJoin(CamJoinRequest.newBuilder().setName(name).setLatitude(latitude).setLongitude(longitude).build());
 
         frontend.report(ReportRequest.newBuilder().setName(name).addObservations(validObs2).build());
@@ -47,7 +47,7 @@ public class TrackMatchIT extends BaseIT {
     }
 
     @AfterAll
-    public static void oneTimeTearDown() {
+    public static void oneTimeTearDown() throws Exception {
         frontend.ctrlClear(CtrlClearRequest.newBuilder().build());
     }
 
@@ -60,7 +60,7 @@ public class TrackMatchIT extends BaseIT {
     }
 
     @Test
-    public void validObservation1Test() {
+    public void validObservation1Test() throws Exception {
         List<Observation> responseObsList = frontend.trackMatch(trackMatchBuildRequest(type, partialIdentifier1)).getObservationsList();
         assertEquals(responseObsList.size(), 2);
         assertEqualsObservation(observationsList1.get(0), responseObsList.get(0));
@@ -76,7 +76,7 @@ public class TrackMatchIT extends BaseIT {
     }
 
     @Test
-    public void validObservation2Test() {
+    public void validObservation2Test() throws Exception {
         List<Observation> responseObsList = frontend.trackMatch(trackMatchBuildRequest(type, partialIdentifier2)).getObservationsList();
         assertEquals(responseObsList.size(), 1);
         assertEqualsObservation(responseObsList.get(0), observationsList2.get(0));
@@ -101,7 +101,7 @@ public class TrackMatchIT extends BaseIT {
     }
 
     @Test
-    public void observationNotFoundTest() {
+    public void observationNotFoundTest() throws Exception {
         List<Observation> responseObsList = frontend.trackMatch(trackMatchBuildRequest(type, notFoundPartialIdentifier)).getObservationsList();
         assertEquals(Collections.emptyList(), responseObsList);
     }

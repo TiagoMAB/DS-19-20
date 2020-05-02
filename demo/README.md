@@ -298,3 +298,518 @@ exit
 ```
 
 ----
+
+## 4. Replication and fault tolerance
+
+### 4.1. Propagation of information through Gossip Protocol
+
+First, open up 2 different terminals with 2 different instances
+
+###### Terminal 1
+```
+cd silo-server
+mvn clean compile exec:java -D instance=1
+```
+###### Terminal 2
+```
+cd silo-server
+mvn clean compile exec:java -D instance=2
+```
+* Then, open up a different terminal in main directory, run an Eye Client and connect it to replica 1
+
+```
+./eye/target/appassembler/bin/eye localhost 8080 Casa 10 30 1
+```
+
+* Eye will connect with replica 1. Insert 1 persons with id 12345 and exit client:
+
+```
+person,12345
+(Press enter)
+exit
+```
+* Now, in the same client terminal, run a Spotter Client and connect it to replica 2
+```
+cd ..
+cd spotter
+./target/appassembler/bin/spotter localhost 8080 2
+```
+
+* Ask to spot the person for person with identifier 12345:
+```
+spot person 12345
+```
+
+* As is, the following output will be printed:
+
+```
+person,12345,(data1),Casa,10,30
+```
+
+Which means that the information was propagated from replica 1 to replica 2.
+
+### 4.2. Fault tolerance with track command
+
+* With a server terminal, in folder A41-Sauron, navigate to folder silo-server and run the server with instance number 1:
+
+```
+cd silo-server
+mvn clean compile exec:java -D instance=1
+```
+
+* With a client terminal, in folder A41-Sauron, go to folder eye and run client eye with arguments host port cameraName latitude longitude:
+
+```
+cd eye
+./target/appassembler/bin/eye localhost 8080 Casa 10 30
+```
+
+* Eye will connect with replica 1. Insert one person with id 12345 and exit client:
+
+```
+person,12345
+(Press enter)
+exit
+```
+
+* Navigate to folder spotter and run client spotter with arguments host port:
+
+```
+cd ..
+cd spotter
+./target/appassembler/bin/spotter localhost 8080
+```
+
+* Ask to list most recent observation for person with identifier 12345:
+
+```
+spot person 12345
+```
+
+* On spotter app, the following output will be printed:
+
+```
+person,12345,(data1),Casa,10,30
+```
+
+* On server terminal, press enter to exit the server and initiate new server with instance number 2
+```
+(Press enter)
+mvn clean compile exec:java -D instance=2
+
+```
+
+* On client terminal, exit the spotter, navigate to eye folder and connect the same camera as before
+```
+exit
+cd ..
+cd eye
+./target/appassembler/bin/eye localhost 8080 Casa 10 30
+```
+
+* Eye will connect with replica 2, Insert one person with id 12345 and exit client:
+```
+person,12345
+(Press enter)
+exit
+```
+
+* Navigate to folder spotter and run client spotter with arguments host port:
+
+```
+cd ..
+cd spotter
+./target/appassembler/bin/spotter localhost 8080
+```
+
+* Ask to list most recent observation for person with identifier 12345:
+
+```
+spot person 12345
+```
+
+* On spotter app, the following output will be printed:
+
+```
+person,12345,(data2),Casa,10,30
+```
+
+* Execute the clear command to clear the server and exit spotter app:
+
+```
+clear
+exit
+```
+
+----
+
+### 4.3. Fault tolerance with trackMatch command
+
+* With a server terminal, in folder A41-Sauron, navigate to folder silo-server and run the server with instance number 1:
+
+```
+cd silo-server
+mvn clean compile exec:java -D instance=1
+```
+
+* With a client terminal, in folder A41-Sauron, go to folder eye and run client eye with arguments host port cameraName latitude longitude:
+
+```
+cd eye
+./target/appassembler/bin/eye localhost 8080 Casa 10 30
+```
+
+* Eye will connect with replica 1. Insert two persons with id 12345 and 12300 and exit client:
+
+```
+person,12345
+(Press enter)
+person,12300
+(Press enter)
+exit
+```
+
+* Navigate to folder spotter and run client spotter with arguments host port:
+
+```
+cd ..
+cd spotter
+./target/appassembler/bin/spotter localhost 8080
+```
+
+* Ask for most recent observation for each object with identifier that matches a partial identifier:
+
+```
+spot person 123*
+```
+
+* On spotter app, the following output will be printed:
+
+```
+person,12300,(data2),Casa,10,30
+person,12345,(data1),Casa,10,30
+```
+
+* On server terminal, press enter to exit the server and initiate new server with instance number 2
+```
+(Press enter)
+mvn clean compile exec:java -D instance=2
+
+```
+
+* On client terminal, exit the spotter, navigate to eye folder and connect the same camera as before
+```
+exit
+cd ..
+cd eye
+./target/appassembler/bin/eye localhost 8080 Casa 10 30
+```
+
+* Eye will connect with replica 2, Insert one person with id 12321 and exit client:
+```
+person,12321
+(Press enter)
+exit
+```
+
+* Navigate to folder spotter and run client spotter with arguments host port:
+
+```
+cd ..
+cd spotter
+./target/appassembler/bin/spotter localhost 8080
+```
+
+* Ask for most recent observation for each object with identifier that matches a partial identifier:
+
+```
+spot person 123*
+```
+
+* On spotter app, the following output will be printed:
+
+```
+person,12300,(data2),Casa,10,30
+person,12321,(data3),Casa,10,30
+person,12345,(data1),Casa,10,30
+```
+
+* Execute the clear command to clear the server and exit spotter app:
+
+```
+clear
+exit
+```
+
+----
+
+### 4.4. Fault tolerance with trace command
+
+* With a server terminal, in folder A41-Sauron, navigate to folder silo-server and run the server with instance number 1:
+
+```
+cd silo-server
+mvn clean compile exec:java -D instance=1
+```
+
+* With a client terminal, in folder A41-Sauron, go to folder eye and run client eye with arguments host port cameraName latitude longitude:
+
+```
+cd eye
+./target/appassembler/bin/eye localhost 8080 Casa 10 30
+```
+
+* Eye will connect with replica 1. Insert three persons with id 12345 and exit client:
+
+```
+person,12345
+(Press enter)
+person,12345
+(Press enter)
+person,12345
+(Press enter)
+exit
+```
+
+* Navigate to folder spotter and run client spotter with arguments host port:
+
+```
+cd ..
+cd spotter
+./target/appassembler/bin/spotter localhost 8080
+```
+
+* Ask to list observations for person with identifier 12345:
+
+```
+trail person 12345
+```
+
+* On spotter app, the following output will be printed:
+
+```
+person,12345,(data3),Casa,10,30
+person,12345,(data2),Casa,10,30
+person,12345,(data1),Casa,10,30
+```
+
+* On server terminal, press enter to exit the server and initiate new server with instance number 2
+```
+(Press enter)
+mvn clean compile exec:java -D instance=2
+
+```
+
+* On client terminal, exit the spotter, navigate to eye folder and connect the same camera as before
+```
+exit
+cd ..
+cd eye
+./target/appassembler/bin/eye localhost 8080 Casa 10 30
+```
+
+* Eye will connect with replica 2, Insert one person with id 12345 and exit client:
+```
+person,12345
+(Press enter)
+exit
+```
+
+* Navigate to folder spotter and run client spotter with arguments host port:
+
+```
+cd ..
+cd spotter
+./target/appassembler/bin/spotter localhost 8080
+```
+
+* Ask to list observations for person with identifier 12345:
+
+```
+trail person 12345
+```
+
+* On spotter app, the following output will be printed:
+
+```
+person,12345,(data4),Casa,10,30
+person,12345,(data3),Casa,10,30
+person,12345,(data2),Casa,10,30
+person,12345,(data1),Casa,10,30
+```
+
+* Execute the clear command to clear the server and exit spotter app:
+
+```
+clear
+exit
+```
+
+----
+
+### 4.5. Connecting to different server during spotter execution
+
+* With a server terminal, in folder A41-Sauron, navigate to folder silo-server and run the server with instance number 1:
+
+```
+cd silo-server
+mvn clean compile exec:java -D instance=1
+```
+
+* With a client terminal, in folder A41-Sauron, go to folder eye and run client eye with arguments host port cameraName latitude longitude:
+
+```
+cd eye
+./target/appassembler/bin/eye localhost 8080 Casa 10 30
+```
+
+* Eye will connect with replica 1. Insert one person with id 12345 and exit client:
+
+```
+person,12345
+(Press enter)
+exit
+```
+
+* Navigate to folder spotter and run client spotter with arguments host port:
+
+```
+cd ..
+cd spotter
+./target/appassembler/bin/spotter localhost 8080
+```
+
+* Ask to list most recent observation for person with identifier 12345:
+
+```
+spot person 12345
+```
+
+* On spotter app, the following output will be printed:
+
+```
+person,12345,(data1),Casa,10,30
+```
+
+* On a different server terminal, initiate new server with instance number 2
+```
+mvn clean compile exec:java -D instance=2
+```
+
+* On the first server terminal, wait 30 seconds and exit the server
+
+```
+(Press enter)
+```
+
+* On the client terminal, ask to list most recent observation for person with identifier 12345:
+
+```
+spot person 12345
+```
+
+* On spotter app, the following output will be printed:
+
+```
+person,12345,(data1),Casa,10,30
+```
+
+* Execute the clear command to clear the server and exit spotter app:
+
+```
+clear
+exit
+```
+
+----
+
+### 4.6. Fault tolerance with spot and trace commands
+
+* With a server terminal, in folder A41-Sauron, navigate to folder silo-server and run the server with instance number 1:
+
+```
+cd silo-server
+mvn clean compile exec:java -D instance=1
+```
+
+* With a client terminal, in folder A41-Sauron, go to folder eye and run client eye with arguments host port cameraName latitude longitude:
+
+```
+cd eye
+./target/appassembler/bin/eye localhost 8080 Casa 10 30
+```
+
+* Eye will connect with replica 1. Insert one person with id 12345:
+
+```
+person,12345
+(Press enter)
+```
+
+* With a different client terminal, in folder A41-Sauron, go to folder spotter and run client spotter with arguments host port:
+
+```
+cd spotter
+./target/appassembler/bin/spotter localhost 8080
+```
+
+* Ask to list most recent observation for person with identifier 12345:
+
+```
+spot person 12345
+```
+
+* On spotter app, the following output will be printed:
+
+```
+person,12345,(data1),Casa,10,30
+```
+
+* On eye client terminal, insert one person with id 12345 and exit client:
+
+```
+person,12345
+(Press enter)
+exit
+```
+
+* On spotter client terminal, ask to list observations for person with identifier 12345:
+
+```
+trail person 12345
+```
+
+* On spotter app, the following output will be printed:
+
+```
+person,12345,(data2),Casa,10,30
+person,12345,(data1),Casa,10,30
+```
+
+* On the server terminal, exit the server and run the server again with instance number 2:
+
+```
+(Press enter)
+mvn clean compile exec:java -D instance=1
+```
+
+* On spotter client terminal, ask to list most recent observation for person with identifier 12345:
+
+```
+spot person 12345
+```
+
+* On spotter app, the following output will be printed:
+
+```
+person,12345,(data2),Casa,10,30
+```
+
+* Execute the clear command to clear the server and exit spotter app:
+
+```
+clear
+exit
+```
+
+----

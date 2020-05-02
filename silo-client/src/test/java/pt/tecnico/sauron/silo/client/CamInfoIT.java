@@ -23,12 +23,12 @@ public class CamInfoIT extends BaseIT {
 
 
     @BeforeAll
-    public static void oneTimeSetUp() {
+    public static void oneTimeSetUp() throws Exception {
         frontend.camJoin(CamJoinRequest.newBuilder().setName(validName).setLatitude(validLatitude).setLongitude(validLongitude).build());
     }
 
     @AfterAll
-    public static void oneTimeTearDown() { frontend.ctrlClear(CtrlClearRequest.newBuilder().build()); }
+    public static void oneTimeTearDown() throws Exception { frontend.ctrlClear(CtrlClearRequest.newBuilder().build()); }
 
     @BeforeEach
     public void setUp() {
@@ -39,7 +39,7 @@ public class CamInfoIT extends BaseIT {
     }
 
     @Test
-    public void validCameraInfoTest() {
+    public void validCameraInfoTest() throws Exception {
         CamInfoResponse response = frontend.camInfo(camInfoBuildRequest(validName));
         assertEquals(response, validResponse);
     }

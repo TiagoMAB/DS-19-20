@@ -27,14 +27,14 @@ public class TrackIT extends BaseIT {
 
 
     @BeforeAll
-    public static void oneTimeSetUp() {
+    public static void oneTimeSetUp() throws Exception {
         frontend.camJoin(CamJoinRequest.newBuilder().setName(name).setLatitude(latitude).setLongitude(longitude).build());
 
         frontend.report(ReportRequest.newBuilder().setName(name).addObservations(validObs).build());
     }
 
     @AfterAll
-    public static void oneTimeTearDown() {
+    public static void oneTimeTearDown() throws Exception {
         frontend.ctrlClear(CtrlClearRequest.newBuilder().build());
     }
 
@@ -47,7 +47,7 @@ public class TrackIT extends BaseIT {
     }
 
     @Test
-    public void validObservationTest() {
+    public void validObservationTest() throws Exception {
         Observation responseObs = frontend.track(trackBuildRequest(type, identifier)).getObservation();
         assertEqualsObservation(validObs, responseObs);
         assertEquals(name, responseObs.getName());
@@ -63,7 +63,7 @@ public class TrackIT extends BaseIT {
     }
 
     @Test
-    public void observationNotFoundTest() {
+    public void observationNotFoundTest() throws Exception {
         Observation responseObs = frontend.track(trackBuildRequest(type, notFoundIdentifier)).getObservation();
         assertEquals(Observation.getDefaultInstance(), responseObs);
     }
