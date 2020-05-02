@@ -47,7 +47,7 @@ After this the server will be left running in this terminal. Open a different te
 
 ```
 cd ..
-./eye/target/appassembler/bin/eye localhost 8080 Alameda 38.737000 -9.136596
+./eye/target/appassembler/bin/eye localhost 2181 Alameda 38.737000 -9.136596
 ```
 
 #### Installing - Third Step (Option 2) Running Spotter
@@ -57,7 +57,7 @@ cd ..
 
 ```
 cd ..
-./spotter/target/appassembler/bin/spotter localhost 8080
+./spotter/target/appassembler/bin/spotter localhost 2181
 ```
 
 ----
@@ -72,17 +72,17 @@ cd ..
 /eye/src/main/java/pt/tecnico/sauron/eye/
 ```
 
-* After picking a Camera name, Latitude and Longitude, start the program with ```#address = localhost``` and ```#port = 8080```, for instance:
+* After picking a Camera name, Latitude and Longitude, start the program with ```#address = localhost``` and ```#port = 2181```, for instance:
 
 ```
-./eye/target/appassembler/bin/eye localhost 8080 CamaraPortao 38.737613 -9.303164
+./eye/target/appassembler/bin/eye localhost 2181 CamaraPortao 38.737613 -9.303164
 ```
 
 * Through this type of execution, the program will be waiting direct Observation input from the terminal.
 If the goal is to see a demo of several Observation inputs, run the program with ```data.txt``` file in its execution command, like this:
 
 ```
-./eye/target/appassembler/bin/eye localhost 8080 CamaraPortao 38.737613 -9.303164 < data.txt
+./eye/target/appassembler/bin/eye localhost 2181 CamaraPortao 38.737613 -9.303164 < data.txt
 ```
 
 ---
@@ -101,7 +101,7 @@ mvn clean compile exec:java
 ```
 cd ..
 cd eye
-./target/appassembler/bin/eye localhost 8080 Casa 10 30
+./target/appassembler/bin/eye localhost 2181 Casa 10 30
 ```
 
 * Insert two persons and one car:
@@ -117,7 +117,7 @@ person,125678
 
 ```
 exit
-./target/appassembler/bin/eye localhost 8080 Trabalho 1 1
+./target/appassembler/bin/eye localhost 2181 Trabalho 1 1
 ```
 
 * Insert one person and exit client:
@@ -133,7 +133,7 @@ exit
 ```
 cd ..
 cd spotter
-./target/appassembler/bin/spotter localhost 8080
+./target/appassembler/bin/spotter localhost 2181
 ```
 
 * Ask to list most recent observation for person with identifier 123456:
@@ -171,7 +171,7 @@ mvn clean compile exec:java
 ```
 cd ..
 cd eye
-./target/appassembler/bin/eye localhost 8080 Casa 10 30
+./target/appassembler/bin/eye localhost 2181 Casa 10 30
 ```
 
 * Insert two persons and one car:
@@ -187,7 +187,7 @@ person,125678
 
 ```
 exit
-./target/appassembler/bin/eye localhost 8080 Trabalho 1 1
+./target/appassembler/bin/eye localhost 2181 Trabalho 1 1
 ```
 
 * Insert one person and exit client:
@@ -203,7 +203,7 @@ exit
 ```
 cd ..
 cd spotter
-./target/appassembler/bin/spotter localhost 8080
+./target/appassembler/bin/spotter localhost 2181
 ```
 
 * Ask for most recent observation for each object with identifier that matches a partial identifier:
@@ -242,7 +242,7 @@ mvn clean compile exec:java
 ```
 cd ..
 cd eye
-./target/appassembler/bin/eye localhost 8080 Casa 10 30
+./target/appassembler/bin/eye localhost 2181 Casa 10 30
 ```
 
 * Insert two persons and one car:
@@ -258,7 +258,7 @@ person,125678
 
 ```
 exit
-./target/appassembler/bin/eye localhost 8080 Trabalho 1 1
+./target/appassembler/bin/eye localhost 2181 Trabalho 1 1
 ```
 
 * Insert one person and exit client:
@@ -274,7 +274,7 @@ exit
 ```
 cd ..
 cd spotter
-./target/appassembler/bin/spotter localhost 8080
+./target/appassembler/bin/spotter localhost 2181
 ```
 
 * Ask to list observations for person with identifier 123456:
@@ -318,7 +318,7 @@ mvn clean compile exec:java -D instance=2
 * Then, open up a different terminal in main directory, run an Eye Client and connect it to replica 1
 
 ```
-./eye/target/appassembler/bin/eye localhost 8080 Casa 10 30 1
+./eye/target/appassembler/bin/eye localhost 2181 Casa 10 30 1
 ```
 
 * Eye will connect with replica 1. Insert 1 persons with id 12345 and exit client:
@@ -330,7 +330,7 @@ exit
 ```
 * Now, in the same client terminal, run a Spotter Client and connect it to replica 2
 ```
-./spotter/target/appassembler/bin/spotter localhost 8080 2
+./spotter/target/appassembler/bin/spotter localhost 2181 2
 ```
 
 * Ask to spot the person for person with identifier 12345:
@@ -359,7 +359,7 @@ mvn clean compile exec:java -D instance=1
 
 ```
 cd eye
-./target/appassembler/bin/eye localhost 8080 Casa 10 30
+./target/appassembler/bin/eye localhost 2181 Casa 10 30
 ```
 
 * Eye will connect with replica 1. Insert one person with id 12345 and exit client:
@@ -375,7 +375,7 @@ exit
 ```
 cd ..
 cd spotter
-./target/appassembler/bin/spotter localhost 8080
+./target/appassembler/bin/spotter localhost 2181
 ```
 
 * Ask to list most recent observation for person with identifier 12345:
@@ -402,7 +402,7 @@ mvn clean compile exec:java -D instance=2
 exit
 cd ..
 cd eye
-./target/appassembler/bin/eye localhost 8080 Casa 10 30
+./target/appassembler/bin/eye localhost 2181 Casa 10 30
 ```
 
 * Eye will connect with replica 2, Insert one person with id 12345 and exit client:
@@ -417,7 +417,7 @@ exit
 ```
 cd ..
 cd spotter
-./target/appassembler/bin/spotter localhost 8080
+./target/appassembler/bin/spotter localhost 2181
 ```
 
 * Ask to list most recent observation for person with identifier 12345:
@@ -454,7 +454,7 @@ mvn clean compile exec:java -D instance=1
 
 ```
 cd eye
-./target/appassembler/bin/eye localhost 8080 Casa 10 30
+./target/appassembler/bin/eye localhost 2181 Casa 10 30
 ```
 
 * Eye will connect with replica 1. Insert two persons with id 12345 and 12300 and exit client:
@@ -472,7 +472,7 @@ exit
 ```
 cd ..
 cd spotter
-./target/appassembler/bin/spotter localhost 8080
+./target/appassembler/bin/spotter localhost 2181
 ```
 
 * Ask for most recent observation for each object with identifier that matches a partial identifier:
@@ -500,7 +500,7 @@ mvn clean compile exec:java -D instance=2
 exit
 cd ..
 cd eye
-./target/appassembler/bin/eye localhost 8080 Casa 10 30
+./target/appassembler/bin/eye localhost 2181 Casa 10 30
 ```
 
 * Eye will connect with replica 2, Insert one person with id 12321 and exit client:
@@ -515,7 +515,7 @@ exit
 ```
 cd ..
 cd spotter
-./target/appassembler/bin/spotter localhost 8080
+./target/appassembler/bin/spotter localhost 2181
 ```
 
 * Ask for most recent observation for each object with identifier that matches a partial identifier:
@@ -554,7 +554,7 @@ mvn clean compile exec:java -D instance=1
 
 ```
 cd eye
-./target/appassembler/bin/eye localhost 8080 Casa 10 30
+./target/appassembler/bin/eye localhost 2181 Casa 10 30
 ```
 
 * Eye will connect with replica 1. Insert three persons with id 12345 and exit client:
@@ -574,7 +574,7 @@ exit
 ```
 cd ..
 cd spotter
-./target/appassembler/bin/spotter localhost 8080
+./target/appassembler/bin/spotter localhost 2181
 ```
 
 * Ask to list observations for person with identifier 12345:
@@ -603,7 +603,7 @@ mvn clean compile exec:java -D instance=2
 exit
 cd ..
 cd eye
-./target/appassembler/bin/eye localhost 8080 Casa 10 30
+./target/appassembler/bin/eye localhost 2181 Casa 10 30
 ```
 
 * Eye will connect with replica 2, Insert one person with id 12345 and exit client:
@@ -618,7 +618,7 @@ exit
 ```
 cd ..
 cd spotter
-./target/appassembler/bin/spotter localhost 8080
+./target/appassembler/bin/spotter localhost 2181
 ```
 
 * Ask to list observations for person with identifier 12345:
@@ -658,7 +658,7 @@ mvn clean compile exec:java -D instance=1
 
 ```
 cd eye
-./target/appassembler/bin/eye localhost 8080 Casa 10 30
+./target/appassembler/bin/eye localhost 2181 Casa 10 30
 ```
 
 * Eye will connect with replica 1. Insert one person with id 12345 and exit client:
@@ -674,7 +674,7 @@ exit
 ```
 cd ..
 cd spotter
-./target/appassembler/bin/spotter localhost 8080
+./target/appassembler/bin/spotter localhost 2181
 ```
 
 * Ask to list most recent observation for person with identifier 12345:
@@ -734,7 +734,7 @@ mvn clean compile exec:java -D instance=1
 
 ```
 cd eye
-./target/appassembler/bin/eye localhost 8080 Casa 10 30
+./target/appassembler/bin/eye localhost 2181 Casa 10 30
 ```
 
 * Eye will connect with replica 1. Insert one person with id 12345:
@@ -748,7 +748,7 @@ person,12345
 
 ```
 cd spotter
-./target/appassembler/bin/spotter localhost 8080
+./target/appassembler/bin/spotter localhost 2181
 ```
 
 * Ask to list most recent observation for person with identifier 12345:
