@@ -258,9 +258,6 @@ public class SiloFrontend implements AutoCloseable {
 
     public boolean checkTs(List<Integer> ts_vector) {
 
-        System.out.println("Old ts vector: " + this.ts_vector);
-        System.out.println("Received ts vector: " + ts_vector);
-
         for (int index = 0; index < ts_vector.size(); index++) {
             if (this.ts_vector.get(index) > ts_vector.get(index)) {
                 return false;
@@ -270,9 +267,6 @@ public class SiloFrontend implements AutoCloseable {
         for (int index = 0; index < ts_vector.size(); index++) {
             this.ts_vector.set(index, ts_vector.get(index));
         }
-
-        System.out.println("New ts vector: " + this.ts_vector);
-        System.out.println("Received ts vector: " + ts_vector);
 
         return true;
     }

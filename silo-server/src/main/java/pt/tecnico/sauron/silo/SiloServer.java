@@ -21,105 +21,14 @@ import static io.grpc.Status.INVALID_ARGUMENT;
 
 public class SiloServer extends SiloGrpc.SiloImplBase {
 
-    private class GossipProtocol extends TimerTask {				//TODO: check if static inside class or this way
-
-        public void run() {
-            System.out.println("Print " );
-
-            ZKNaming zkNaming = new ZKNaming(zkhost, zkport);
-            ZKRecord record;
-
-            String path = "/grpc/sauron/silo";
-
-            LOGGER.info("GossipProtocol()...");
-            try {
-                ArrayList<ZKRecord> records = (ArrayList) zkNaming.listRecords(path);
-
-                GossipRequest.Builder request = GossipRequest.newBuilder();
-
-                LOGGER.info("Updates...");
-                List<pt.tecnico.sauron.silo.domain.Update> updates = log.getUpdates();
-
-                for (pt.tecnico.sauron.silo.domain.Update u: updates) {
-                    int instance = u.getInstance();
-                    int seq_number = u.getSeq_number();
-                    String name = u.getCamera().getName();
-                    double latitude = u.getCamera().getLatitude();
-                    double longitude = u.getCamera().getLongitude();
-
-                    LOGGER.info("Instance: " + instance + " update number: " + seq_number + " Camera name:" + name);
-
-                    Update.Builder update = Update.newBuilder().setInstance(instance).setSeqNumber(seq_number).setName(name).setLatitude(latitude).setLongitude(longitude);
-
-                    for (pt.tecnico.sauron.silo.domain.Observation o : u.getObservations()) {
-                        LOGGER.info("Observation: " + o.getObject().getIdentifier());
-                        Type t;                                 //TODO: clean
-                        if (o.getObject().getType() == Object.Type.car) {
-                            t = Type.CAR;
-                        } else {
-                            t = Type.PERSON;
-                        }
-
-                        //Converts java.sql.timestamp to protobuf.timestamp
-                        Timestamp timestamp = o.getTimestamp();
-                        Long milliseconds = timestamp.getTime();
-                        com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(milliseconds / 1000).build();
-
-                        //Converts internal representation of observation to a data transfer object
-                        Observation obs = Observation.newBuilder().setType(t).setIdentifier(o.getObject().getIdentifier()).setDate(ts).setName(name).setLatitude(latitude).setLongitude(longitude).build();
-
-                        //Adds observation (dto) to list of observations to be sent
-                        update.addObservations(obs);
-                    }
-                    request.addUpdates(update.build());
-                }
-
-
-                //if instance not provided chooses random instance, otherwise finds instance provided
-                for (ZKRecord zkr: records) {
-                    if (zkr.getURI().equals(host + ":" + port)) {
-                        continue;
-                    }
-                    LOGGER.info("Sending data to " + zkr.getPath());
-                    String target = zkr.getURI();
-
-                    ManagedChannel channel = ManagedChannelBuilder.forTarget(target).usePlaintext().build();
-                    SiloGrpc.SiloBlockingStub stub = SiloGrpc.newBlockingStub(channel);
-
-                    stub.gossip(request.build());       //TODO: clean repeated build
-                    LOGGER.info("Sent data to " + zkr.getPath());
-                }
-
-            }
-            catch (Exception e) {
-                //TODO: handle excpetion
-                LOGGER.info(e.getMessage());
-                System.out.println("Error during timertask gossip");
-            }
-        }
-    }
-
     private static final Logger LOGGER = Logger.getLogger(SiloServer.class.getName());
 
     private final UpdateLog log;
     private final Silo silo;
-    private final String zkhost;
-    private final String zkport;
-    private final String host;
-    private final String port;
 
-    public SiloServer(int instance, String zkhost, String zkport, String host, String port) {
+    public SiloServer(int instance) {
         this.log = new UpdateLog(instance);
         this.silo = new Silo();
-        this.zkhost = zkhost;
-        this.zkport = zkport;
-        this.host = host;
-        this.port = port;
-
-        Timer timer = new Timer();
-        TimerTask gossip = new GossipProtocol();
-
-        timer.schedule(gossip, Date.from(Instant.now().plusSeconds(30)), 30000);
     }
 
     @Override
@@ -181,7 +90,6 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
             Camera camera = silo.camInfo(n);
 
             List<Observation> ol = request.getObservationsList();
-
             List<pt.tecnico.sauron.silo.domain.Observation> observationsList = new ArrayList<pt.tecnico.sauron.silo.domain.Observation>();
 
             LOGGER.info("Received name: " + n);
@@ -472,13 +380,75 @@ public class SiloServer extends SiloGrpc.SiloImplBase {
                     log.addUpdate(camera, observationsList, update.getInstance());
                 }
             }
+
+            GossipResponse.Builder response = GossipResponse.newBuilder();
+
+            //Sends ts_vector with response
+            int[] ts_vector = log.getTs_vector();
+            for (int ts_value: ts_vector) {
+                response.addTsVector(ts_value);
+            }
+
             //Signals that the response was built successfully
-            responseObserver.onNext(GossipResponse.newBuilder().build());
+            responseObserver.onNext(response.setInstance(log.getInstance()).build());
             responseObserver.onCompleted();
         }
         catch (Exception e) {
             LOGGER.info(e.getMessage());
             responseObserver.onError(INVALID_ARGUMENT.withDescription(e.getMessage()).asRuntimeException());
         }
+    }
+
+    public GossipRequest createGossipRequest(int dest_instance) {
+        GossipRequest.Builder request = GossipRequest.newBuilder();
+
+        LOGGER.info("Updates...");
+        List<pt.tecnico.sauron.silo.domain.Update> updates = log.getUpdates();
+
+        for (pt.tecnico.sauron.silo.domain.Update u: updates) {
+            if (log.skipUpdate(dest_instance, u.getInstance(), u.getSeq_number())) {
+                continue;
+            }
+
+            int instance = u.getInstance();
+            int seq_number = u.getSeq_number();
+            String name = u.getCamera().getName();
+            double latitude = u.getCamera().getLatitude();
+            double longitude = u.getCamera().getLongitude();
+
+            LOGGER.info("Instance: " + instance + " update number: " + seq_number + " Camera name:" + name);
+
+            pt.tecnico.sauron.silo.grpc.Update.Builder update = pt.tecnico.sauron.silo.grpc.Update.newBuilder().setInstance(instance).setSeqNumber(seq_number).setName(name).setLatitude(latitude).setLongitude(longitude);
+
+            for (pt.tecnico.sauron.silo.domain.Observation o : u.getObservations()) {
+                LOGGER.info("Observation: " + o.getObject().getIdentifier());
+                Type t;                                 //TODO: clean
+                if (o.getObject().getType() == Object.Type.car) {
+                    t = Type.CAR;
+                } else {
+                    t = Type.PERSON;
+                }
+
+                //Converts java.sql.timestamp to protobuf.timestamp
+                Timestamp timestamp = o.getTimestamp();
+                Long milliseconds = timestamp.getTime();
+                com.google.protobuf.Timestamp ts = com.google.protobuf.Timestamp.newBuilder().setSeconds(milliseconds / 1000).build();
+
+                //Converts internal representation of observation to a data transfer object
+                Observation obs = Observation.newBuilder().setType(t).setIdentifier(o.getObject().getIdentifier()).setDate(ts).setName(name).setLatitude(latitude).setLongitude(longitude).build();
+
+                //Adds observation (dto) to list of observations to be sent
+                update.addObservations(obs);
+            }
+            request.addUpdates(update.build());
+        }
+
+        return request.build();
+    }
+
+    public void handleGossipResponse(GossipResponse response) {
+
+        log.updateTs_vector(response.getInstance(), response.getTsVectorList());
+        LOGGER.info("Received vector: " + response.getTsVectorList());
     }
 }

@@ -213,6 +213,8 @@ message GossipRequest {
 //
 message GossipResponse {
 
+    int32 instance = 1;
+    repeated int32 ts_vector = 2;
 }
 
 //
