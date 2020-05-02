@@ -328,7 +328,7 @@ person,12345
 (Press enter)
 exit
 ```
-* Now, in the same client terminal, run a Spotter Client and connect it to replica 2
+* Now, in the same client terminal, run a Spotter Client and connect it to replica 2. Wait 30 seconds.
 ```
 ./spotter/target/appassembler/bin/spotter localhost 2181 2
 ```
