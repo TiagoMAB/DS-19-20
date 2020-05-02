@@ -397,10 +397,8 @@ mvn clean compile exec:java -D instance=2
 
 ```
 
-* On client terminal, exit the spotter, navigate to eye folder and connect the same camera as before
+* On a different client terminal, assuming you are in main folder, navigate to eye folder and connect the same camera as before
 ```
-exit
-cd ..
 cd eye
 ./target/appassembler/bin/eye localhost 2181 Casa 10 30
 ```
@@ -412,15 +410,7 @@ person,12345
 exit
 ```
 
-* Navigate to folder spotter and run client spotter with arguments host port:
-
-```
-cd ..
-cd spotter
-./target/appassembler/bin/spotter localhost 2181
-```
-
-* Ask to list most recent observation for person with identifier 12345:
+* Using the spotter terminal, ask to list most recent observation for person with identifier 12345:
 
 ```
 spot person 12345
