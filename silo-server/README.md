@@ -11,11 +11,16 @@ The server runs in a stand-alone process.
 
 Make sure that the parent POM was installed first.
 
-To compile and run:
+To compile and run, use one of the options below:
 
 ```
 mvn compile exec:java
 ```
+
+```
+mvn compile exec:java -D instance=#value
+```
+Where #value is the an integer between 1 and 9 (Use the second option if you want to specify the instance)
 
 When running, the server awaits connections from clients.
 
