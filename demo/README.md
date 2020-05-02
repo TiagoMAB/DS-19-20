@@ -330,9 +330,7 @@ exit
 ```
 * Now, in the same client terminal, run a Spotter Client and connect it to replica 2
 ```
-cd ..
-cd spotter
-./target/appassembler/bin/spotter localhost 8080 2
+./spotter/target/appassembler/bin/spotter localhost 8080 2
 ```
 
 * Ask to spot the person for person with identifier 12345:
